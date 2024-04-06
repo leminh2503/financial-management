@@ -1,5 +1,4 @@
-import { configureStore } from '@reduxjs/toolkit';
-import { combineReducers } from '@reduxjs/toolkit';
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import authReducer from './reducers/authReducer';
 import {
   FLUSH,
@@ -12,6 +11,8 @@ import {
   REHYDRATE,
 } from 'redux-persist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import productReducer from './reducers/productReducer';
+
 const config = {
   key: 'root',
   storage: AsyncStorage,
@@ -20,6 +21,7 @@ const config = {
 
 const reducers = combineReducers({
   auth: authReducer,
+  product: productReducer,
   // other reducers goes here...
 });
 

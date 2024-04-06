@@ -43,7 +43,7 @@ const light = {
 export const theme: ITheme = extendTheme({
   config: {
     useSystemColorMode: true,
-    initialColorMode: 'light',
+    initialColorMode: 'dark',
   },
   colors: {
     primary: schema,

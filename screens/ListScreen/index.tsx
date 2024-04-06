@@ -1,34 +1,134 @@
 import React, { useCallback, useState } from 'react';
 import {
   Box,
-  FlatList,
-  Row,
+  Button,
   Column,
-  Text,
-  Pressable,
-  Center,
-  Icon,
+  FlatList,
   Heading,
+  Icon,
+  Image,
+  Row,
+  Text,
 } from 'native-base';
 
 // navigation
 import { RootStackParamList } from '../../navigation/types';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useFocusEffect } from '@react-navigation/native';
-import { ApiService, UserModel } from '../../lib/axios';
-import Feather from '@expo/vector-icons/build/Feather';
+import { ApiService, ProductModel, UserModel } from '../../lib/axios';
+import { Octicons } from '@expo/vector-icons';
+import { TouchableOpacity } from 'react-native';
+import { ModalItemProduct } from './modals/ModalItemProduct';
+import { useDispatch } from 'react-redux';
+import { addToCart } from '../../lib/redux/reducers/productReducer';
+import { TextInput } from 'react-native-paper';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'List'>;
 
+const _item: ProductModel = {
+  id: 1,
+  name: 'Product 1',
+  price: 1000,
+  description: 'Description 1',
+  image: 'https://picsum.photos/200/300',
+  quantity: 10,
+  code: 'MZISKSFJSK',
+};
+const _item2: ProductModel = {
+  id: 2,
+  name: 'Product 2',
+  price: 1000,
+  description: 'Description 1',
+  image: 'https://picsum.photos/200/300',
+  quantity: 10,
+  code: 'MZISKSFJSK',
+};
+const _item3: ProductModel = {
+  id: 3,
+  name: 'Product 3',
+  price: 1000,
+  description: 'Description 1',
+  image: 'https://picsum.photos/200/300',
+  quantity: 10,
+  code: 'MZISKSFJSK',
+};
+const _item4: ProductModel = {
+  id: 4,
+  name: 'Product 4',
+  price: 1000,
+  description: 'Description 1',
+  image: 'https://picsum.photos/200/300',
+  quantity: 10,
+  code: 'MZISKSFJSK',
+};
+const _item5: ProductModel = {
+  id: 5,
+  name: 'Product 5',
+  price: 1000,
+  description: 'Description 1',
+  image: 'https://picsum.photos/200/300',
+  quantity: 10,
+  code: 'MZISKSFJSK',
+};
+const _item6: ProductModel = {
+  id: 6,
+  name: 'Product 6',
+  price: 1000,
+  description: 'Description 1',
+  image: 'https://picsum.photos/200/300',
+  quantity: 10,
+  code: 'MZISKSFJSK',
+};
+const _ListData: ProductModel[] = [
+  _item,
+  _item2,
+  _item3,
+  _item2,
+  _item2,
+  _item2,
+  _item3,
+  _item2,
+  _item4,
+  _item5,
+  _item6,
+];
+
 export const ListScreen: React.FC<Props> = () => {
   const [lists, setLists] = useState<UserModel[]>();
-  const onPressListItem = async (item: UserModel) => {
+  const [selectedItem, setSelectedItem] = useState<any>();
+  const [showAppModal, setShowModal] = useState(false);
+  const dispatch = useDispatch();
+  const onPressItem = async (item: any) => {
     // TODO: do something
     // props.navigation.navigate('Detail', {
     //   screen: 'Profile',
     //   params: item,
     // });
-    console.log(item);
+    setSelectedItem(item);
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setSelectedItem(null);
+  };
+
+  const handleAddItem = () => {
+    setSelectedItem(null);
+    setShowModal(true);
+  };
+
+  const addItemToCart = (item: any) => {
+    dispatch(
+      addToCart({
+        ...item,
+        count: 1,
+      })
+    );
+  };
+
+  const handleDeleteItem = (item: any) => {
+    console.log('delete item', item);
   };
   const GetUsers = () => {
     ApiService.getUsers().then((e) => {
@@ -48,51 +148,98 @@ export const ListScreen: React.FC<Props> = () => {
     }, [])
   );
   return (
-    <Center width="100%">
-      <Box w="100%">
-        <FlatList
-          data={lists}
-          renderItem={({ item }) => (
-            <Pressable onPress={() => onPressListItem(item)}>
-              <Box
-                borderBottomWidth="1"
-                _light={{
-                  borderColor: 'light.border',
-                }}
-                _dark={{
-                  borderColor: 'dark.border',
-                }}
-                pl="4"
-                pr="5"
-                py="2"
-              >
-                <Row space={3} justifyContent="space-between">
-                  <Column mr={1}>
+    <Box w="100%">
+      <Row justifyContent="flex-end" alignItems="center" my={2}>
+        <TextInput
+          label="Search by Code"
+          secureTextEntry
+          style={{
+            width: 200,
+            height: 38,
+          }}
+          right={<TextInput.Icon icon="search-web" />}
+        />
+        <Button mx={2} onPress={handleAddItem}>
+          Thêm Sản Phẩm
+        </Button>
+      </Row>
+      <FlatList
+        ListFooterComponent={<Box height={120}></Box>}
+        data={_ListData}
+        renderItem={({ item }) => (
+          <Box
+            borderBottomWidth="1"
+            _light={{
+              borderColor: 'light.border',
+            }}
+            _dark={{
+              borderColor: 'dark.border',
+            }}
+            pl="4"
+            pr="5"
+            py="2"
+          >
+            <Row space={3} justifyContent="space-between">
+              <Column mr={1}>
+                <Row>
+                  <Column justifyContent="center">
+                    <Icon
+                      hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
+                      onPress={(event) => {
+                        event.preventDefault();
+                        addItemToCart(item);
+                      }}
+                      as={Octicons}
+                      color="emerald.500"
+                      name="plus"
+                      size="30"
+                      mr={3}
+                    />
+                  </Column>
+
+                  <TouchableOpacity
+                    activeOpacity={0.5}
+                    onPress={() => {
+                      onPressItem(item);
+                    }}
+                  >
                     <Row>
-                      <Column justifyContent="center">
-                        <Icon
-                          as={Feather}
-                          color="emerald.500"
-                          name="user"
-                          size="sm"
+                      <Column>
+                        <Image
+                          style={{ width: 100, height: 80, borderRadius: 10 }} // style={{ width: 50, height: 50 }}
+                          source={{
+                            uri: item.image,
+                          }}
                           mr={3}
-                        />
+                        ></Image>
                       </Column>
                       <Column>
-                        <Heading fontSize="sm">
-                          Name: {item.first_name + ' ' + item.last_name}
-                        </Heading>
-                        <Text fontSize="xs">Email {item.email}</Text>
+                        <Heading fontSize="sm">{item.name}</Heading>
+                        <Text mt={0.5} fontSize="xs">
+                          Mã sản phẩm: {item.code}
+                        </Text>
+                        <Text mt={0.5} fontSize="xs">
+                          Tồn kho: {item.quantity}
+                        </Text>
+                        <Text mt={0.5} fontSize="sm" color="orange.600">
+                          Giá thành: {item.price}
+                        </Text>
                       </Column>
                     </Row>
-                  </Column>
+                  </TouchableOpacity>
                 </Row>
-              </Box>
-            </Pressable>
-          )}
-          keyExtractor={(item) => String(item.email)}
-        />
-      </Box>
-    </Center>
+              </Column>
+            </Row>
+          </Box>
+        )}
+        keyExtractor={(item) => Math.random().toString()}
+      />
+      <ModalItemProduct
+        open={showAppModal}
+        closeModal={handleCloseModal}
+        selectItem={selectedItem}
+        deleteItem={handleDeleteItem}
+      />
+    </Box>
   );
 };

@@ -6,31 +6,34 @@ import { apiClient, ApiService } from '../../lib/axios';
 //components
 import {
   Box,
-  Text,
-  Heading,
-  Column,
-  FormControl,
-  Input,
-  Link,
   Button,
-  Row,
   Center,
   Checkbox,
+  Column,
+  FormControl,
+  Heading,
+  Image,
+  Input,
+  KeyboardAvoidingView,
+  Link,
+  Row,
   Spacer,
+  Text,
 } from 'native-base';
 
 //redux
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  setUser,
-  setToken,
   setLoginEmail,
+  setToken,
+  setUser,
 } from '../../lib/redux/reducers/authReducer';
 import { RootState } from '../../lib/redux/store';
 
 // navigation
 import { RootStackParamList } from '../../navigation/types';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { Platform } from 'react-native';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Signin'>;
 
@@ -44,68 +47,93 @@ export const SigninScreen: React.FC<Props> = (props) => {
     const values = {
       email,
       password,
+      device_token: 'device_token',
     };
-    ApiService.signin(values).then((res) => {
-      console.log(res);
-      dispatch(setUser(res.data.user));
-      dispatch(setToken(res.data.token));
-      // Set auth token
-      apiClient.interceptors.request.use((config) => {
-        if (config.headers) {
-          config.headers.Authorization = `Bearer ${res.data.token.access_token}`;
+    ApiService.signin(values)
+      .then((res) => {
+        console.log(res.data);
+        dispatch(setUser(res.data.user));
+        dispatch(setToken(res.data.token));
+        // Set auth token
+        apiClient.interceptors.request.use((config) => {
+          if (config.headers) {
+            config.headers.Authorization = `Bearer ${res.data.token}`;
+          }
+          return config;
+        });
+        // If remember me checked, then save user data to storage
+        if (rememberMe) {
+          dispatch(
+            setLoginEmail({
+              email: email,
+              password: password,
+            })
+          );
         }
-        return config;
-      });
-      // If remember me checked, then save user data to storage
-      if (rememberMe) {
-        dispatch(
-          setLoginEmail({
-            email: email,
-            password: password,
-          })
-        );
-      }
-      props.navigation.navigate('List');
-    });
+        props.navigation.navigate('BottomTab', { screen: 'List' });
+      })
+      .catch((err) => console.log('err----', err));
   };
   const onPressSignupLink = () => {
     props.navigation.navigate('Signup');
   };
   return (
-    <Center width="100%">
-      <Box safeArea p="2" py="8" w="90%">
-        <Heading>Welcome</Heading>
-        <Column space={3} mt="5">
-          <FormControl>
-            <FormControl.Label>Email</FormControl.Label>
-            <Input value={email} onChangeText={onChangeEmail} type="text" />
-          </FormControl>
-          <FormControl>
-            <FormControl.Label>Password</FormControl.Label>
-            <Input
-              value={password}
-              onChangeText={onChangePassword}
-              type="password"
-            />
-          </FormControl>
-          <Row space={3} width="100%">
-            <Checkbox value="" isChecked={rememberMe} onChange={setRememberMe}>
-              Remember me
-            </Checkbox>
-            <Spacer />
-            <Link href={'https://your.app.web/forgot-password'} isExternal>
-              Forget Password?
-            </Link>
-          </Row>
-          <Button onPress={onPressSigninButton} mt="2">
-            Sign in
-          </Button>
-          <Row mt="6" justifyContent="center">
-            <Text>I&apos;m a new user. </Text>
-            <Link onPress={onPressSignupLink}>Sign Up</Link>
-          </Row>
-        </Column>
-      </Box>
-    </Center>
+    <KeyboardAvoidingView
+      style={{
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      <Center width="100%">
+        <Box safeArea p="2" py="8" w="90%">
+          <Image
+            style={{
+              width: 200,
+              height: 200,
+              alignSelf: 'center',
+              marginBottom: 20,
+            }}
+            source={require('../../assets/images/logo.png')}
+          ></Image>
+          <Heading>Welcome to Lan Anh Mart</Heading>
+          <Column space={3} mt="5">
+            <FormControl>
+              <FormControl.Label>Email</FormControl.Label>
+              <Input value={email} onChangeText={onChangeEmail} type="text" />
+            </FormControl>
+            <FormControl>
+              <FormControl.Label>Password</FormControl.Label>
+              <Input
+                value={password}
+                onChangeText={onChangePassword}
+                type="password"
+              />
+            </FormControl>
+            <Row space={3} width="100%">
+              <Checkbox
+                value=""
+                isChecked={rememberMe}
+                onChange={setRememberMe}
+              >
+                Remember me
+              </Checkbox>
+              <Spacer />
+              <Link href={'https://your.app.web/forgot-password'} isExternal>
+                Forget Password?
+              </Link>
+            </Row>
+            <Button onPress={onPressSigninButton} mt="2">
+              Sign in
+            </Button>
+            <Row mt="6" justifyContent="center">
+              <Text>I&apos;m a new user. </Text>
+              <Link onPress={onPressSignupLink}>Sign Up</Link>
+            </Row>
+          </Column>
+        </Box>
+      </Center>
+    </KeyboardAvoidingView>
   );
 };

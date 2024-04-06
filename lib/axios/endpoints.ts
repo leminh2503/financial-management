@@ -12,7 +12,7 @@ class ApiService {
   }
 
   signin(data: SigninModel) {
-    return http.post<{ user: UserModel; token: Token }>('/v1/signin', data);
+    return http.post<{ user: UserModel; token: Token }>('/auth/login', data);
   }
 
   updateUser(data: UserRegisterOrUpdateModel) {

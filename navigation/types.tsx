@@ -10,6 +10,7 @@ export type RootStackParamList = {
   Signin: undefined;
   Signup: undefined;
   List: undefined;
+  BottomTab: undefined;
   Settings: NavigatorScreenParams<SettingsScreenTabParamList>;
 };
 

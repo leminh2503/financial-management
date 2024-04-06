@@ -1,4 +1,7 @@
 {
+  "runtimeVersion": {
+    "policy": "sdkVersion"
+  },
   "expo": {
     "name": "rn-base-app",
     "slug": "rn-base-app",
@@ -9,13 +12,15 @@
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/splash.png",
-      "resizeMode": "cover",
+      "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "bundleIdentifier": "com.sampleapp",
       "buildNumber": "1.0.0",
@@ -32,6 +37,8 @@
     "web": {
       "favicon": "./assets/images/favicon.png"
     },
-    "plugins": []
+    "plugins": [
+      "expo-font"
+    ]
   }
 }
