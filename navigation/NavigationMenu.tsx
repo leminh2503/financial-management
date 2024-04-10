@@ -1,5 +1,5 @@
 import React from 'react';
-import { Menu, HamburgerIcon, Text, Pressable } from 'native-base';
+import { HamburgerIcon, Menu, Pressable, Text } from 'native-base';
 // type
 import { RootStackParamList } from './types';
 // navigation
@@ -34,14 +34,8 @@ export const NavMenu = () => {
         );
       }}
     >
-      <Menu.Item
-        onPress={() =>
-          navigation.navigate('Settings', {
-            screen: 'UserSetting',
-          })
-        }
-      >
-        <Text>Settings</Text>
+      <Menu.Item onPress={() => navigation.navigate('ListInvoice')}>
+        <Text>Danh sách hoá đơn</Text>
       </Menu.Item>
       <Menu.Item onPress={() => doLogout()}>
         <Text>Sign out</Text>

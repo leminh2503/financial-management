@@ -29,6 +29,7 @@ export const ModalItemUser: React.FC<Props> = ({
   const [phoneNumber, setPhoneNumber] = React.useState('');
   const [image, setImage] = React.useState('');
   const [pass, setPass] = React.useState('');
+  const [fullName, setFullName] = React.useState('');
   const pickImageAsync = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
@@ -46,6 +47,7 @@ export const ModalItemUser: React.FC<Props> = ({
     setUserName(selectItem?.username || '');
     setPhoneNumber(selectItem?.phoneNumber?.toString() || '');
     setImage(selectItem?.image || '');
+    setFullName(selectItem?.fullName || '');
   }, [selectItem]);
 
   return (
@@ -70,20 +72,25 @@ export const ModalItemUser: React.FC<Props> = ({
           </Modal.Header>
           <Modal.Body>
             <FormControl>
-              <FormControl.Label>Image</FormControl.Label>
-              {image ? (
+              {image && (
                 <Box alignItems="center" justifyContent="center">
                   <Image
                     style={{
-                      width: 200,
+                      width: 100,
                       height: 100,
+                      borderRadius: 50,
                     }}
                     source={{ uri: image }}
                   ></Image>
                 </Box>
-              ) : (
-                <Button onPress={pickImageAsync}>Chọn ảnh</Button>
               )}
+              <Button mt={4} onPress={pickImageAsync}>
+                Chọn ảnh
+              </Button>
+            </FormControl>
+            <FormControl>
+              <FormControl.Label>Họ và tên</FormControl.Label>
+              <Input value={fullName} onChangeText={setFullName} />
             </FormControl>
             <FormControl>
               <FormControl.Label>Username</FormControl.Label>

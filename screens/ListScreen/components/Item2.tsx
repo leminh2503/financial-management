@@ -42,7 +42,7 @@ export const Item2 = ({ item }: PropsItem) => {
                     addItemToCart(item);
                   }}
                   as={Octicons}
-                  color="emerald.500"
+                  color="#E80843"
                   name="plus"
                   size={30}
                   mr={3}
@@ -62,7 +62,11 @@ export const Item2 = ({ item }: PropsItem) => {
                 <Text mt={0.5} fontSize="xs">
                   Mã sản phẩm: {item.code}
                 </Text>
-                <Text mt={0.5} fontSize="xs">
+                <Text
+                  mt={0.5}
+                  color={item.quantity < 5 ? 'orange.600' : '#000e21'}
+                  fontSize={item.quantity < 5 ? 'lg' : 'xs'}
+                >
                   Tồn kho: {item.quantity}
                 </Text>
                 <Text mt={0.5} fontSize="sm" color="orange.600">

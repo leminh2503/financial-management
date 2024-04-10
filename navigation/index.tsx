@@ -25,8 +25,6 @@ import { navDarkTheme, navLightTheme } from '../theme';
 import { RootStackParamList } from './types';
 
 // components
-import { NavMenu } from './NavigationMenu';
-
 // state(redux)
 import { useSelector } from 'react-redux';
 import { RootState } from '../lib/redux/store';
@@ -35,6 +33,7 @@ import RouteList from './RouteList';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import BottomTabContent from './BottomTabContent';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NavMenu } from './NavigationMenu';
 
 const BottomTab = createBottomTabNavigator();
 

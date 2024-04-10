@@ -79,7 +79,7 @@ export const ModalItemProduct: React.FC<Props> = ({
           <Modal.Body>
             <FormControl>
               <FormControl.Label>Image</FormControl.Label>
-              {image ? (
+              {image && (
                 <Box alignItems="center" justifyContent="center">
                   <Image
                     style={{
@@ -89,9 +89,10 @@ export const ModalItemProduct: React.FC<Props> = ({
                     source={{ uri: image }}
                   ></Image>
                 </Box>
-              ) : (
-                <Button onPress={pickImageAsync}>Chọn ảnh</Button>
               )}
+              <Button mt={3} onPress={pickImageAsync}>
+                Chọn ảnh
+              </Button>
             </FormControl>
             <FormControl>
               <FormControl.Label>Name</FormControl.Label>

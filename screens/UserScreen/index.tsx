@@ -15,6 +15,7 @@ const _item: UserModel = {
   username: 'admin',
   image: 'https://picsum.photos/200/300',
   phoneNumber: 123456789,
+  fullName: 'Nguyễn Văn A',
 };
 
 const _data = [

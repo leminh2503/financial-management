@@ -21,7 +21,6 @@ import { TouchableOpacity } from 'react-native';
 import { ModalItemProduct } from './modals/ModalItemProduct';
 import { useDispatch } from 'react-redux';
 import { addToCart } from '../../lib/redux/reducers/productReducer';
-import { TextInput } from 'react-native-paper';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'List'>;
 
@@ -79,7 +78,7 @@ const _item6: ProductModel = {
   quantity: 10,
   code: 'MZISKSFJSK',
 };
-const _ListData: ProductModel[] = [
+export const _ListData: ProductModel[] = [
   _item,
   _item2,
   _item3,
@@ -150,15 +149,15 @@ export const ListScreen: React.FC<Props> = () => {
   return (
     <Box w="100%">
       <Row justifyContent="flex-end" alignItems="center" my={2}>
-        <TextInput
-          label="Search by Code"
-          secureTextEntry
-          style={{
-            width: 200,
-            height: 38,
-          }}
-          right={<TextInput.Icon icon="search-web" />}
-        />
+        {/*<TextInput*/}
+        {/*  label="Search by Code"*/}
+        {/*  secureTextEntry*/}
+        {/*  style={{*/}
+        {/*    width: 200,*/}
+        {/*    height: 38,*/}
+        {/*  }}*/}
+        {/*  right={<TextInput.Icon icon="search-web" />}*/}
+        {/*/>*/}
         <Button mx={2} onPress={handleAddItem}>
           Thêm Sản Phẩm
         </Button>
@@ -190,7 +189,7 @@ export const ListScreen: React.FC<Props> = () => {
                         addItemToCart(item);
                       }}
                       as={Octicons}
-                      color="emerald.500"
+                      color="#E80843"
                       name="plus"
                       size="30"
                       mr={3}
@@ -218,7 +217,11 @@ export const ListScreen: React.FC<Props> = () => {
                         <Text mt={0.5} fontSize="xs">
                           Mã sản phẩm: {item.code}
                         </Text>
-                        <Text mt={0.5} fontSize="xs">
+                        <Text
+                          mt={0.5}
+                          color={item.quantity < 5 ? 'orange.600' : '#000e21'}
+                          fontSize={item.quantity < 5 ? 'lg' : 'xs'}
+                        >
                           Tồn kho: {item.quantity}
                         </Text>
                         <Text mt={0.5} fontSize="sm" color="orange.600">

@@ -6,6 +6,9 @@ import { CartScreen } from '../screens/CartScreen';
 import { UserScreen } from '../screens/UserScreen';
 import { SalesScreen } from '../screens/SalesScreen';
 import { SearchScreen } from '../screens/SearchScreen';
+import InvoiceDetail from '../screens/InvoiceScreen/InvoiceDetail';
+import { ListInvoiceScreen } from '../screens/InvoiceScreen';
+import { SaffScreen } from '../screens/SaffScreen';
 
 const routes: any[] = [
   // auth
@@ -42,9 +45,27 @@ const routes: any[] = [
     icon: 'tire',
   },
   {
+    component: SaffScreen,
+    name: 'Saff',
+    title: 'Saff Info',
+    isAuth: true,
+    isBottom: true,
+    icon: 'account',
+  },
+  {
     component: SearchScreen,
     name: 'Search',
     title: 'Search',
+  },
+  {
+    component: InvoiceDetail,
+    name: 'InvoiceDetail',
+    title: 'InvoiceDetail',
+  },
+  {
+    component: ListInvoiceScreen,
+    name: 'ListInvoice',
+    title: 'Danh sách hoá đơn',
   },
   {
     component: SettingsScreen,

@@ -3,6 +3,8 @@ import { ProductModel } from '../../axios/model';
 
 const initialState = {
   cart: [] as ProductModel[],
+  name: '',
+  phone: '',
 };
 
 const productSlice = createSlice({
@@ -33,12 +35,26 @@ const productSlice = createSlice({
       );
       console.log('changeCountProduct-----', state.cart);
     },
+    setCart(state, action: PayloadAction<ProductModel[]>) {
+      state.cart = action.payload;
+      console.log('setCart-----', state.cart);
+    },
     removeProduct(state, action: PayloadAction<number>) {
       state.cart = state.cart.filter((item) => item.id !== action.payload);
+    },
+    setClient(state, action: PayloadAction<{ name: string; phone: string }>) {
+      state.name = action.payload.name;
+      state.phone = action.payload.phone;
     },
   },
 });
 
-export const { reset, addToCart, changeCountProduct, removeProduct } =
-  productSlice.actions;
+export const {
+  reset,
+  addToCart,
+  changeCountProduct,
+  removeProduct,
+  setClient,
+  setCart,
+} = productSlice.actions;
 export default productSlice.reducer;

@@ -54,11 +54,15 @@ export const Item1 = ({ item }: PropsItem) => {
           <Text mt={0.5} fontSize="xs">
             Mã sản phẩm: {item.code}
           </Text>
-          <Text mt={0.5} fontSize="xs">
+          <Text
+            mt={0.5}
+            color={item.quantity < 5 ? 'orange.600' : '#000e21'}
+            fontSize={item.quantity < 5 ? 'lg' : 'xs'}
+          >
             Tồn kho: {item.quantity}
           </Text>
           <Text mt={0.5} fontSize="sm" color="orange.600">
-            Giá thành: {item.price}
+            Giá thành: {item.price} đ
           </Text>
           <NumericInput
             minValue={0}

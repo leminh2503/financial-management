@@ -15,6 +15,8 @@ export interface UserModel {
   image: string;
   username: string;
   phoneNumber: number;
+  fullName?: string;
+  role?: string;
 }
 
 export interface Token {
@@ -31,4 +33,13 @@ export interface ProductModel {
   quantity: number;
   code: string;
   count: number;
+}
+
+export interface InvoiceModel {
+  id: number;
+  total: number;
+  user: UserModel;
+  products: ProductModel[];
+  created_at: string;
+  updated_at: string;
 }
