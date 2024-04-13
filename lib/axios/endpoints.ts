@@ -1,8 +1,8 @@
 import http from './http';
 import {
-  UserModel,
+  DataResponse,
   SigninModel,
-  Token,
+  UserModel,
   UserRegisterOrUpdateModel,
 } from './model';
 
@@ -12,7 +12,10 @@ class ApiService {
   }
 
   signin(data: SigninModel) {
-    return http.post<{ user: UserModel; token: Token }>('/auth/login', data);
+    return http.post<DataResponse<{ token: string; user: UserModel }>>(
+      '/api/Auth/login',
+      data
+    );
   }
 
   updateUser(data: UserRegisterOrUpdateModel) {
@@ -20,7 +23,26 @@ class ApiService {
   }
 
   getUsers() {
-    return http.get<UserModel[]>('/v1/users');
+    return http.get<DataResponse<UserModel[]>>('/api/User');
+  }
+
+  deleteUser(id?: number) {
+    return http.delete<DataResponse<UserModel>>(`/api/User/${id}`);
+  }
+
+  postUser(data: UserModel) {
+    return http.post<DataResponse<UserModel>>('/api/User', data);
+  }
+
+  patchUser(data: UserModel) {
+    return http.patch<DataResponse<UserModel>>(
+      `/api/User/${data.userId}`,
+      data
+    );
+  }
+
+  getUserById(id?: number) {
+    return http.get<DataResponse<UserModel[]>>(`/api/User/${id}`);
   }
 }
 

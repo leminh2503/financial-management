@@ -40,24 +40,23 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Signin'>;
 export const SigninScreen: React.FC<Props> = (props) => {
   const dispatch = useDispatch();
   const { loginInfo } = useSelector((state: RootState) => state.auth);
-  const [email, onChangeEmail] = React.useState(loginInfo?.email);
+  const [username, onChangeUsername] = React.useState(loginInfo?.username);
   const [password, onChangePassword] = React.useState(loginInfo?.password);
-  const [rememberMe, setRememberMe] = React.useState(!!loginInfo?.email);
+  const [rememberMe, setRememberMe] = React.useState(!!loginInfo?.username);
   const onPressSigninButton = async () => {
     const values = {
-      email,
+      username,
       password,
-      device_token: 'device_token',
     };
+
     ApiService.signin(values)
       .then((res) => {
-        console.log(res.data);
-        dispatch(setUser(res.data.user));
-        dispatch(setToken(res.data.token));
+        dispatch(setUser(res.data.data.user));
+        dispatch(setToken(res.data.data.token));
         // Set auth token
         apiClient.interceptors.request.use((config) => {
           if (config.headers) {
-            config.headers.Authorization = `Bearer ${res.data.token}`;
+            config.headers.Authorization = `Bearer ${res.data.data.token}`;
           }
           return config;
         });
@@ -65,7 +64,7 @@ export const SigninScreen: React.FC<Props> = (props) => {
         if (rememberMe) {
           dispatch(
             setLoginEmail({
-              email: email,
+              username: username,
               password: password,
             })
           );
@@ -100,8 +99,12 @@ export const SigninScreen: React.FC<Props> = (props) => {
           <Heading>Welcome to Lan Anh Mart</Heading>
           <Column space={3} mt="5">
             <FormControl>
-              <FormControl.Label>Email</FormControl.Label>
-              <Input value={email} onChangeText={onChangeEmail} type="text" />
+              <FormControl.Label>Username</FormControl.Label>
+              <Input
+                value={username}
+                onChangeText={onChangeUsername}
+                type="text"
+              />
             </FormControl>
             <FormControl>
               <FormControl.Label>Password</FormControl.Label>

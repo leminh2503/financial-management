@@ -16,7 +16,7 @@ export default function usePusherNotification() {
       // Set auth token
       apiClient.interceptors.request.use((config) => {
         if (token && config.headers) {
-          config.headers.Authorization = `Bearer ${token.access_token}`;
+          config.headers.Authorization = `Bearer ${token}`;
         }
         return config;
       });

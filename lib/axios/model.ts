@@ -1,5 +1,5 @@
 export interface SigninModel {
-  email: string;
+  username: string;
   password: string;
 }
 
@@ -10,13 +10,21 @@ export interface UserRegisterOrUpdateModel {
   last_name: string;
 }
 
+export interface DataResponse<T> {
+  data: T;
+  message: string;
+  status: number;
+  success: boolean;
+}
+
 export interface UserModel {
-  id: number;
-  image: string;
+  userId?: number;
+  image?: string;
+  password?: string;
   username: string;
-  phoneNumber: number;
+  phoneNumber?: number;
   fullName?: string;
-  role?: string;
+  roleId?: number;
 }
 
 export interface Token {

@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Button,
@@ -14,7 +14,6 @@ import {
 // navigation
 import { RootStackParamList } from '../../navigation/types';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { useFocusEffect } from '@react-navigation/native';
 import { ApiService, ProductModel, UserModel } from '../../lib/axios';
 import { Octicons } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native';
@@ -136,16 +135,16 @@ export const ListScreen: React.FC<Props> = () => {
     });
   };
 
-  useFocusEffect(
-    useCallback(() => {
-      // Do something when the screen is focused
-      GetUsers();
-      return () => {
-        // Do something when the screen is unfocused
-        // Useful for cleanup functions
-      };
-    }, [])
-  );
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     // Do something when the screen is focused
+  //     GetUsers();
+  //     return () => {
+  //       // Do something when the screen is unfocused
+  //       // Useful for cleanup functions
+  //     };
+  //   }, [])
+  // );
   return (
     <Box w="100%">
       <Row justifyContent="flex-end" alignItems="center" my={2}>

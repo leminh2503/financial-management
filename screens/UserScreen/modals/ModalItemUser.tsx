@@ -8,7 +8,7 @@ import {
   KeyboardAvoidingView,
   Modal,
 } from 'native-base';
-import { UserModel } from '../../../lib/axios';
+import { ApiService, UserModel } from '../../../lib/axios';
 import { Platform } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 
@@ -17,6 +17,7 @@ type Props = {
   closeModal: () => void;
   selectItem?: UserModel;
   deleteItem?: (item: UserModel) => void;
+  refresh?: () => void;
 };
 
 export const ModalItemUser: React.FC<Props> = ({
@@ -24,6 +25,7 @@ export const ModalItemUser: React.FC<Props> = ({
   selectItem,
   closeModal,
   deleteItem,
+  refresh,
 }) => {
   const [userName, setUserName] = React.useState('');
   const [phoneNumber, setPhoneNumber] = React.useState('');
@@ -43,11 +45,56 @@ export const ModalItemUser: React.FC<Props> = ({
     }
   };
 
-  useEffect(() => {
+  const handleSave = () => {
+    if (selectItem) {
+      patchUser();
+    } else {
+      addUser();
+    }
+  };
+
+  const patchUser = () => {
+    ApiService.patchUser({
+      userId: selectItem?.userId,
+      username: userName,
+      roleId: 2,
+    })
+      .then((e) => {
+        refresh && refresh();
+        closeModal();
+        resetValue();
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
+  const addUser = () => {
+    ApiService.postUser({
+      username: userName,
+      password: pass,
+      roleId: 2,
+    })
+      .then((e) => {
+        refresh && refresh();
+        resetValue();
+        closeModal();
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
+  const resetValue = () => {
     setUserName(selectItem?.username || '');
     setPhoneNumber(selectItem?.phoneNumber?.toString() || '');
     setImage(selectItem?.image || '');
     setFullName(selectItem?.fullName || '');
+    setPass('');
+  };
+
+  useEffect(() => {
+    resetValue();
   }, [selectItem]);
 
   return (
@@ -103,7 +150,7 @@ export const ModalItemUser: React.FC<Props> = ({
             {!selectItem && (
               <FormControl mt="3">
                 <FormControl.Label>{'Mật khẩu'}</FormControl.Label>
-                <Input value={pass} onChangeText={setPass} />
+                <Input type="password" value={pass} onChangeText={setPass} />
               </FormControl>
             )}
           </Modal.Body>
@@ -116,7 +163,7 @@ export const ModalItemUser: React.FC<Props> = ({
               >
                 Cancel
               </Button>
-              {selectItem ? (
+              {selectItem && selectItem.roleId === 1 ? (
                 <Button
                   onPress={() => {
                     deleteItem && deleteItem(selectItem);
@@ -128,7 +175,7 @@ export const ModalItemUser: React.FC<Props> = ({
               ) : (
                 <Box></Box>
               )}
-              <Button onPress={closeModal}>Save</Button>
+              <Button onPress={handleSave}>Save</Button>
             </Button.Group>
           </Modal.Footer>
         </Modal.Content>

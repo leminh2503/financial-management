@@ -1,40 +1,19 @@
-import React, { useCallback, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Button, Column, FlatList, Image, Row, Text } from 'native-base';
 
 // navigation
 import { RootStackParamList } from '../../navigation/types';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { useFocusEffect } from '@react-navigation/native';
 import { ApiService, UserModel } from '../../lib/axios';
 import { ModalItemUser } from './modals/ModalItemUser';
 import { TouchableRipple } from 'react-native-paper';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'List'>;
-const _item: UserModel = {
-  id: 1,
-  username: 'admin',
-  image: 'https://picsum.photos/200/300',
-  phoneNumber: 123456789,
-  fullName: 'Nguyễn Văn A',
-};
-
-const _data = [
-  _item,
-  _item,
-  _item,
-  _item,
-  _item,
-  _item,
-  _item,
-  _item,
-  _item,
-  _item,
-  _item,
-];
 export const UserScreen: React.FC<Props> = () => {
   const [lists, setLists] = useState<UserModel[]>();
   const [selectedItem, setSelectedItem] = useState<any>();
   const [showAppModal, setShowModal] = useState(false);
+  const [refresh, setRefresh] = useState(false);
   const onPressItem = async (item: UserModel) => {
     setSelectedItem(item);
     handleOpenModal();
@@ -53,23 +32,33 @@ export const UserScreen: React.FC<Props> = () => {
     setSelectedItem(null);
     handleOpenModal();
   };
-  const GetUsers = () => {
-    ApiService.getUsers().then((e) => {
-      console.log(e);
-      setLists(e.data);
-    });
-  };
 
-  useFocusEffect(
-    useCallback(() => {
-      // Do something when the screen is focused
-      GetUsers();
-      return () => {
-        // Do something when the screen is unfocused
-        // Useful for cleanup functions
-      };
-    }, [])
-  );
+  console.log('lists: ---', lists);
+
+  const handleDeteleItem = (item: UserModel) => {
+    ApiService.deleteUser(item?.userId)
+      .then((e) => {
+        GetUsers();
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+  const GetUsers = () => {
+    ApiService.getUsers()
+      .then((e) => {
+        setLists(e.data.data);
+        setShowModal(false);
+        setRefresh(false);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+  useEffect(() => {
+    GetUsers();
+  }, []);
+
   return (
     <Box width="100%">
       <Box w="100%">
@@ -79,7 +68,9 @@ export const UserScreen: React.FC<Props> = () => {
         <FlatList
           mx={2}
           ListFooterComponent={<Box height={170} />}
-          data={_data}
+          data={lists || []}
+          refreshing={refresh}
+          onRefresh={GetUsers}
           renderItem={({ item }) => (
             <TouchableRipple
               onPress={() => {
@@ -102,7 +93,9 @@ export const UserScreen: React.FC<Props> = () => {
               >
                 <Row alignItems="center">
                   <Image
-                    source={{ uri: item.image }}
+                    source={{
+                      uri: item.image || 'https://picsum.photos/200/300',
+                    }}
                     style={{
                       width: 60,
                       height: 60,
@@ -113,19 +106,21 @@ export const UserScreen: React.FC<Props> = () => {
                     <Text fontSize="xl" fontWeight={600}>
                       {item.username}
                     </Text>
-                    <Text>{item.phoneNumber}</Text>
+                    <Text>{item.roleId === 1 ? 'ADMIN' : 'Nhân viên'}</Text>
                   </Column>
                 </Row>
               </Box>
             </TouchableRipple>
           )}
-          keyExtractor={(item) => String(item.id)}
+          keyExtractor={(item) => String(item.userId)}
         />
       </Box>
       <ModalItemUser
         selectItem={selectedItem}
         closeModal={handleCloseModal}
         open={showAppModal}
+        deleteItem={handleDeteleItem}
+        refresh={GetUsers}
       />
     </Box>
   );

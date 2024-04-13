@@ -1,12 +1,13 @@
-import React, { useCallback, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Button, Image, Row, Text } from 'native-base';
 
 // navigation
 import { RootStackParamList } from '../../navigation/types';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { useFocusEffect } from '@react-navigation/native';
 import { ApiService, UserModel } from '../../lib/axios';
 import { ModalItemUser } from '../UserScreen/modals/ModalItemUser';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../lib/redux/store';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'List'>;
 const _item: UserModel = {
@@ -17,21 +18,11 @@ const _item: UserModel = {
   fullName: 'Nguyễn Văn A',
 };
 
-const _data = [
-  _item,
-  _item,
-  _item,
-  _item,
-  _item,
-  _item,
-  _item,
-  _item,
-  _item,
-  _item,
-  _item,
-];
 export const SaffScreen: React.FC<Props> = () => {
+  const dispatch = useDispatch();
+  const { user } = useSelector((state: RootState) => state.auth);
   const [showAppModal, setShowModal] = useState(false);
+  const [info, setInfo] = useState<UserModel>();
 
   const handleOpenModal = () => {
     setShowModal(true);
@@ -40,24 +31,21 @@ export const SaffScreen: React.FC<Props> = () => {
   const handleCloseModal = () => {
     setShowModal(false);
   };
-
-  const GetUsers = () => {
-    ApiService.getUsers().then((e) => {
-      console.log(e);
-      setLists(e.data);
-    });
+  const GetUser = () => {
+    ApiService.getUserById(user?.userId)
+      .then((e) => {
+        console.log('GetUser: ', e);
+        setInfo(e.data.data[0]);
+      })
+      .catch((e) => {
+        console.log('Error: ', e);
+      });
   };
 
-  useFocusEffect(
-    useCallback(() => {
-      // Do something when the screen is focused
-      GetUsers();
-      return () => {
-        // Do something when the screen is unfocused
-        // Useful for cleanup functions
-      };
-    }, [])
-  );
+  useEffect(() => {
+    GetUser();
+  }, [user]);
+
   return (
     <Box width="100%" px={5}>
       <Box my={5} alignItems="center" justifyContent="center">
@@ -75,7 +63,7 @@ export const SaffScreen: React.FC<Props> = () => {
           Username:
         </Text>
         <Text mx={3} fontSize={20}>
-          {_item.username}
+          {info?.username}
         </Text>
       </Row>
       <Row alignItems="center" mt={3}>
@@ -83,7 +71,7 @@ export const SaffScreen: React.FC<Props> = () => {
           Họ và tên:
         </Text>
         <Text mx={3} fontSize={20}>
-          {_item.fullName}
+          {info?.fullName || _item.fullName}
         </Text>
       </Row>
       <Row alignItems="center" mt={3}>
@@ -91,7 +79,7 @@ export const SaffScreen: React.FC<Props> = () => {
           Chức vụ:
         </Text>
         <Text mx={3} fontSize={20}>
-          {_item?.role}
+          {info?.roleId === 1 ? 'ADMIN' : 'Nhân viên'}
         </Text>
       </Row>
       <Row alignItems="center" mt={3}>
@@ -99,7 +87,7 @@ export const SaffScreen: React.FC<Props> = () => {
           Số điện thoại:
         </Text>
         <Text mx={3} fontSize={20}>
-          {_item.phoneNumber}
+          {info?.phoneNumber || _item.phoneNumber}
         </Text>
       </Row>
       <Button mt={3} onPress={handleOpenModal}>
@@ -107,9 +95,10 @@ export const SaffScreen: React.FC<Props> = () => {
       </Button>
 
       <ModalItemUser
-        selectItem={_item}
+        selectItem={info}
         closeModal={handleCloseModal}
         open={showAppModal}
+        refresh={GetUser}
       />
     </Box>
   );
