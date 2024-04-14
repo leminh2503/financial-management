@@ -14,7 +14,7 @@ export interface PropsItem {
 
 export const Item1 = ({ item }: PropsItem) => {
   const {
-    id,
+    productId,
     productName,
     productQuantity,
     productImageId,
@@ -30,7 +30,7 @@ export const Item1 = ({ item }: PropsItem) => {
 
   useEffect(() => {
     if (count === 0) {
-      dispatch(removeProduct(item.id));
+      dispatch(removeProduct(item.productId));
     }
   }, [count]);
 
@@ -84,7 +84,9 @@ export const Item1 = ({ item }: PropsItem) => {
             textColor="black"
             onChange={(value) => {
               setCount(value);
-              dispatch(changeCountProduct({ id: item.id, count: value }));
+              dispatch(
+                changeCountProduct({ productId: item.productId, count: value })
+              );
             }}
           />
         </Column>

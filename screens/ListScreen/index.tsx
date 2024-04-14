@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -14,87 +14,40 @@ import {
 // navigation
 import { RootStackParamList } from '../../navigation/types';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import {
-  ApiService,
-  ProductModel,
-  ProductModelTest,
-  UserModel,
-} from '../../lib/axios';
+import { ApiService, ProductModel, UserModel } from '../../lib/axios';
 import { Octicons } from '@expo/vector-icons';
-import { TouchableOpacity } from 'react-native';
+import { RefreshControl, TouchableOpacity } from 'react-native';
 import { ModalItemProduct } from './modals/ModalItemProduct';
 import { useDispatch, useSelector } from 'react-redux';
-import { addToCart } from '../../lib/redux/reducers/productReducer';
+import {
+  addToCart,
+  deleteProduct,
+  setListProduct,
+} from '../../lib/redux/reducers/productReducer';
 import { RootState } from '../../lib/redux/store';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'List'>;
 
-const _item: ProductModelTest = {
-  id: 1,
-  name: 'Product 1',
-  price: 1000,
-  description: 'Description 1',
-  image: 'https://picsum.photos/200/300',
-  quantity: 10,
-  code: 'MZISKSFJSK',
+const _item: ProductModel = {
+  productId: 1,
+  productName: 'Product 1',
+  productPrice: 1000,
+  productDescription: 'Description 1',
+  productImageId: 'https://picsum.photos/200/300',
+  productQuantity: 10,
+  productSKU: 'MZISKSFJSK',
 };
-const _item2: ProductModelTest = {
-  id: 2,
-  name: 'Product 2',
-  price: 1000,
-  description: 'Description 1',
-  image: 'https://picsum.photos/200/300',
-  quantity: 10,
-  code: 'MZISKSFJSK',
-};
-const _item3: ProductModelTest = {
-  id: 3,
-  name: 'Product 3',
-  price: 1000,
-  description: 'Description 1',
-  image: 'https://picsum.photos/200/300',
-  quantity: 10,
-  code: 'MZISKSFJSK',
-};
-const _item4: ProductModelTest = {
-  id: 4,
-  name: 'Product 4',
-  price: 1000,
-  description: 'Description 1',
-  image: 'https://picsum.photos/200/300',
-  quantity: 10,
-  code: 'MZISKSFJSK',
-};
-const _item5: ProductModelTest = {
-  id: 5,
-  name: 'Product 5',
-  price: 1000,
-  description: 'Description 1',
-  image: 'https://picsum.photos/200/300',
-  quantity: 10,
-  code: 'MZISKSFJSK',
-};
-const _item6: ProductModelTest = {
-  id: 6,
-  name: 'Product 6',
-  price: 1000,
-  description: 'Description 1',
-  image: 'https://picsum.photos/200/300',
-  quantity: 10,
-  code: 'MZISKSFJSK',
-};
-export const _ListData: ProductModel[] | ProductModelTest[] = [
+export const _ListData: ProductModel[] = [
   _item,
-  _item2,
-  _item3,
-  _item2,
-  _item2,
-  _item2,
-  _item3,
-  _item2,
-  _item4,
-  _item5,
-  _item6,
+  _item,
+  _item,
+  _item,
+  _item,
+  _item,
+  _item,
+  _item,
+  _item,
+  _item,
 ];
 
 export const ListScreen: React.FC<Props> = () => {
@@ -103,6 +56,8 @@ export const ListScreen: React.FC<Props> = () => {
   const [showAppModal, setShowModal] = useState(false);
   const dispatch = useDispatch();
   const { user } = useSelector((state: RootState) => state.auth);
+  const { listProduct } = useSelector((state: RootState) => state.product);
+  const [loading, setLoading] = useState(false);
 
   const onPressItem = async (item: any) => {
     // TODO: do something
@@ -113,6 +68,8 @@ export const ListScreen: React.FC<Props> = () => {
     setSelectedItem(item);
     setShowModal(true);
   };
+
+  console.log('listProduct: ', listProduct);
 
   const handleCloseModal = () => {
     setShowModal(false);
@@ -133,17 +90,35 @@ export const ListScreen: React.FC<Props> = () => {
     );
   };
 
-  const handleDeleteItem = (item: any) => {
-    console.log('delete item', item);
+  const handleDeleteItem = (item: ProductModel) => {
+    ApiService.deleteProduct(item.productId)
+      .then((e) => {
+        console.log('Delete product: ', e.data.data);
+        setShowModal(false);
+        dispatch(deleteProduct(item.productId));
+      })
+      .catch((e) => {
+        console.log('Error: ', e);
+      });
   };
-  const GetUsers = () => {
-    ApiService.getUsers().then((e) => {
-      console.log(e);
-      setLists(e.data);
-    });
+  const getListProduct = () => {
+    setLoading(true);
+    ApiService.getProduct()
+      .then((e) => {
+        // console.log('getListProduct-----', e.data.data);
+        dispatch(setListProduct(e.data.data));
+        setLoading(false);
+      })
+      .catch((e) => {
+        console.log('Error: ', e);
+        setLoading(false);
+      });
   };
 
-  console.log('lists: ---', user);
+  useEffect(() => {
+    getListProduct();
+  }, []);
+
   return (
     <Box w="100%">
       {user?.roleId === 1 && (
@@ -154,8 +129,11 @@ export const ListScreen: React.FC<Props> = () => {
         </Row>
       )}
       <FlatList
+        refreshControl={
+          <RefreshControl refreshing={loading} onRefresh={getListProduct} />
+        }
         ListFooterComponent={<Box height={120}></Box>}
-        data={_ListData}
+        data={listProduct}
         renderItem={({ item }) => (
           <Box
             borderBottomWidth="1"
@@ -198,25 +176,27 @@ export const ListScreen: React.FC<Props> = () => {
                         <Image
                           style={{ width: 100, height: 80, borderRadius: 10 }} // style={{ width: 50, height: 50 }}
                           source={{
-                            uri: item.image,
+                            uri: _item.productImageId,
                           }}
                           mr={3}
                         ></Image>
                       </Column>
                       <Column>
-                        <Heading fontSize="sm">{item.name}</Heading>
+                        <Heading fontSize="sm">{item.productName}</Heading>
                         <Text mt={0.5} fontSize="xs">
-                          Mã sản phẩm: {item.code}
+                          Mã sản phẩm: {item.productSKU}
                         </Text>
                         <Text
                           mt={0.5}
-                          color={item.quantity < 5 ? 'orange.600' : '#000e21'}
-                          fontSize={item.quantity < 5 ? 'lg' : 'xs'}
+                          color={
+                            item.productQuantity < 5 ? 'orange.600' : '#000e21'
+                          }
+                          fontSize={item.productQuantity < 5 ? 'lg' : 'xs'}
                         >
-                          Tồn kho: {item.quantity}
+                          Tồn kho: {item.productQuantity}
                         </Text>
                         <Text mt={0.5} fontSize="sm" color="orange.600">
-                          Giá thành: {item.price}
+                          Giá thành: {item.productPrice}
                         </Text>
                       </Column>
                     </Row>

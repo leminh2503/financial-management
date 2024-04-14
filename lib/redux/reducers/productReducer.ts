@@ -1,10 +1,20 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { ProductModel } from '../../axios/model';
 
-const initialState = {
-  cart: [] as ProductModel[],
+interface IProductReducer {
+  cart: ProductModel[];
+  listProduct: ProductModel[];
+  name: string;
+  phone: string;
+  test: any[];
+}
+
+const initialState: IProductReducer = {
+  cart: [],
+  listProduct: [],
   name: '',
   phone: '',
+  test: [],
 };
 
 const productSlice = createSlice({
@@ -12,11 +22,16 @@ const productSlice = createSlice({
   initialState,
   reducers: {
     reset: () => initialState,
+    resetCart(state) {
+      state.cart = [];
+    },
     addToCart(state, action: PayloadAction<ProductModel>) {
-      if (state.cart.find((item) => item.id === action.payload.id)) {
+      if (
+        state.cart.find((item) => item.productId === action.payload.productId)
+      ) {
         state.cart = state.cart.map((item) =>
-          item.id === action.payload.id
-            ? { ...item, count: item.count + 1 }
+          item.productId === action.payload.productId
+            ? { ...item, count: item?.count + 1 }
             : item
         );
       } else {
@@ -26,10 +41,10 @@ const productSlice = createSlice({
     },
     changeCountProduct(
       state,
-      action: PayloadAction<{ id: number; count: number }>
+      action: PayloadAction<{ productId: number; count: number }>
     ) {
       state.cart = state.cart.map((item) =>
-        item.id === action.payload.id
+        item.productId === action.payload.productId
           ? { ...item, count: action.payload.count }
           : item
       );
@@ -46,6 +61,27 @@ const productSlice = createSlice({
       state.name = action.payload.name;
       state.phone = action.payload.phone;
     },
+    setListProduct(state, action: PayloadAction<ProductModel[]>) {
+      state.listProduct = action.payload;
+    },
+    addToListProduct(state, action: PayloadAction<any>) {
+      state.listProduct = [...state.listProduct, action.payload];
+    },
+    editProduct(state, action: PayloadAction<ProductModel>) {
+      state.listProduct = state.listProduct.map((item) =>
+        item.productId === action.payload.productId
+          ? {
+              ...item,
+              ...action.payload,
+            }
+          : item
+      );
+    },
+    deleteProduct(state, action: PayloadAction<number>) {
+      state.listProduct = state.listProduct.filter(
+        (item) => item.productId !== action.payload
+      );
+    },
   },
 });
 
@@ -56,5 +92,10 @@ export const {
   removeProduct,
   setClient,
   setCart,
+  setListProduct,
+  addToListProduct,
+  resetCart,
+  editProduct,
+  deleteProduct,
 } = productSlice.actions;
 export default productSlice.reducer;

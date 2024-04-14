@@ -13,7 +13,7 @@ const BottomTabContent = React.memo(function BottomTabContent() {
   const navigation = useNavigation();
   const theme = useTheme().colors;
   const route = useRoute();
-  const currentRoute = getFocusedRouteNameFromRoute(route) ?? 'List';
+  const currentRoute = getFocusedRouteNameFromRoute(route) ?? 'Sales';
   const getColor = (name: string, index: number): string => {
     if (currentRoute === undefined) {
       return index === 0 ? 'red' : 'black';

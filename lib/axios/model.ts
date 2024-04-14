@@ -33,7 +33,7 @@ export interface Token {
 }
 
 export interface ProductModel {
-  id: number;
+  productId: number;
   productName: string;
   productPrice: number;
   productDescription: string;
@@ -44,7 +44,7 @@ export interface ProductModel {
 }
 
 export interface ImageModel {
-  imageId: number;
+  imageId: number | string;
   imagePath: string;
   imageName: string;
 }

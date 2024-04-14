@@ -10,7 +10,7 @@ import { ProductModel } from '../../lib/axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../lib/redux/store';
 import { Item1 } from './Item1';
-import { reset } from '../../lib/redux/reducers/productReducer';
+import { resetCart } from '../../lib/redux/reducers/productReducer';
 import { FontAwesome } from '@expo/vector-icons';
 import { ModalAddClient } from './modals/ModalAddClient';
 
@@ -29,7 +29,7 @@ export const CartScreen: React.FC<Props> = () => {
   };
 
   const cleanCart = () => {
-    dispatch(reset());
+    dispatch(resetCart());
   };
 
   useEffect(() => {

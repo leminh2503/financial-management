@@ -12,6 +12,7 @@ import {
 } from 'redux-persist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import productReducer from './reducers/productReducer';
+import invoiceReducer from './reducers/invoiceReducer';
 
 const config = {
   key: 'root',
@@ -22,6 +23,7 @@ const config = {
 const reducers = combineReducers({
   auth: authReducer,
   product: productReducer,
+  invoice: invoiceReducer,
   // other reducers goes here...
 });
 

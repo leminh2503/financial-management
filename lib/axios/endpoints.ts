@@ -1,6 +1,7 @@
 import http from './http';
 import {
   DataResponse,
+  ImageModel,
   ProductModel,
   SigninModel,
   UserModel,
@@ -48,7 +49,7 @@ class ApiService {
 
   postImage(formData: FormData) {
     console.log('data', formData);
-    return http.post<DataResponse<string>>('/api/Image', formData, {
+    return http.post<DataResponse<ImageModel>>('/api/Image', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -60,6 +61,21 @@ class ApiService {
 
   getProduct() {
     return http.get<DataResponse<ProductModel[]>>(`/api/Product`);
+  }
+
+  postProduct(data: ProductModel) {
+    return http.post<DataResponse<ProductModel>>('/api/Product', data);
+  }
+
+  patchProduct(data: ProductModel) {
+    return http.patch<DataResponse<ProductModel>>(
+      `/api/Product/${data.productId}`,
+      data
+    );
+  }
+
+  deleteProduct(id?: number) {
+    return http.delete<DataResponse<ProductModel>>(`/api/Product/${id}`);
   }
 }
 
