@@ -5,7 +5,7 @@ import NumericInput from 'react-native-numeric-input';
 import { useDispatch } from 'react-redux';
 import {
   changeCountProduct,
-  removeProduct,
+  removeProductInCart,
 } from '../../lib/redux/reducers/productReducer';
 
 export interface PropsItem {
@@ -30,7 +30,7 @@ export const Item1 = ({ item }: PropsItem) => {
 
   useEffect(() => {
     if (count === 0) {
-      dispatch(removeProduct(item.productId));
+      dispatch(removeProductInCart(item.productId));
     }
   }, [count]);
 

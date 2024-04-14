@@ -7,6 +7,8 @@ import { Searchbar } from 'react-native-paper';
 import { Box, FlatList } from 'native-base';
 import { Item2 } from '../ListScreen/components/Item2';
 import { ProductModel } from '../../lib/axios';
+import { RootState } from '../../lib/redux/store';
+import { useSelector } from 'react-redux';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'List'>;
 const _item: ProductModel = {
@@ -35,6 +37,7 @@ const _ListData: ProductModel[] = [
 ];
 
 export const SearchScreen: React.FC<Props> = () => {
+  const { listProduct } = useSelector((state: RootState) => state.product);
   const [searchQuery, setSearchQuery] = React.useState('');
   return (
     <Box>
@@ -45,12 +48,12 @@ export const SearchScreen: React.FC<Props> = () => {
         value={searchQuery}
       />
       <FlatList
-        data={_ListData}
+        data={listProduct}
         renderItem={({ item }) => {
           return <Item2 item={item} />;
         }}
         ListFooterComponent={<Box height={100} />}
-        keyExtractor={(item) => String(item.id)}
+        keyExtractor={(item) => String(item.productId)}
       />
     </Box>
   );

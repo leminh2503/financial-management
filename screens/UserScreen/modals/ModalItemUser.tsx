@@ -20,6 +20,7 @@ type Props = {
   selectItem?: UserModel;
   deleteItem?: (item: UserModel) => void;
   refresh?: () => void;
+  isShowDelete?: boolean;
 };
 
 export const ModalItemUser: React.FC<Props> = ({
@@ -28,6 +29,7 @@ export const ModalItemUser: React.FC<Props> = ({
   closeModal,
   deleteItem,
   refresh,
+  isShowDelete = true,
 }) => {
   const [userName, setUserName] = React.useState('');
   const [phoneNumber, setPhoneNumber] = React.useState('');
@@ -164,7 +166,7 @@ export const ModalItemUser: React.FC<Props> = ({
               >
                 Cancel
               </Button>
-              {selectItem && user?.roleId === 1 ? (
+              {selectItem && user?.roleId === 1 && isShowDelete ? (
                 <Button
                   onPress={() => {
                     deleteItem && deleteItem(selectItem);

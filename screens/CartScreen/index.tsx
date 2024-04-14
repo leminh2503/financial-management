@@ -1,44 +1,73 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Box, Button, Column, FlatList, Icon, Row, Text } from 'native-base';
 import { StyleSheet } from 'react-native';
+import { cloneDeep } from 'lodash';
 
 // navigation
 import { RootStackParamList } from '../../navigation/types';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { useIsFocused, useNavigation } from '@react-navigation/native';
-import { ProductModel } from '../../lib/axios';
+import { useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../lib/redux/store';
 import { Item1 } from './Item1';
-import { resetCart } from '../../lib/redux/reducers/productReducer';
+import {
+  addCartToInvoice,
+  editProduct,
+  resetCart,
+} from '../../lib/redux/reducers/productReducer';
 import { FontAwesome } from '@expo/vector-icons';
 import { ModalAddClient } from './modals/ModalAddClient';
+import { addInvoice } from '../../lib/redux/reducers/invoiceReducer';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'List'>;
 
 export const CartScreen: React.FC<Props> = () => {
-  const [product, setListProduct] = useState<ProductModel[]>();
   const { cart } = useSelector((state: RootState) => state.product);
-  const [service, setService] = useState<string>('');
+  const { user } = useSelector((state: RootState) => state.auth);
   const [showModalClient, setShowModalClient] = useState(false);
-  const isFocus = useIsFocused();
   const dispatch = useDispatch();
   const navigate = useNavigation();
-  const onPressListItem = async (item: ProductModel) => {
-    console.log(item);
-  };
 
   const cleanCart = () => {
     dispatch(resetCart());
   };
 
-  useEffect(() => {
-    setListProduct(cart);
-  }, [cart, isFocus]);
-
   const total = useMemo(() => {
-    return product?.reduce((total, item) => total + item.price * item.count, 0);
-  }, [product]);
+    return cart?.reduce(
+      (total, item) => total + item.productPrice * item.count,
+      0
+    );
+  }, [cart]);
+
+  const handleCreateInvoice = async (data: { name: string; phone: string }) => {
+    const id = Math.floor(Math.random() * 99999);
+    const listProduct = cloneDeep(cart);
+    await dispatch(
+      addInvoice({
+        id: id,
+        name: data.name,
+        phone: data.phone,
+        user: user,
+        total: total,
+        products: listProduct,
+        createdAt: new Date().toISOString(),
+      })
+    );
+    await listProduct.forEach((item) => {
+      dispatch(
+        editProduct({
+          ...item,
+          count: 0,
+          productQuantity: item.productQuantity - item.count,
+        })
+      );
+    });
+    await dispatch(addCartToInvoice());
+    navigate.navigate('InvoiceDetail', {
+      id: id,
+    });
+    // console.log('handleCreateInvoice', user);
+  };
 
   return (
     <Column w="100%" mx={2} style={{ flex: 1 }} justifyContent="space-between">
@@ -63,11 +92,11 @@ export const CartScreen: React.FC<Props> = () => {
       <Column style={{ flex: 1 }}>
         <FlatList
           // ListFooterComponent={<Box height={200} />}
-          data={product}
+          data={cart}
           renderItem={({ item }) => {
             return <Item1 item={item} />;
           }}
-          keyExtractor={(item) => String(item.code)}
+          keyExtractor={(item) => String(item.productSKU)}
         />
       </Column>
 
@@ -97,6 +126,7 @@ export const CartScreen: React.FC<Props> = () => {
       <ModalAddClient
         open={showModalClient}
         closeModal={() => setShowModalClient(false)}
+        createInvoice={handleCreateInvoice}
       />
     </Column>
   );

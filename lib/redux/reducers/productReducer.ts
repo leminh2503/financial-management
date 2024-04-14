@@ -39,23 +39,39 @@ const productSlice = createSlice({
       }
       console.log('addToCart-----', state.cart);
     },
+    addCartToInvoice(state) {
+      console.log('addCartToInvoice-----', state.cart);
+      state.cart.forEach((item) => {
+        console.log('item---', item);
+        editProduct({
+          ...item,
+          productQuantity: item.productQuantity - item.count,
+          count: 0,
+        });
+      });
+      state.cart = [];
+    },
     changeCountProduct(
       state,
       action: PayloadAction<{ productId: number; count: number }>
     ) {
       state.cart = state.cart.map((item) =>
         item.productId === action.payload.productId
-          ? { ...item, count: action.payload.count }
+          ? {
+              ...item,
+              count: action.payload.count,
+            }
           : item
       );
-      console.log('changeCountProduct-----', state.cart);
     },
     setCart(state, action: PayloadAction<ProductModel[]>) {
       state.cart = action.payload;
       console.log('setCart-----', state.cart);
     },
-    removeProduct(state, action: PayloadAction<number>) {
-      state.cart = state.cart.filter((item) => item.id !== action.payload);
+    removeProductInCart(state, action: PayloadAction<number>) {
+      state.cart = state.cart.filter(
+        (item) => item.productId !== action.payload
+      );
     },
     setClient(state, action: PayloadAction<{ name: string; phone: string }>) {
       state.name = action.payload.name;
@@ -68,14 +84,21 @@ const productSlice = createSlice({
       state.listProduct = [...state.listProduct, action.payload];
     },
     editProduct(state, action: PayloadAction<ProductModel>) {
-      state.listProduct = state.listProduct.map((item) =>
-        item.productId === action.payload.productId
-          ? {
-              ...item,
-              ...action.payload,
-            }
-          : item
-      );
+      if (action.payload.productQuantity < 1) {
+        state.listProduct = state.listProduct.filter(
+          (item) => item.productId !== action.payload.productId
+        );
+      } else {
+        state.listProduct = state.listProduct.map((item) =>
+          item.productId === action.payload.productId
+            ? {
+                ...item,
+                ...action.payload,
+              }
+            : item
+        );
+      }
+      console.log('editProduct-----', state.listProduct);
     },
     deleteProduct(state, action: PayloadAction<number>) {
       state.listProduct = state.listProduct.filter(
@@ -89,7 +112,7 @@ export const {
   reset,
   addToCart,
   changeCountProduct,
-  removeProduct,
+  removeProductInCart,
   setClient,
   setCart,
   setListProduct,
@@ -97,5 +120,6 @@ export const {
   resetCart,
   editProduct,
   deleteProduct,
+  addCartToInvoice,
 } = productSlice.actions;
 export default productSlice.reducer;

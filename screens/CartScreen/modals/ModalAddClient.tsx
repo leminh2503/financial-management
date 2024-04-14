@@ -8,23 +8,25 @@ import {
 } from 'native-base';
 import { Platform } from 'react-native';
 import { useDispatch } from 'react-redux';
-import { setClient } from '../../../lib/redux/reducers/productReducer';
-import { useNavigation } from '@react-navigation/native';
 
 type Props = {
   open: boolean;
   closeModal: () => void;
+  createInvoice: (user: { name: string; phone: string }) => void;
 };
 
-export const ModalAddClient: React.FC<Props> = ({ open, closeModal }) => {
+export const ModalAddClient: React.FC<Props> = ({
+  open,
+  closeModal,
+  createInvoice,
+}) => {
   const [name, setName] = React.useState('');
   const [phone, setPhone] = React.useState('');
   const dispatch = useDispatch();
-  const navigation = useNavigation();
   const onPressSave = () => {
     closeModal();
-    dispatch(setClient({ name, phone }));
-    navigation.navigate('InvoiceDetail');
+    // dispatch(setClient({ name, phone }));
+    createInvoice({ name, phone });
   };
 
   return (
@@ -52,7 +54,11 @@ export const ModalAddClient: React.FC<Props> = ({ open, closeModal }) => {
             </FormControl>
             <FormControl mt="3">
               <FormControl.Label>Số điện thoại</FormControl.Label>
-              <Input value={phone} onChangeText={setPhone} />
+              <Input
+                keyboardType="numeric"
+                value={phone}
+                onChangeText={setPhone}
+              />
             </FormControl>
           </Modal.Body>
           <Modal.Footer>

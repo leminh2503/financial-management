@@ -25,7 +25,7 @@ const routes: any[] = [
     title: 'List',
     isAuth: true,
     isBottom: true,
-    icon: 'format-list-bulleted',
+    icon: 'store-outline',
   },
   {
     component: CartScreen,
@@ -39,8 +39,8 @@ const routes: any[] = [
     component: ListInvoiceScreen,
     name: 'ListInvoice',
     title: 'Danh sách hoá đơn',
+    icon: 'format-list-bulleted',
     isBottom: true,
-    icon: 'store-outline',
   },
   {
     component: InvoiceDetail,

@@ -1,26 +1,22 @@
-import React, { useState } from 'react';
+import React, { useMemo } from 'react';
 import { Box, Center, Column, Row, Text } from 'native-base';
 
 // navigation
 import { RootStackParamList } from '../../navigation/types';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { ProductModel } from '../../lib/axios';
 import { BarChart } from 'react-native-chart-kit';
 import { Dimensions } from 'react-native';
+import { RootState } from '../../lib/redux/store';
+import { useSelector } from 'react-redux';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'List'>;
 
 export const SalesScreen: React.FC<Props> = () => {
-  const [lists, setLists] = useState<ProductModel[]>();
+  const { listInvoice } = useSelector((state: RootState) => state.invoice);
 
-  const onPressListItem = async (item: ProductModel) => {
-    // TODO: do something
-    // props.navigation.navigate('Detail', {
-    //   screen: 'Profile',
-    //   params: item,
-    // });
-    console.log(item);
-  };
+  const totals = useMemo(() => {
+    return listInvoice?.reduce((total, item) => total + item.total, 0);
+  }, [listInvoice]);
 
   const data = {
     labels: ['XSSASC', 'XVVBC', 'XZCZX', 'ASD'],
@@ -42,9 +38,9 @@ export const SalesScreen: React.FC<Props> = () => {
       >
         <Row>
           <Column>
-            <Text>6 hoá đơn</Text>
+            <Text>{listInvoice.length} hoá đơn</Text>
             <Text fontSize={24} color="green.700" fontWeight="700">
-              4.37<Text> Tr</Text>
+              {totals} đ
             </Text>
           </Column>
           {/*<Column>*/}

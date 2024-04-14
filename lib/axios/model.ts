@@ -64,7 +64,8 @@ export interface InvoiceModel {
   id: number;
   total: number;
   user: UserModel;
+  name: string;
+  phone: string;
   products: ProductModel[];
-  created_at: string;
-  updated_at: string;
+  createdAt: string;
 }

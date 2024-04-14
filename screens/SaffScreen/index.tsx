@@ -107,6 +107,7 @@ export const SaffScreen: React.FC<Props> = () => {
         closeModal={handleCloseModal}
         open={showAppModal}
         refresh={GetUser}
+        isShowDelete={false}
       />
     </Box>
   );

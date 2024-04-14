@@ -1,38 +1,43 @@
 // import { Table } from "react-native-table-component";
 import { StyleSheet } from 'react-native';
-import React, { useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Button, Icon, Row, Text } from 'native-base';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../lib/redux/store';
 import { DataTable } from 'react-native-paper';
 import { AntDesign } from '@expo/vector-icons';
+import { useRoute } from '@react-navigation/native';
+import { InvoiceModel } from '../../lib/axios';
 
 export default function InvoiceDetail() {
-  const { phone, name, cart } = useSelector(
-    (state: RootState) => state.product
-  );
+  const { listInvoice } = useSelector((state: RootState) => state.invoice);
+  const [invoice, setInvoice] = useState<InvoiceModel>();
+  const { params } = useRoute();
 
-  const totalPrice = useMemo(() => {
-    return cart?.reduce((total, item) => total + item.price * item.count, 0);
-  }, [cart]);
+  useEffect(() => {
+    const item = listInvoice.find((item) => item.id === params.id);
+    setInvoice(item);
+  }, [listInvoice, params]);
+
+  console.log('invoice---', invoice);
 
   return (
     <Box style={styles.container}>
       <Row justifyContent="space-between">
         <Text fontWeight="bold">Ngày lập hoá đơn</Text>
-        <Text>10/4/2024</Text>
+        <Text>{invoice?.createdAt}</Text>
       </Row>
       <Row mt={1} justifyContent="space-between">
         <Text fontWeight="bold">Mã nhân viên</Text>
-        <Text>NV0001</Text>
+        <Text>{invoice?.user?.username}</Text>
       </Row>
       <Row mt={1} justifyContent="space-between">
         <Text fontWeight="bold">Tên khách hàng</Text>
-        <Text>{name}</Text>
+        <Text>{invoice?.name}</Text>
       </Row>
       <Row mt={1} mb={4} justifyContent="space-between">
         <Text fontWeight="bold">Số điện thoại</Text>
-        <Text>{phone}</Text>
+        <Text>{invoice?.phone}</Text>
       </Row>
 
       <DataTable>
@@ -43,7 +48,7 @@ export default function InvoiceDetail() {
           <DataTable.Title style={{ flex: 2 }}>Giá</DataTable.Title>
           <DataTable.Title style={{ flex: 1 }}>SL</DataTable.Title>
         </DataTable.Header>
-        {cart?.map((l, i) => (
+        {invoice?.products?.map((l, i) => (
           <DataTable.Row style={styles.databeBox} key={i}>
             <DataTable.Cell style={{ flex: 1 }}>{i + 1}</DataTable.Cell>
             <DataTable.Cell style={{ flex: 3 }}>{l.productName}</DataTable.Cell>
@@ -59,7 +64,7 @@ export default function InvoiceDetail() {
       </DataTable>
       <Row mt={4} justifyContent="space-between">
         <Text fontWeight="bold">Tổng thanh toán</Text>
-        <Text>{totalPrice} đ</Text>
+        <Text>{invoice?.total} đ</Text>
       </Row>
       <Button mt={3} backgroundColor="#0065D6">
         <Row alignItems="center" space={4}>
