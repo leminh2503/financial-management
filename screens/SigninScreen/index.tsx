@@ -69,7 +69,7 @@ export const SigninScreen: React.FC<Props> = (props) => {
             })
           );
         }
-        props.navigation.navigate('BottomTab', { screen: 'List' });
+        props.navigation.navigate('BottomTab', { screen: 'Sales' });
       })
       .catch((err) => console.log('err----', err));
   };
@@ -99,7 +99,7 @@ export const SigninScreen: React.FC<Props> = (props) => {
           <Heading>Welcome to Lan Anh Mart</Heading>
           <Column space={3} mt="5">
             <FormControl>
-              <FormControl.Label>Username</FormControl.Label>
+              <FormControl.Label>Username/Số điện thoại</FormControl.Label>
               <Input
                 value={username}
                 onChangeText={onChangeUsername}

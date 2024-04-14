@@ -11,12 +11,12 @@ import { ProductModel } from '../../lib/axios';
 type Props = NativeStackScreenProps<RootStackParamList, 'List'>;
 const _item: ProductModel = {
   id: 1,
-  name: 'Product 1',
-  price: 1000,
-  description: 'Description 1',
-  image: 'https://picsum.photos/200/300',
-  quantity: 10,
-  code: 'MZISKSFJSK',
+  productName: 'Product 1',
+  productPrice: 1000,
+  productDescription: 'Description 1',
+  productImageId: 'https://picsum.photos/200/300',
+  productQuantity: 10,
+  productSKU: 'MZISKSFJSK',
   count: 0,
 };
 const _ListData: ProductModel[] = [

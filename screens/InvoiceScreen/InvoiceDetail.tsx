@@ -16,8 +16,6 @@ export default function InvoiceDetail() {
     return cart?.reduce((total, item) => total + item.price * item.count, 0);
   }, [cart]);
 
-  console.log('cart----', cart);
-
   return (
     <Box style={styles.container}>
       <Row justifyContent="space-between">
@@ -48,10 +46,14 @@ export default function InvoiceDetail() {
         {cart?.map((l, i) => (
           <DataTable.Row style={styles.databeBox} key={i}>
             <DataTable.Cell style={{ flex: 1 }}>{i + 1}</DataTable.Cell>
-            <DataTable.Cell style={{ flex: 3 }}>{l.name}</DataTable.Cell>
-            <DataTable.Cell style={{ flex: 3 }}>{l.code}</DataTable.Cell>
-            <DataTable.Cell style={{ flex: 2 }}>{l.price}</DataTable.Cell>
-            <DataTable.Cell style={{ flex: 1 }}>{l.count}</DataTable.Cell>
+            <DataTable.Cell style={{ flex: 3 }}>{l.productName}</DataTable.Cell>
+            <DataTable.Cell style={{ flex: 3 }}>{l.productSKU}</DataTable.Cell>
+            <DataTable.Cell style={{ flex: 2 }}>
+              {l.productPrice}
+            </DataTable.Cell>
+            <DataTable.Cell style={{ flex: 1 }}>
+              {l.productQuantity}
+            </DataTable.Cell>
           </DataTable.Row>
         ))}
       </DataTable>

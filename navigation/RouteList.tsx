@@ -11,7 +11,14 @@ import { ListInvoiceScreen } from '../screens/InvoiceScreen';
 import { SaffScreen } from '../screens/SaffScreen';
 
 const routes: any[] = [
-  // auth
+  {
+    component: SalesScreen,
+    name: 'Sales',
+    title: 'TotalSales',
+    isAuth: true,
+    isBottom: true,
+    icon: 'tire',
+  },
   {
     component: ListScreen,
     name: 'List',
@@ -29,33 +36,11 @@ const routes: any[] = [
     icon: 'cart',
   },
   {
-    component: UserScreen,
-    name: 'User',
-    title: 'User',
-    isAuth: true,
+    component: ListInvoiceScreen,
+    name: 'ListInvoice',
+    title: 'Danh sách hoá đơn',
     isBottom: true,
-    icon: 'account-group',
-  },
-  {
-    component: SalesScreen,
-    name: 'Sales',
-    title: 'TotalSales',
-    isAuth: true,
-    isBottom: true,
-    icon: 'tire',
-  },
-  {
-    component: SaffScreen,
-    name: 'Saff',
-    title: 'Saff Info',
-    isAuth: true,
-    isBottom: true,
-    icon: 'account',
-  },
-  {
-    component: SearchScreen,
-    name: 'Search',
-    title: 'Search',
+    icon: 'store-outline',
   },
   {
     component: InvoiceDetail,
@@ -63,9 +48,22 @@ const routes: any[] = [
     title: 'InvoiceDetail',
   },
   {
-    component: ListInvoiceScreen,
-    name: 'ListInvoice',
-    title: 'Danh sách hoá đơn',
+    component: SaffScreen,
+    name: 'Saff',
+    title: 'Saff Info',
+    isBottom: true,
+    icon: 'account',
+  },
+  {
+    component: UserScreen,
+    name: 'User',
+    title: 'User',
+    isAuth: true,
+  },
+  {
+    component: SearchScreen,
+    name: 'Search',
+    title: 'Search',
   },
   {
     component: SettingsScreen,

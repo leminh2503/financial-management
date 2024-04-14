@@ -1,28 +1,28 @@
-import React, { useState, useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import Constants from 'expo-constants';
 import * as Device from 'expo-device';
-import { useFocusEffect } from '@react-navigation/native';
+import { CompositeScreenProps, useFocusEffect } from '@react-navigation/native';
 
 // components
 import {
   Button,
-  Link,
-  Row,
-  Column,
-  Text,
-  Modal,
-  Heading,
-  ScrollView,
   Center,
+  Column,
+  Heading,
+  Icon,
+  Link,
+  Modal,
+  Row,
+  ScrollView,
+  Text,
 } from 'native-base';
-import { Icon } from 'native-base';
 import { Feather } from '@expo/vector-icons';
 
 // storage
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // redux
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../lib/redux/store';
 import { reset, resetAuthData } from '../../../lib/redux/reducers/authReducer';
 
@@ -30,10 +30,9 @@ import { reset, resetAuthData } from '../../../lib/redux/reducers/authReducer';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import {
-  SettingsScreenTabParamList,
   RootStackParamList,
+  SettingsScreenTabParamList,
 } from '../../../navigation/types';
-import { CompositeScreenProps } from '@react-navigation/native';
 
 type Props = CompositeScreenProps<
   BottomTabScreenProps<SettingsScreenTabParamList, 'AppConfig'>,
@@ -97,13 +96,13 @@ export const AppConfigScreen: React.FC<Props> = () => {
               <Text bold color="primary.500">
                 User Email:{' '}
               </Text>
-              <Text>{user?.email}</Text>
+              <Text>{user?.username}</Text>
             </Row>
             <Row pb="1.5">
               <Text bold color="primary.500">
                 User Name:{' '}
               </Text>
-              <Text>{user?.first_name + ' ' + user?.last_name}</Text>
+              <Text>{user?.username + ' ' + user?.username}</Text>
             </Row>
           </Column>
           <Column pb="3" maxWidth="80">

@@ -1,6 +1,7 @@
 import http from './http';
 import {
   DataResponse,
+  ProductModel,
   SigninModel,
   UserModel,
   UserRegisterOrUpdateModel,
@@ -43,6 +44,22 @@ class ApiService {
 
   getUserById(id?: number) {
     return http.get<DataResponse<UserModel[]>>(`/api/User/${id}`);
+  }
+
+  postImage(formData: FormData) {
+    console.log('data', formData);
+    return http.post<DataResponse<string>>('/api/Image', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+      transformRequest: (data, headers) => {
+        return formData; // this is doing the trick
+      },
+    });
+  }
+
+  getProduct() {
+    return http.get<DataResponse<ProductModel[]>>(`/api/Product`);
   }
 }
 

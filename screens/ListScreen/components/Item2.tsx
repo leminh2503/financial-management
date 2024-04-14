@@ -52,25 +52,25 @@ export const Item2 = ({ item }: PropsItem) => {
                 <Image
                   style={{ width: 100, height: 80, borderRadius: 10 }} // style={{ width: 50, height: 50 }}
                   source={{
-                    uri: item.image,
+                    uri: item.productImageId,
                   }}
                   mr={3}
                 ></Image>
               </Column>
               <Column>
-                <Heading fontSize="sm">{item.name}</Heading>
+                <Heading fontSize="sm">{item.productName}</Heading>
                 <Text mt={0.5} fontSize="xs">
-                  Mã sản phẩm: {item.code}
+                  Mã sản phẩm: {item.productSKU}
                 </Text>
                 <Text
                   mt={0.5}
-                  color={item.quantity < 5 ? 'orange.600' : '#000e21'}
-                  fontSize={item.quantity < 5 ? 'lg' : 'xs'}
+                  color={item.productQuantity < 5 ? 'orange.600' : '#000e21'}
+                  fontSize={item.productQuantity < 5 ? 'lg' : 'xs'}
                 >
-                  Tồn kho: {item.quantity}
+                  Tồn kho: {item.productQuantity}
                 </Text>
                 <Text mt={0.5} fontSize="sm" color="orange.600">
-                  Giá thành: {item.price}
+                  Giá thành: {item.productPrice}
                 </Text>
               </Column>
             </Row>

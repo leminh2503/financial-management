@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Center, Row, Text } from 'native-base';
+import { Box, Center, Column, Row, Text } from 'native-base';
 
 // navigation
 import { RootStackParamList } from '../../navigation/types';
@@ -32,8 +32,33 @@ export const SalesScreen: React.FC<Props> = () => {
   };
 
   return (
-    <Center width="100%">
-      <Box w="100%">
+    <Center mt={3} mx={2}>
+      <Box
+        width="100%"
+        borderWidth={1}
+        backgroundColor="white"
+        p={4}
+        borderRadius={4}
+      >
+        <Row>
+          <Column>
+            <Text>6 hoá đơn</Text>
+            <Text fontSize={24} color="green.700" fontWeight="700">
+              4.37<Text> Tr</Text>
+            </Text>
+          </Column>
+          {/*<Column>*/}
+          {/*  <Text>Lợi nhuận</Text>*/}
+          {/*  <Text fontSize={24} color="blue">*/}
+          {/*    4.37<Text>Tr</Text>*/}
+          {/*  </Text>*/}
+          {/*</Column>*/}
+        </Row>
+      </Box>
+      <Box w="100%" mt={3}>
+        <Text fontSize={20} fontWeight="800">
+          Doanh thu
+        </Text>
         <BarChart
           data={data}
           yAxisLabel=""
@@ -65,14 +90,14 @@ export const SalesScreen: React.FC<Props> = () => {
           }}
         />
 
-        <Row mt={3} justifyContent="space-between" p={4}>
-          <Text fontWeight="bold" fontSize={14}>
-            Tổng doanh số
-          </Text>
-          <Text fontWeight="bold" fontSize={20}>
-            1000 đ
-          </Text>
-        </Row>
+        {/*<Row mt={3} justifyContent="space-between" p={4}>*/}
+        {/*  <Text fontWeight="bold" fontSize={14}>*/}
+        {/*    Tổng doanh số*/}
+        {/*  </Text>*/}
+        {/*  <Text fontWeight="bold" fontSize={20}>*/}
+        {/*    1000 đ*/}
+        {/*  </Text>*/}
+        {/*</Row>*/}
       </Box>
     </Center>
   );

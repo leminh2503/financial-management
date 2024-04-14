@@ -8,12 +8,12 @@ import { setCart, setClient } from '../../lib/redux/reducers/productReducer';
 
 const _item6: ProductModel = {
   id: 6,
-  name: 'Product 6',
-  price: 1000,
-  description: 'Description 1',
-  image: 'https://picsum.photos/200/300',
-  quantity: 10,
-  code: 'MZISKSFJSK',
+  productName: 'Product 6',
+  productPrice: 1000,
+  productDescription: 'Description 1',
+  productImageId: 'https://picsum.photos/200/300',
+  productQuantity: 10,
+  productSKU: 'MZISKSFJSK',
   count: 1,
 };
 const _data: InvoiceModel[] = [
@@ -22,7 +22,7 @@ const _data: InvoiceModel[] = [
     total: 1000,
     products: [_item6, _item6, _item6, _item6],
     user: {
-      id: 1,
+      userId: 1,
       username: 'User 1',
       phoneNumber: 123456789,
       image: 'https://picsum.photos/200/300',
@@ -35,7 +35,7 @@ const _data: InvoiceModel[] = [
     total: 2000,
     products: [_item6, _item6, _item6, _item6],
     user: {
-      id: 2,
+      userId: 2,
       username: 'User 2',
       phoneNumber: 123456789,
       image: 'https://picsum.photos/200/300',
@@ -48,7 +48,7 @@ const _data: InvoiceModel[] = [
     total: 2000,
     products: [_item6, _item6, _item6, _item6],
     user: {
-      id: 2,
+      userId: 2,
       username: 'User 2',
       phoneNumber: 123456789,
       image: 'https://picsum.photos/200/300',
@@ -61,7 +61,7 @@ const _data: InvoiceModel[] = [
     total: 2000,
     products: [_item6, _item6, _item6, _item6],
     user: {
-      id: 2,
+      userId: 2,
       username: 'User 2',
       phoneNumber: 123456789,
       image: 'https://picsum.photos/200/300',
@@ -74,7 +74,7 @@ const _data: InvoiceModel[] = [
     total: 2000,
     products: [_item6, _item6, _item6, _item6],
     user: {
-      id: 2,
+      userId: 2,
       username: 'User 2',
       phoneNumber: 123456789,
       image: 'https://picsum.photos/200/300',
@@ -87,7 +87,7 @@ const _data: InvoiceModel[] = [
     total: 2000,
     products: [_item6, _item6, _item6, _item6],
     user: {
-      id: 2,
+      userId: 2,
       username: 'User 2',
       phoneNumber: 123456789,
       image: 'https://picsum.photos/200/300',
@@ -100,7 +100,7 @@ const _data: InvoiceModel[] = [
     total: 2000,
     products: [_item6, _item6, _item6, _item6],
     user: {
-      id: 2,
+      userId: 2,
       username: 'User 2',
       phoneNumber: 123456789,
       image: 'https://picsum.photos/200/300',
@@ -113,7 +113,7 @@ const _data: InvoiceModel[] = [
     total: 2000,
     products: [_item6, _item6, _item6, _item6],
     user: {
-      id: 2,
+      userId: 2,
       username: 'User 2',
       phoneNumber: 123456789,
       image: 'https://picsum.photos/200/300',
@@ -126,7 +126,7 @@ const _data: InvoiceModel[] = [
     total: 2000,
     products: [_item6, _item6, _item6, _item6],
     user: {
-      id: 2,
+      userId: 2,
       username: 'User 2',
       phoneNumber: 123456789,
       image: 'https://picsum.photos/200/300',
@@ -146,7 +146,7 @@ export const ListInvoiceScreen = () => {
     dispatch(
       setClient({
         name: item.user.username,
-        phone: item.user.phoneNumber.toString(),
+        phone: item?.user?.phoneNumber.toString() || '',
       })
     );
     navigate.navigate('InvoiceDetail');

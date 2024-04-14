@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Button, Image, Row, Text } from 'native-base';
+import { Alert, Box, Button, Image, Row, Text } from 'native-base';
 
 // navigation
 import { RootStackParamList } from '../../navigation/types';
@@ -8,6 +8,7 @@ import { ApiService, UserModel } from '../../lib/axios';
 import { ModalItemUser } from '../UserScreen/modals/ModalItemUser';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../lib/redux/store';
+import { Loading } from '../../components/Loading';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'List'>;
 const _item: UserModel = {
@@ -23,6 +24,9 @@ export const SaffScreen: React.FC<Props> = () => {
   const { user } = useSelector((state: RootState) => state.auth);
   const [showAppModal, setShowModal] = useState(false);
   const [info, setInfo] = useState<UserModel>();
+  const [loading, setLoading] = useState(false);
+
+  console.log('user: ', user);
 
   const handleOpenModal = () => {
     setShowModal(true);
@@ -32,22 +36,26 @@ export const SaffScreen: React.FC<Props> = () => {
     setShowModal(false);
   };
   const GetUser = () => {
+    setLoading(true);
     ApiService.getUserById(user?.userId)
       .then((e) => {
         console.log('GetUser: ', e);
         setInfo(e.data.data[0]);
+        setLoading(false);
       })
       .catch((e) => {
-        console.log('Error: ', e);
+        Alert('Lỗi lấy thông tin người dùng');
+        setLoading(false);
       });
   };
 
   useEffect(() => {
     GetUser();
-  }, [user]);
+  }, []);
 
   return (
     <Box width="100%" px={5}>
+      {loading && <Loading />}
       <Box my={5} alignItems="center" justifyContent="center">
         <Image
           style={{

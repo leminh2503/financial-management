@@ -34,6 +34,23 @@ export interface Token {
 
 export interface ProductModel {
   id: number;
+  productName: string;
+  productPrice: number;
+  productDescription: string;
+  productImageId: string;
+  productQuantity: number;
+  productSKU: string;
+  count: number;
+}
+
+export interface ImageModel {
+  imageId: number;
+  imagePath: string;
+  imageName: string;
+}
+
+export interface ProductModelTest {
+  id: number;
   name: string;
   price: number;
   description: string;

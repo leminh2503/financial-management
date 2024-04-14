@@ -14,16 +14,22 @@ import {
 // navigation
 import { RootStackParamList } from '../../navigation/types';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { ApiService, ProductModel, UserModel } from '../../lib/axios';
+import {
+  ApiService,
+  ProductModel,
+  ProductModelTest,
+  UserModel,
+} from '../../lib/axios';
 import { Octicons } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native';
 import { ModalItemProduct } from './modals/ModalItemProduct';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { addToCart } from '../../lib/redux/reducers/productReducer';
+import { RootState } from '../../lib/redux/store';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'List'>;
 
-const _item: ProductModel = {
+const _item: ProductModelTest = {
   id: 1,
   name: 'Product 1',
   price: 1000,
@@ -32,7 +38,7 @@ const _item: ProductModel = {
   quantity: 10,
   code: 'MZISKSFJSK',
 };
-const _item2: ProductModel = {
+const _item2: ProductModelTest = {
   id: 2,
   name: 'Product 2',
   price: 1000,
@@ -41,7 +47,7 @@ const _item2: ProductModel = {
   quantity: 10,
   code: 'MZISKSFJSK',
 };
-const _item3: ProductModel = {
+const _item3: ProductModelTest = {
   id: 3,
   name: 'Product 3',
   price: 1000,
@@ -50,7 +56,7 @@ const _item3: ProductModel = {
   quantity: 10,
   code: 'MZISKSFJSK',
 };
-const _item4: ProductModel = {
+const _item4: ProductModelTest = {
   id: 4,
   name: 'Product 4',
   price: 1000,
@@ -59,7 +65,7 @@ const _item4: ProductModel = {
   quantity: 10,
   code: 'MZISKSFJSK',
 };
-const _item5: ProductModel = {
+const _item5: ProductModelTest = {
   id: 5,
   name: 'Product 5',
   price: 1000,
@@ -68,7 +74,7 @@ const _item5: ProductModel = {
   quantity: 10,
   code: 'MZISKSFJSK',
 };
-const _item6: ProductModel = {
+const _item6: ProductModelTest = {
   id: 6,
   name: 'Product 6',
   price: 1000,
@@ -77,7 +83,7 @@ const _item6: ProductModel = {
   quantity: 10,
   code: 'MZISKSFJSK',
 };
-export const _ListData: ProductModel[] = [
+export const _ListData: ProductModel[] | ProductModelTest[] = [
   _item,
   _item2,
   _item3,
@@ -96,6 +102,8 @@ export const ListScreen: React.FC<Props> = () => {
   const [selectedItem, setSelectedItem] = useState<any>();
   const [showAppModal, setShowModal] = useState(false);
   const dispatch = useDispatch();
+  const { user } = useSelector((state: RootState) => state.auth);
+
   const onPressItem = async (item: any) => {
     // TODO: do something
     // props.navigation.navigate('Detail', {
@@ -135,32 +143,16 @@ export const ListScreen: React.FC<Props> = () => {
     });
   };
 
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     // Do something when the screen is focused
-  //     GetUsers();
-  //     return () => {
-  //       // Do something when the screen is unfocused
-  //       // Useful for cleanup functions
-  //     };
-  //   }, [])
-  // );
+  console.log('lists: ---', user);
   return (
     <Box w="100%">
-      <Row justifyContent="flex-end" alignItems="center" my={2}>
-        {/*<TextInput*/}
-        {/*  label="Search by Code"*/}
-        {/*  secureTextEntry*/}
-        {/*  style={{*/}
-        {/*    width: 200,*/}
-        {/*    height: 38,*/}
-        {/*  }}*/}
-        {/*  right={<TextInput.Icon icon="search-web" />}*/}
-        {/*/>*/}
-        <Button mx={2} onPress={handleAddItem}>
-          Thêm Sản Phẩm
-        </Button>
-      </Row>
+      {user?.roleId === 1 && (
+        <Row justifyContent="flex-end" alignItems="center" my={2}>
+          <Button mx={2} onPress={handleAddItem}>
+            Thêm Sản Phẩm
+          </Button>
+        </Row>
+      )}
       <FlatList
         ListFooterComponent={<Box height={120}></Box>}
         data={_ListData}

@@ -1,8 +1,7 @@
 import { apiClient } from '../lib/axios';
-import { useToast } from 'native-base';
+import { Alert, useToast } from 'native-base';
 // redux
 import { useDispatch, useSelector } from 'react-redux';
-import { resetAuthData } from '../lib/redux/reducers/authReducer';
 import { RootState } from '../lib/redux/store';
 import { useEffect, useState } from 'react';
 
@@ -22,17 +21,21 @@ export default function usePusherNotification() {
       });
       apiClient.interceptors.response.use(
         (response) => {
+          console.log('response-------', response);
+
           return response;
         },
         (error) => {
+          console.log('error-------', error.response);
           // If API return 401 not authorized error, then sign-out
           if (error?.response.status == 401) {
-            dispatch(resetAuthData());
+            // dispatch(resetAuthData());
             toast.show({
               title: 'Error',
               placement: 'top',
               description: String(error),
             });
+            Alert('Token expired, please login again');
           }
           return error;
         }

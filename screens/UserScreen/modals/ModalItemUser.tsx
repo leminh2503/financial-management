@@ -11,6 +11,8 @@ import {
 import { ApiService, UserModel } from '../../../lib/axios';
 import { Platform } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../lib/redux/store';
 
 type Props = {
   open: boolean;
@@ -32,6 +34,7 @@ export const ModalItemUser: React.FC<Props> = ({
   const [image, setImage] = React.useState('');
   const [pass, setPass] = React.useState('');
   const [fullName, setFullName] = React.useState('');
+  const { user } = useSelector((state: RootState) => state.auth);
   const pickImageAsync = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
@@ -57,7 +60,7 @@ export const ModalItemUser: React.FC<Props> = ({
     ApiService.patchUser({
       userId: selectItem?.userId,
       username: userName,
-      roleId: 2,
+      roleId: 0,
     })
       .then((e) => {
         refresh && refresh();
@@ -73,7 +76,7 @@ export const ModalItemUser: React.FC<Props> = ({
     ApiService.postUser({
       username: userName,
       password: pass,
-      roleId: 2,
+      roleId: 0,
     })
       .then((e) => {
         refresh && refresh();
@@ -96,6 +99,8 @@ export const ModalItemUser: React.FC<Props> = ({
   useEffect(() => {
     resetValue();
   }, [selectItem]);
+
+  console.log('selectItem----', selectItem);
 
   return (
     <Modal isOpen={open} size={'full'} onClose={closeModal} safeAreaTop={true}>
@@ -140,12 +145,8 @@ export const ModalItemUser: React.FC<Props> = ({
               <Input value={fullName} onChangeText={setFullName} />
             </FormControl>
             <FormControl>
-              <FormControl.Label>Username</FormControl.Label>
-              <Input value={userName} onChangeText={setUserName} />
-            </FormControl>
-            <FormControl mt="3">
               <FormControl.Label>Số điện thoại</FormControl.Label>
-              <Input value={phoneNumber} onChangeText={setPhoneNumber} />
+              <Input value={userName} onChangeText={setUserName} />
             </FormControl>
             {!selectItem && (
               <FormControl mt="3">
@@ -163,7 +164,7 @@ export const ModalItemUser: React.FC<Props> = ({
               >
                 Cancel
               </Button>
-              {selectItem && selectItem.roleId === 1 ? (
+              {selectItem && user?.roleId === 1 ? (
                 <Button
                   onPress={() => {
                     deleteItem && deleteItem(selectItem);

@@ -8,9 +8,11 @@ import {
   KeyboardAvoidingView,
   Modal,
 } from 'native-base';
-import { ProductModel } from '../../../lib/axios';
+import { ApiService, ProductModel } from '../../../lib/axios';
 import { Platform } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+import { RootState } from '../../../lib/redux/store';
+import { useSelector } from 'react-redux';
 
 type Props = {
   open: boolean;
@@ -31,30 +33,42 @@ export const ModalItemProduct: React.FC<Props> = ({
   const [quantity, setQuantity] = React.useState('');
   const [image, setImage] = React.useState('');
   const [code, setCode] = React.useState('');
+  const [imageApi, setImageApi] = React.useState('');
+
+  const { token } = useSelector((state: RootState) => state.auth);
   const pickImageAsync = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
       quality: 1,
     });
-
     if (!result.canceled) {
-      console.log(result);
-      setImage(result.assets[0].uri);
+      const formData = new FormData();
+      formData?.append('imageFile', {
+        uri: result.assets[0].uri,
+        name: result.assets[0].fileName || 'image.png',
+        type: result.assets[0].mimeType,
+      });
+      ApiService.postImage(formData)
+        .then((e) => {
+          setImage(result.assets[0].uri);
+          setImageApi(e.data.data);
+        })
+        .catch((e) => {
+          console.log('Error: ', e);
+        });
     } else {
       alert('You did not select any image.');
     }
   };
 
   useEffect(() => {
-    setName(selectItem?.name || '');
-    setPrice(selectItem?.price.toString() || '');
-    setDescription(selectItem?.description || '');
-    setQuantity(selectItem?.quantity.toString() || '');
-    setImage(selectItem?.image || '');
-    setCode(selectItem?.code || '');
+    setName(selectItem?.productName || '');
+    setPrice(selectItem?.productPrice.toString() || '');
+    setDescription(selectItem?.productDescription || '');
+    setQuantity(selectItem?.productQuantity.toString() || '');
+    setImage(selectItem?.productImageId || '');
+    setCode(selectItem?.productSKU || '');
   }, [selectItem]);
-
-  console.log('selectItem----', selectItem);
 
   return (
     <Modal isOpen={open} size={'full'} onClose={closeModal} safeAreaTop={true}>
@@ -74,7 +88,9 @@ export const ModalItemProduct: React.FC<Props> = ({
         <Modal.Content>
           <Modal.CloseButton />
           <Modal.Header>
-            {selectItem?.name ? selectItem?.name : 'Thêm sản phẩm'}
+            {selectItem?.productName
+              ? selectItem?.productName
+              : 'Thêm sản phẩm'}
           </Modal.Header>
           <Modal.Body>
             <FormControl>
@@ -119,14 +135,14 @@ export const ModalItemProduct: React.FC<Props> = ({
               />
             </FormControl>
 
-            <FormControl mt="3">
-              <FormControl.Label>Mô tả</FormControl.Label>
-              <Input
-                placeholder="Description"
-                value={description}
-                onChangeText={setDescription}
-              />
-            </FormControl>
+            {/*<FormControl mt="3">*/}
+            {/*  <FormControl.Label>Mô tả</FormControl.Label>*/}
+            {/*  <Input*/}
+            {/*    placeholder="Description"*/}
+            {/*    value={description}*/}
+            {/*    onChangeText={setDescription}*/}
+            {/*  />*/}
+            {/*</FormControl>*/}
           </Modal.Body>
           <Modal.Footer>
             <Button.Group space={2}>
