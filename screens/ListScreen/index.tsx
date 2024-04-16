@@ -95,14 +95,9 @@ export const ListScreen: React.FC<Props> = () => {
       });
   };
 
-  const getURLImage = async (id: any) => {
-    const res = await ApiService.getImageById(id);
-    return res.data.message;
-  };
-
   useEffect(() => {
     getListProduct();
-  }, [user]);
+  }, []);
 
   return (
     <Box w="100%">

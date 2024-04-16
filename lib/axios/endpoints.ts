@@ -1,7 +1,9 @@
 import http from './http';
 import {
+  CreateInvoiceModel,
   DataResponse,
   ImageModel,
+  InvoiceModel,
   ProductModel,
   SigninModel,
   UserModel,
@@ -79,6 +81,14 @@ class ApiService {
 
   deleteProduct(id?: number) {
     return http.delete<DataResponse<ProductModel>>(`/api/Product/${id}`);
+  }
+
+  createOrder(data: CreateInvoiceModel) {
+    return http.post<DataResponse<CreateInvoiceModel>>('/api/Order', data);
+  }
+
+  getOrder() {
+    return http.get<DataResponse<InvoiceModel[]>>('/api/Order');
   }
 }
 

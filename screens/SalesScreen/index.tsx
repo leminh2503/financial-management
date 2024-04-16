@@ -8,21 +8,112 @@ import { BarChart } from 'react-native-chart-kit';
 import { Dimensions } from 'react-native';
 import { RootState } from '../../lib/redux/store';
 import { useSelector } from 'react-redux';
+import { ProductModel } from '../../lib/axios';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'List'>;
 
 export const SalesScreen: React.FC<Props> = () => {
   const { listInvoice } = useSelector((state: RootState) => state.invoice);
 
+  const totalItem = (list: ProductModel[]) => {
+    return list.reduce((t, i) => {
+      return t + i.productPrice * i.quantityInOrder;
+    }, 0);
+  };
+
   const totals = useMemo(() => {
-    return listInvoice?.reduce((total, item) => total + item.total, 0);
+    return listInvoice?.reduce((t, item) => t + totalItem(item.products), 0);
   }, [listInvoice]);
 
+  const capitalItem = (list: ProductModel[]) => {
+    return list.reduce((t, i) => {
+      return t + i.productCost * i.quantityInOrder;
+    }, 0);
+  };
+
+  const capital = useMemo(() => {
+    return listInvoice?.reduce(
+      (t, item) => t - capitalItem(item.products),
+      totals
+    );
+  }, [listInvoice]);
+
+  const removeDuplicate = (arr: any) => {
+    return arr.filter((item: any, index: any) => {
+      return arr.indexOf(item) === index;
+    });
+  };
+
+  const getLabel = () => {
+    return listInvoice.flatMap((item) => {
+      return removeDuplicate(item.products.map((i) => i.productSKU));
+    }, 1);
+  };
+
+  function aggregateQuantities(data: any[]) {
+    const aggregatedData: any = {};
+
+    data.forEach((item) => {
+      const { productSKU, quantityInOrder } = item;
+      if (aggregatedData[productSKU]) {
+        aggregatedData[productSKU] += quantityInOrder;
+      } else {
+        aggregatedData[productSKU] = quantityInOrder;
+      }
+    });
+
+    return Object.keys(aggregatedData).map((productSKU) => ({
+      productSKU,
+      quantityInOrder: aggregatedData[productSKU],
+    }));
+  }
+
+  function aggregateQuantities1(data: any) {
+    const aggregatedData: any = {};
+
+    data.forEach((item) => {
+      const { productSKU, quantityInOrder } = item;
+      if (aggregatedData[productSKU]) {
+        aggregatedData[productSKU] += quantityInOrder;
+      } else {
+        aggregatedData[productSKU] = quantityInOrder;
+      }
+    });
+
+    // Convert aggregated data to array of objects
+    return Object.keys(aggregatedData).map((productSKU) => ({
+      productSKU,
+      quantityInOrder: aggregatedData[productSKU],
+    }));
+  }
+
+  const getData = () => {
+    return listInvoice.flatMap((item) => {
+      return aggregateQuantities(item.products);
+    }, 1);
+  };
+
+  const dataObj = useMemo(() => {
+    return aggregateQuantities1(getData());
+  }, [listInvoice]);
+
+  const getLabel1 = (item: any) => {
+    return item.map((i: any) => {
+      return i.productSKU;
+    });
+  };
+
+  const getQuantity = (item: any) => {
+    return item.map((i: any) => {
+      return i.quantityInOrder;
+    });
+  };
+
   const data = {
-    labels: ['XSSASC', 'XVVBC', 'XZCZX', 'ASD'],
+    labels: getLabel1(dataObj),
     datasets: [
       {
-        data: [20, 45, 28, 80],
+        data: getQuantity(dataObj),
       },
     ],
   };
@@ -36,19 +127,19 @@ export const SalesScreen: React.FC<Props> = () => {
         p={4}
         borderRadius={4}
       >
-        <Row>
+        <Row justifyContent="space-between">
           <Column>
             <Text>{listInvoice.length} hoá đơn</Text>
             <Text fontSize={24} color="green.700" fontWeight="700">
               {totals} đ
             </Text>
           </Column>
-          {/*<Column>*/}
-          {/*  <Text>Lợi nhuận</Text>*/}
-          {/*  <Text fontSize={24} color="blue">*/}
-          {/*    4.37<Text>Tr</Text>*/}
-          {/*  </Text>*/}
-          {/*</Column>*/}
+          <Column>
+            <Text>Lợi nhuận</Text>
+            <Text fontSize={24} color="green.700" fontWeight="700">
+              {capital} đ
+            </Text>
+          </Column>
         </Row>
       </Box>
       <Box w="100%" mt={3}>

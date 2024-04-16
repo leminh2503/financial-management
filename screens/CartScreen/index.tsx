@@ -1,7 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { Box, Button, Column, FlatList, Icon, Row, Text } from 'native-base';
 import { StyleSheet } from 'react-native';
-import { cloneDeep } from 'lodash';
 
 // navigation
 import { RootStackParamList } from '../../navigation/types';
@@ -17,7 +16,9 @@ import {
 } from '../../lib/redux/reducers/productReducer';
 import { FontAwesome } from '@expo/vector-icons';
 import { ModalAddClient } from './modals/ModalAddClient';
+import { ApiService } from '../../lib/axios';
 import { addInvoice } from '../../lib/redux/reducers/invoiceReducer';
+import { cloneDeep } from 'lodash';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'List'>;
 
@@ -39,18 +40,25 @@ export const CartScreen: React.FC<Props> = () => {
     );
   }, [cart]);
 
-  const handleCreateInvoice = async (data: { name: string; phone: string }) => {
-    const id = Math.floor(Math.random() * 99999);
+  const handleCreateInvoice = async (data: { name: string }) => {
+    const listOrderItem = cart.map((item) => {
+      return {
+        productId: item.productId,
+        quantityInOrder: item.count,
+      };
+    });
+    const res = await ApiService.createOrder({
+      orderName: data.name,
+      products: listOrderItem,
+    });
+    const dataRes = res.data.data;
     const listProduct = cloneDeep(cart);
     await dispatch(
       addInvoice({
-        id: id,
-        name: data.name,
-        phone: data.phone,
-        user: user,
-        total: total,
+        id: dataRes.orderId,
+        orderName: dataRes.orderName,
         products: listProduct,
-        createdAt: new Date().toISOString(),
+        createdDate: new Date().toISOString(),
       })
     );
     await listProduct.forEach((item) => {
@@ -58,13 +66,13 @@ export const CartScreen: React.FC<Props> = () => {
         editProduct({
           ...item,
           count: 0,
-          productQuantity: item.productQuantity - item.count,
+          quantityInOrder: item.quantityInOrder + item.count,
         })
       );
     });
     await dispatch(addCartToInvoice());
     navigate.navigate('InvoiceDetail', {
-      id: id,
+      id: dataRes.orderId,
     });
     // console.log('handleCreateInvoice', user);
   };

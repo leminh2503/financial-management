@@ -40,6 +40,7 @@ export interface ProductModel {
   productImageId: string;
   productImagePath?: string;
   productQuantity: number;
+  quantityInOrder: number;
   productSKU: string;
   productCost: number;
   count: number;
@@ -63,11 +64,17 @@ export interface ProductModelTest {
 }
 
 export interface InvoiceModel {
-  id: number;
-  total: number;
-  user: UserModel;
-  name: string;
-  phone: string;
+  orderId: number;
+  orderName: string;
   products: ProductModel[];
-  createdAt: string;
+  createdDate: string;
+}
+
+export interface CreateInvoiceModel {
+  orderId?: number;
+  orderName: string;
+  products: {
+    productId: number;
+    quantityInOrder: number;
+  }[];
 }

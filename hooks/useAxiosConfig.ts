@@ -25,6 +25,7 @@ export default function usePusherNotification() {
           return response;
         },
         (error) => {
+          console.log('errortoken-------', token);
           console.log('error-------', error?.response);
           // If API return 401 not authorized error, then sign-out
           if (error?.response.status == 401) {
@@ -42,7 +43,7 @@ export default function usePusherNotification() {
       setLoadingComplete(true);
     };
     initActionOfTokenExpired();
-  }, []);
+  }, [token]);
 
   return isLoadingComplete;
 }

@@ -8,6 +8,7 @@ import { DataTable } from 'react-native-paper';
 import { AntDesign } from '@expo/vector-icons';
 import { useRoute } from '@react-navigation/native';
 import { InvoiceModel } from '../../lib/axios';
+import moment from 'moment';
 
 export default function InvoiceDetail() {
   const { listInvoice } = useSelector((state: RootState) => state.invoice);
@@ -19,26 +20,28 @@ export default function InvoiceDetail() {
     setInvoice(item);
   }, [listInvoice, params]);
 
-  console.log('invoice---', invoice);
+  const total = invoice?.products?.reduce((a, i) => {
+    return a + i.quantityInOrder * i.productPrice;
+  }, 0);
 
   return (
     <Box style={styles.container}>
       <Row justifyContent="space-between">
         <Text fontWeight="bold">Ngày lập hoá đơn</Text>
-        <Text>{invoice?.createdAt}</Text>
+        <Text>{moment(invoice?.createdDate).format('DD/MM/yyyy HH:mm')}</Text>
       </Row>
-      <Row mt={1} justifyContent="space-between">
-        <Text fontWeight="bold">Mã nhân viên</Text>
-        <Text>{invoice?.user?.username}</Text>
-      </Row>
-      <Row mt={1} justifyContent="space-between">
+      {/*<Row mt={1} justifyContent="space-between">*/}
+      {/*  <Text fontWeight="bold">Mã nhân viên</Text>*/}
+      {/*  <Text>{invoice?.user?.username}</Text>*/}
+      {/*</Row>*/}
+      <Row my={3} justifyContent="space-between">
         <Text fontWeight="bold">Tên khách hàng</Text>
-        <Text>{invoice?.name}</Text>
+        <Text>{invoice?.orderName}</Text>
       </Row>
-      <Row mt={1} mb={4} justifyContent="space-between">
-        <Text fontWeight="bold">Số điện thoại</Text>
-        <Text>{invoice?.phone}</Text>
-      </Row>
+      {/*<Row mt={1} mb={4} justifyContent="space-between">*/}
+      {/*  <Text fontWeight="bold">Số điện thoại</Text>*/}
+      {/*  <Text>{invoice?.phone}</Text>*/}
+      {/*</Row>*/}
 
       <DataTable>
         <DataTable.Header style={styles.databeHeader}>
@@ -57,14 +60,14 @@ export default function InvoiceDetail() {
               {l.productPrice}
             </DataTable.Cell>
             <DataTable.Cell style={{ flex: 1 }}>
-              {l.productQuantity}
+              {l.quantityInOrder}
             </DataTable.Cell>
           </DataTable.Row>
         ))}
       </DataTable>
       <Row mt={4} justifyContent="space-between">
         <Text fontWeight="bold">Tổng thanh toán</Text>
-        <Text>{invoice?.total} đ</Text>
+        <Text>{total} đ</Text>
       </Row>
       <Button mt={3} backgroundColor="#0065D6">
         <Row alignItems="center" space={4}>

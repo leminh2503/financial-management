@@ -30,6 +30,7 @@ const BottomTabContent = React.memo(function BottomTabContent() {
   };
 
   useEffect(() => {
+    console.log('token------', token);
     if (!token) {
       navigation.navigate('Signin');
     }

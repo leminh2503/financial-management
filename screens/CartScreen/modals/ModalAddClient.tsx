@@ -12,7 +12,7 @@ import { useDispatch } from 'react-redux';
 type Props = {
   open: boolean;
   closeModal: () => void;
-  createInvoice: (user: { name: string; phone: string }) => void;
+  createInvoice: (user: { name: string }) => void;
 };
 
 export const ModalAddClient: React.FC<Props> = ({
@@ -26,7 +26,7 @@ export const ModalAddClient: React.FC<Props> = ({
   const onPressSave = () => {
     closeModal();
     // dispatch(setClient({ name, phone }));
-    createInvoice({ name, phone });
+    createInvoice({ name });
   };
 
   return (
@@ -52,14 +52,14 @@ export const ModalAddClient: React.FC<Props> = ({
               <FormControl.Label>Tên khách hàng</FormControl.Label>
               <Input value={name} onChangeText={setName} />
             </FormControl>
-            <FormControl mt="3">
-              <FormControl.Label>Số điện thoại</FormControl.Label>
-              <Input
-                keyboardType="numeric"
-                value={phone}
-                onChangeText={setPhone}
-              />
-            </FormControl>
+            {/*<FormControl mt="3">*/}
+            {/*  <FormControl.Label>Số điện thoại</FormControl.Label>*/}
+            {/*  <Input*/}
+            {/*    keyboardType="numeric"*/}
+            {/*    value={phone}*/}
+            {/*    onChangeText={setPhone}*/}
+            {/*  />*/}
+            {/*</FormControl>*/}
           </Modal.Body>
           <Modal.Footer>
             <Button.Group space={2}>

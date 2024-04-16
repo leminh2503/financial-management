@@ -40,12 +40,10 @@ const productSlice = createSlice({
       console.log('addToCart-----', state.cart);
     },
     addCartToInvoice(state) {
-      console.log('addCartToInvoice-----', state.cart);
       state.cart.forEach((item) => {
-        console.log('item---', item);
         editProduct({
           ...item,
-          productQuantity: item.productQuantity - item.count,
+          quantityInOrder: item.quantityInOrder + item.count,
           count: 0,
         });
       });
