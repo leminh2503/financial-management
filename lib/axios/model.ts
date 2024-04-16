@@ -38,6 +38,7 @@ export interface ProductModel {
   productPrice: number;
   productDescription: string;
   productImageId: string;
+  productImagePath?: string;
   productQuantity: number;
   productSKU: string;
   count: number;

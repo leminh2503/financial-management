@@ -5,9 +5,15 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 import { addToCart } from '../../../lib/redux/reducers/productReducer';
 import { TouchableRipple } from 'react-native-paper';
+import { ApiService } from '../../../lib/axios';
 
-export const Item2 = ({ item }: PropsItem) => {
+export const Item2 = ({ item, openItem }: PropsItem) => {
   const dispatch = useDispatch();
+
+  const getURLImage = async (id: any) => {
+    const res = await ApiService.getImageById(id);
+    return res.data.message;
+  };
 
   const addItemToCart = (item: any) => {
     dispatch(
@@ -18,7 +24,12 @@ export const Item2 = ({ item }: PropsItem) => {
     );
   };
   return (
-    <TouchableRipple onPress={() => addItemToCart(item)}>
+    <TouchableRipple
+      onPress={() => {
+        if (openItem) openItem(item);
+        else addItemToCart(item);
+      }}
+    >
       <Box
         borderBottomWidth="1"
         _light={{

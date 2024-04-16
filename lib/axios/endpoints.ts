@@ -48,7 +48,6 @@ class ApiService {
   }
 
   postImage(formData: FormData) {
-    console.log('data', formData);
     return http.post<DataResponse<ImageModel>>('/api/Image', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -57,6 +56,10 @@ class ApiService {
         return formData; // this is doing the trick
       },
     });
+  }
+
+  getImageById(id: any) {
+    return http.get<DataResponse<any>>(`/api/Image/${id}`);
   }
 
   getProduct() {

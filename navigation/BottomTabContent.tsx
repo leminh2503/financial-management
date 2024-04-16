@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import {
   getFocusedRouteNameFromRoute,
@@ -8,11 +8,14 @@ import {
 } from '@react-navigation/native';
 import RouteList from './RouteList';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { RootState } from '../lib/redux/store';
+import { useSelector } from 'react-redux';
 
 const BottomTabContent = React.memo(function BottomTabContent() {
   const navigation = useNavigation();
   const theme = useTheme().colors;
   const route = useRoute();
+  const { token } = useSelector((state: RootState) => state.auth);
   const currentRoute = getFocusedRouteNameFromRoute(route) ?? 'Sales';
   const getColor = (name: string, index: number): string => {
     if (currentRoute === undefined) {
@@ -25,6 +28,13 @@ const BottomTabContent = React.memo(function BottomTabContent() {
 
     return 'black';
   };
+
+  useEffect(() => {
+    if (!token) {
+      navigation.navigate('Signin');
+    }
+  }, [token]);
+
   return (
     <View style={[styles.main, { backgroundColor: theme.background }]}>
       {RouteList.map(

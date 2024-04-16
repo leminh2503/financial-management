@@ -1,22 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Box,
-  Button,
-  Column,
-  FlatList,
-  Heading,
-  Icon,
-  Image,
-  Row,
-  Text,
-} from 'native-base';
+import { Box, Button, FlatList, Row } from 'native-base';
 
 // navigation
 import { RootStackParamList } from '../../navigation/types';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { ApiService, ProductModel, UserModel } from '../../lib/axios';
-import { Octicons } from '@expo/vector-icons';
-import { RefreshControl, TouchableOpacity } from 'react-native';
+import { ApiService, ProductModel } from '../../lib/axios';
+import { RefreshControl } from 'react-native';
 import { ModalItemProduct } from './modals/ModalItemProduct';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -25,6 +14,7 @@ import {
   setListProduct,
 } from '../../lib/redux/reducers/productReducer';
 import { RootState } from '../../lib/redux/store';
+import { Item2 } from './components/Item2';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'List'>;
 
@@ -51,7 +41,6 @@ export const _ListData: ProductModel[] = [
 ];
 
 export const ListScreen: React.FC<Props> = () => {
-  const [lists, setLists] = useState<UserModel[]>();
   const [selectedItem, setSelectedItem] = useState<any>();
   const [showAppModal, setShowModal] = useState(false);
   const dispatch = useDispatch();
@@ -60,16 +49,10 @@ export const ListScreen: React.FC<Props> = () => {
   const [loading, setLoading] = useState(false);
 
   const onPressItem = async (item: any) => {
-    // TODO: do something
-    // props.navigation.navigate('Detail', {
-    //   screen: 'Profile',
-    //   params: item,
-    // });
+    console.log('item-----', item);
     setSelectedItem(item);
     setShowModal(true);
   };
-
-  console.log('listProduct: ', listProduct);
 
   const handleCloseModal = () => {
     setShowModal(false);
@@ -93,7 +76,6 @@ export const ListScreen: React.FC<Props> = () => {
   const handleDeleteItem = (item: ProductModel) => {
     ApiService.deleteProduct(item.productId)
       .then((e) => {
-        console.log('Delete product: ', e.data.data);
         setShowModal(false);
         dispatch(deleteProduct(item.productId));
       })
@@ -105,19 +87,22 @@ export const ListScreen: React.FC<Props> = () => {
     setLoading(true);
     ApiService.getProduct()
       .then((e) => {
-        // console.log('getListProduct-----', e.data.data);
         dispatch(setListProduct(e.data.data));
         setLoading(false);
       })
       .catch((e) => {
-        console.log('Error: ', e);
         setLoading(false);
       });
   };
 
+  const getURLImage = async (id: any) => {
+    const res = await ApiService.getImageById(id);
+    return res.data.message;
+  };
+
   useEffect(() => {
     getListProduct();
-  }, []);
+  }, [user]);
 
   return (
     <Box w="100%">
@@ -134,78 +119,13 @@ export const ListScreen: React.FC<Props> = () => {
         }
         ListFooterComponent={<Box height={120}></Box>}
         data={listProduct}
-        renderItem={({ item }) => (
-          <Box
-            borderBottomWidth="1"
-            _light={{
-              borderColor: 'light.border',
-            }}
-            _dark={{
-              borderColor: 'dark.border',
-            }}
-            pl="4"
-            pr="5"
-            py="2"
-          >
-            <Row space={3} justifyContent="space-between">
-              <Column mr={1}>
-                <Row>
-                  <Column justifyContent="center">
-                    <Icon
-                      hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
-                      onPress={(event) => {
-                        event.preventDefault();
-                        addItemToCart(item);
-                      }}
-                      as={Octicons}
-                      color="#E80843"
-                      name="plus"
-                      size="30"
-                      mr={3}
-                    />
-                  </Column>
+        renderItem={({ item }) => {
+          // const urlImage = getURLImage(item.productImageId);
 
-                  <TouchableOpacity
-                    activeOpacity={0.5}
-                    onPress={() => {
-                      onPressItem(item);
-                    }}
-                  >
-                    <Row>
-                      <Column>
-                        <Image
-                          style={{ width: 100, height: 80, borderRadius: 10 }} // style={{ width: 50, height: 50 }}
-                          source={{
-                            uri: _item.productImageId,
-                          }}
-                          mr={3}
-                        ></Image>
-                      </Column>
-                      <Column>
-                        <Heading fontSize="sm">{item.productName}</Heading>
-                        <Text mt={0.5} fontSize="xs">
-                          Mã sản phẩm: {item.productSKU}
-                        </Text>
-                        <Text
-                          mt={0.5}
-                          color={
-                            item.productQuantity < 5 ? 'orange.600' : '#000e21'
-                          }
-                          fontSize={item.productQuantity < 5 ? 'lg' : 'xs'}
-                        >
-                          Tồn kho: {item.productQuantity}
-                        </Text>
-                        <Text mt={0.5} fontSize="sm" color="orange.600">
-                          Giá thành: {item.productPrice}
-                        </Text>
-                      </Column>
-                    </Row>
-                  </TouchableOpacity>
-                </Row>
-              </Column>
-            </Row>
-          </Box>
-        )}
+          // console.log('urlImage----', urlImage);
+
+          return <Item2 item={item} openItem={onPressItem} />;
+        }}
         keyExtractor={(item) => Math.random().toString()}
       />
       <ModalItemProduct

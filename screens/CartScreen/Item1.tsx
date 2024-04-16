@@ -10,6 +10,7 @@ import {
 
 export interface PropsItem {
   item: ProductModel;
+  openItem?: (item: ProductModel) => void;
 }
 
 export const Item1 = ({ item }: PropsItem) => {

@@ -1,13 +1,14 @@
 import { apiClient } from '../lib/axios';
 import { Alert, useToast } from 'native-base';
 // redux
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../lib/redux/store';
+import { useDispatch } from 'react-redux';
+import { store } from '../lib/redux/store';
 import { useEffect, useState } from 'react';
+import { resetAuthData } from '../lib/redux/reducers/authReducer';
 
 export default function usePusherNotification() {
   const [isLoadingComplete, setLoadingComplete] = useState(false);
-  const { token } = useSelector((state: RootState) => state.auth);
+  const { token } = store.getState().auth;
   const toast = useToast();
   const dispatch = useDispatch();
   useEffect(() => {
@@ -21,15 +22,13 @@ export default function usePusherNotification() {
       });
       apiClient.interceptors.response.use(
         (response) => {
-          console.log('response-------', response);
-
           return response;
         },
         (error) => {
-          console.log('error-------', error.response);
+          console.log('error-------', error?.response);
           // If API return 401 not authorized error, then sign-out
           if (error?.response.status == 401) {
-            // dispatch(resetAuthData());
+            dispatch(resetAuthData());
             toast.show({
               title: 'Error',
               placement: 'top',

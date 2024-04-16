@@ -15,10 +15,10 @@ import {
   Image,
   Input,
   KeyboardAvoidingView,
-  Link,
   Row,
   Spacer,
   Text,
+  useToast,
 } from 'native-base';
 
 //redux
@@ -39,6 +39,7 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Signin'>;
 
 export const SigninScreen: React.FC<Props> = (props) => {
   const dispatch = useDispatch();
+  const toast = useToast();
   const { loginInfo } = useSelector((state: RootState) => state.auth);
   const [username, onChangeUsername] = React.useState(loginInfo?.username);
   const [password, onChangePassword] = React.useState(loginInfo?.password);
@@ -71,7 +72,15 @@ export const SigninScreen: React.FC<Props> = (props) => {
         }
         props.navigation.navigate('BottomTab', { screen: 'Sales' });
       })
-      .catch((err) => console.log('err----', err));
+      .catch((err) => {
+        console.log('err------', String(err.message));
+
+        toast.show({
+          title: 'Error',
+          placement: 'top',
+          description: String(err),
+        });
+      });
   };
   const onPressSignupLink = () => {
     props.navigation.navigate('Signup');
@@ -123,17 +132,15 @@ export const SigninScreen: React.FC<Props> = (props) => {
                 Remember me
               </Checkbox>
               <Spacer />
-              <Link href={'https://your.app.web/forgot-password'} isExternal>
-                Forget Password?
-              </Link>
+              <Text>Forget Password?</Text>
             </Row>
             <Button onPress={onPressSigninButton} mt="2">
               Sign in
             </Button>
-            <Row mt="6" justifyContent="center">
-              <Text>I&apos;m a new user. </Text>
-              <Link onPress={onPressSignupLink}>Sign Up</Link>
-            </Row>
+            {/*<Row mt="6" justifyContent="center">*/}
+            {/*  <Text>I&apos;m a new user. </Text>*/}
+            {/*  <Link onPress={onPressSignupLink}>Sign Up</Link>*/}
+            {/*</Row>*/}
           </Column>
         </Box>
       </Center>
