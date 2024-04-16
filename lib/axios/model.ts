@@ -41,6 +41,7 @@ export interface ProductModel {
   productImagePath?: string;
   productQuantity: number;
   productSKU: string;
+  productCost: number;
   count: number;
 }
 

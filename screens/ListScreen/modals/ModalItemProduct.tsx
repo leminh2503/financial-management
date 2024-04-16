@@ -38,6 +38,7 @@ export const ModalItemProduct: React.FC<Props> = ({
   const [quantity, setQuantity] = React.useState('');
   const [image, setImage] = React.useState('');
   const [code, setCode] = React.useState('');
+  const [cost, setCost] = React.useState('');
   const [imageApi, setImageApi] = React.useState<ImageModel>('');
   const [loading, setLoading] = React.useState(false);
   const dispatch = useDispatch();
@@ -49,10 +50,11 @@ export const ModalItemProduct: React.FC<Props> = ({
     });
     if (!result.canceled) {
       const formData = new FormData();
+      console.log('result:-----', result.assets[0]);
       formData?.append('imageFile', {
         uri: result.assets[0].uri,
-        name: result.assets[0].fileName || 'image.png',
-        type: result.assets[0].mimeType,
+        type: 'image/jpeg',
+        name: `image${Math.random() * 99999}`,
       });
       setLoading(true);
       const reponsrImage = await ApiService.postImage(formData)
@@ -77,6 +79,7 @@ export const ModalItemProduct: React.FC<Props> = ({
       productQuantity: parseInt(quantity),
       productImageId: imageApi.imageId,
       productSKU: code,
+      productCost: parseInt(cost),
     };
     setLoading(true);
     ApiService.postProduct(data)
@@ -107,6 +110,7 @@ export const ModalItemProduct: React.FC<Props> = ({
       productQuantity: parseInt(quantity),
       productImageId: imageApi.imageId,
       productSKU: code,
+      productCost: parseInt(cost),
     };
     setLoading(true);
     ApiService.patchProduct(data)
@@ -138,6 +142,7 @@ export const ModalItemProduct: React.FC<Props> = ({
     setQuantity(selectItem?.productQuantity.toString() || '');
     setImage(selectItem?.productImageId || '');
     setCode(selectItem?.productSKU || '');
+    setCost(selectItem?.productCost.toString() || '');
   }, [selectItem]);
 
   return (
@@ -207,14 +212,16 @@ export const ModalItemProduct: React.FC<Props> = ({
                   keyboardType={'numeric'}
                 />
               </FormControl>
-              <FormControl mt="3">
-                <FormControl.Label>Mô tả</FormControl.Label>
-                <Input
-                  placeholder="Description"
-                  value={description}
-                  onChangeText={setDescription}
-                />
-              </FormControl>
+              {isAdmin && (
+                <FormControl mt="3">
+                  <FormControl.Label>Giá nhập</FormControl.Label>
+                  <Input
+                    value={cost}
+                    onChangeText={setCost}
+                    keyboardType={'numeric'}
+                  />
+                </FormControl>
+              )}
             </Modal.Body>
             <Modal.Footer>
               <Button.Group space={2}>

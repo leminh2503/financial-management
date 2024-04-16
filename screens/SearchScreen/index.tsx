@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useEffect } from 'react';
 
 // navigation
 import { RootStackParamList } from '../../navigation/types';
@@ -9,6 +9,7 @@ import { Item2 } from '../ListScreen/components/Item2';
 import { ProductModel } from '../../lib/axios';
 import { RootState } from '../../lib/redux/store';
 import { useSelector } from 'react-redux';
+import { useDebounce } from '../../hooks/useDebounce';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'List'>;
 const _item: ProductModel = {
@@ -21,24 +22,27 @@ const _item: ProductModel = {
   productSKU: 'MZISKSFJSK',
   count: 0,
 };
-const _ListData: ProductModel[] = [
-  _item,
-  _item,
-  _item,
-  _item,
-  _item,
-  _item,
-  _item,
-  _item,
-  _item,
-  _item,
-  _item,
-  _item,
-];
 
 export const SearchScreen: React.FC<Props> = () => {
   const { listProduct } = useSelector((state: RootState) => state.product);
+  const [list, setList] = React.useState<ProductModel[]>([]);
   const [searchQuery, setSearchQuery] = React.useState('');
+  const debouncedValue = useDebounce(searchQuery, 500);
+
+  const search = useCallback(async () => {
+    const listResult = listProduct.filter((item) => {
+      return item.productSKU.includes(debouncedValue);
+    });
+    setList(listResult);
+  }, [debouncedValue]);
+
+  useEffect(() => {
+    search();
+  }, [debouncedValue, search]);
+
+  useEffect(() => {
+    setList(listProduct);
+  }, [listProduct]);
   return (
     <Box>
       <Searchbar
@@ -48,7 +52,7 @@ export const SearchScreen: React.FC<Props> = () => {
         value={searchQuery}
       />
       <FlatList
-        data={listProduct}
+        data={list}
         renderItem={({ item }) => {
           return <Item2 item={item} />;
         }}

@@ -120,10 +120,6 @@ export const ListScreen: React.FC<Props> = () => {
         ListFooterComponent={<Box height={120}></Box>}
         data={listProduct}
         renderItem={({ item }) => {
-          // const urlImage = getURLImage(item.productImageId);
-
-          // console.log('urlImage----', urlImage);
-
           return <Item2 item={item} openItem={onPressItem} />;
         }}
         keyExtractor={(item) => Math.random().toString()}
