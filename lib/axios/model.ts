@@ -38,12 +38,13 @@ export interface ProductModel {
   productPrice: number;
   productDescription: string;
   productImageId: string;
-  productImagePath?: string;
+  productImagePath: string;
   productQuantity: number;
   quantityInOrder: number;
   productSKU: string;
   productCost: number;
   count: number;
+  productQuantitySold?: number;
 }
 
 export interface ImageModel {

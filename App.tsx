@@ -14,10 +14,12 @@ import { PersistGate } from 'redux-persist/es/integration/react';
 
 import { Root } from './Root';
 import { StatusBar } from 'expo-status-bar';
+import { fbApp } from './hooks/useFirestorage';
 
 export default function App() {
   const mode = useColorScheme();
   // Changing initialColorMode to 'dark' or 'light' or system(mode)
+  fbApp;
   theme.config.initialColorMode = mode;
   return (
     <NativeBaseProvider theme={theme}>

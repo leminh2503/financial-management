@@ -3,6 +3,7 @@ import { Card, TouchableRipple } from 'react-native-paper';
 import React, { useMemo } from 'react';
 import { InvoiceModel } from '../../lib/axios';
 import { useNavigation } from '@react-navigation/native';
+import moment from 'moment';
 
 export const ItemInvoice = ({ item }: { item: InvoiceModel }) => {
   const navigate = useNavigation();
@@ -35,7 +36,9 @@ export const ItemInvoice = ({ item }: { item: InvoiceModel }) => {
               <Text fontStyle="italic" fontSize={14}>
                 {item.orderName}
               </Text>
-              <Text fontStyle="italic">{item.createdAt}</Text>
+              <Text fontStyle="italic">
+                {moment(item.createdDate).format('DD/MM/YYYY HH:mm')}
+              </Text>
             </Row>
           </Box>
         </Card>

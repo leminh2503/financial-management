@@ -14,15 +14,6 @@ export interface PropsItem {
 }
 
 export const Item1 = ({ item }: PropsItem) => {
-  const {
-    productId,
-    productName,
-    productQuantity,
-    productImageId,
-    productDescription,
-    productPrice,
-    productSKU,
-  } = item;
   const [count, setCount] = useState(item.count || 0);
   const dispatch = useDispatch();
   useEffect(() => {
@@ -68,7 +59,7 @@ export const Item1 = ({ item }: PropsItem) => {
             color={item.productQuantity < 5 ? 'orange.600' : '#000e21'}
             fontSize={item.productQuantity < 5 ? 'lg' : 'xs'}
           >
-            Tồn kho: {item.productQuantity}
+            Tồn kho: {item.productQuantity - (item.productQuantitySold || 0)}
           </Text>
           <Text mt={0.5} fontSize="sm" color="orange.600">
             Giá thành: {item.productPrice} đ

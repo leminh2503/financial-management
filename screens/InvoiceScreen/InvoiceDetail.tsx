@@ -1,7 +1,7 @@
 // import { Table } from "react-native-table-component";
 import { StyleSheet } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import { Box, Button, Icon, Row, Text } from 'native-base';
+import { Box, Button, Icon, Row, ScrollView, Text } from 'native-base';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../lib/redux/store';
 import { DataTable } from 'react-native-paper';
@@ -27,7 +27,7 @@ export default function InvoiceDetail() {
   console.log('invoice----', invoice);
 
   return (
-    <Box style={styles.container}>
+    <ScrollView style={styles.container}>
       <Row justifyContent="space-between">
         <Text fontWeight="bold">Ngày lập hoá đơn</Text>
         <Text>{moment(invoice?.createdDate).format('DD/MM/yyyy HH:mm')}</Text>
@@ -79,7 +79,8 @@ export default function InvoiceDetail() {
           <Icon name="printer" as={AntDesign} color="#FFFFFF" />
         </Row>
       </Button>
-    </Box>
+      <Box height={100}></Box>
+    </ScrollView>
   );
 }
 

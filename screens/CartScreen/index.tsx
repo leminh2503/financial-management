@@ -59,10 +59,10 @@ export const CartScreen: React.FC<Props> = () => {
         quantityInOrder: item.count,
       };
     });
-    const id = Math.floor(Math.random() * 1000);
+
     await dispatch(
       addInvoice({
-        id: id,
+        id: dataRes.orderId,
         orderName: dataRes.orderName,
         products: listProductMap,
         createdDate: new Date().toISOString(),
@@ -73,13 +73,13 @@ export const CartScreen: React.FC<Props> = () => {
         editProduct({
           ...item,
           count: 0,
-          quantityInOrder: item.quantityInOrder,
+          productQuantitySold: (item.productQuantitySold || 0) + item.count,
         })
       );
     });
     await dispatch(addCartToInvoice());
     navigate.navigate('InvoiceDetail', {
-      id: id,
+      id: dataRes.orderId,
     });
     // console.log('handleCreateInvoice', user);
   };

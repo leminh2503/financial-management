@@ -109,14 +109,16 @@ export const SalesScreen: React.FC<Props> = () => {
     });
   };
 
-  const data = {
-    labels: getLabel1(dataObj),
-    datasets: [
-      {
-        data: getQuantity(dataObj),
-      },
-    ],
-  };
+  const data = useMemo(() => {
+    return {
+      labels: getLabel1(dataObj),
+      datasets: [
+        {
+          data: getQuantity(dataObj),
+        },
+      ],
+    };
+  }, [listInvoice]);
 
   return (
     <Center mt={3} mx={2}>

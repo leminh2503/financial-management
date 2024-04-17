@@ -92,13 +92,10 @@ const productSlice = createSlice({
             ? {
                 ...item,
                 ...action.payload,
-                quantityInOrder:
-                  item.quantityInOrder + action.payload.quantityInOrder,
               }
             : item
         );
       }
-      console.log('editProduct-----', state.listProduct);
     },
     deleteProduct(state, action: PayloadAction<number>) {
       state.listProduct = state.listProduct.filter(

@@ -5,15 +5,22 @@ import { RootState } from '../../lib/redux/store';
 import { ItemInvoice } from './ItemInvoice';
 import { ApiService } from '../../lib/axios';
 import { setListInvoice } from '../../lib/redux/reducers/invoiceReducer';
+import { RefreshControl } from 'react-native';
 
 export const ListInvoiceScreen = () => {
   const dispatch = useDispatch();
   const { listInvoice } = useSelector((state: RootState) => state.invoice);
-
+  const [refreshing, setRefreshing] = React.useState(false);
   const getInvoice = async () => {
-    ApiService.getOrder().then((res) => {
-      dispatch(setListInvoice(res.data.data));
-    });
+    setRefreshing(true);
+    ApiService.getOrder()
+      .then((res) => {
+        setRefreshing(false);
+        dispatch(setListInvoice(res.data.data.reverse()));
+      })
+      .catch(() => {
+        setRefreshing(false);
+      });
   };
 
   useEffect(() => {
@@ -25,6 +32,10 @@ export const ListInvoiceScreen = () => {
       <FlatList
         ListFooterComponent={<Box p={4} />}
         data={listInvoice}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={getInvoice} />
+        }
+        keyExtractor={(item) => item?.orderId?.toString()}
         renderItem={({ item, index }) => {
           return <ItemInvoice item={item} />;
         }}

@@ -5,21 +5,13 @@ import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { addToCart } from '../../../lib/redux/reducers/productReducer';
 import { TouchableRipple } from 'react-native-paper';
-import { ApiService } from '../../../lib/axios';
 import { useRoleAdmin } from '../../../hooks/useRoleAdmin';
+import { ProductModel } from '../../../lib/axios';
+import { getImageStorage } from '../../../hooks/useFirestorage';
 
 export const Item2 = ({ item, openItem }: PropsItem) => {
   const dispatch = useDispatch();
   const [image, setImage] = React.useState<string>('');
-
-  const getURLImage = async (id: any) => {
-    const res = await ApiService.getImageById(id);
-    setImage(res.data.message);
-  };
-
-  useEffect(() => {
-    getURLImage(71);
-  }, [item]);
 
   const addItemToCart = (item: any) => {
     dispatch(
@@ -29,6 +21,17 @@ export const Item2 = ({ item, openItem }: PropsItem) => {
       })
     );
   };
+
+  const getURLImage = async (item?: ProductModel) => {
+    const url = await getImageStorage(item?.productImageId);
+    setImage(url);
+  };
+
+  useEffect(() => {
+    getURLImage(item);
+  }, []);
+
+  console.log('item', item);
 
   return (
     <TouchableRipple
@@ -49,48 +52,51 @@ export const Item2 = ({ item, openItem }: PropsItem) => {
         pr="5"
         py="2"
       >
-        <Row space={3} justifyContent="space-between">
-          <Column mr={1}>
-            <Row>
-              <Column justifyContent="center">
-                <Icon
-                  hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
-                  onPress={(event) => {
-                    event.preventDefault();
-                    addItemToCart(item);
-                  }}
-                  as={Octicons}
-                  color="#E80843"
-                  name="plus"
-                  size={30}
-                  mr={3}
-                />
-              </Column>
-              <Column>
-                <Image
-                  style={{ width: 100, height: 80, borderRadius: 10 }} // style={{ width: 50, height: 50 }}
-                  source={{
-                    uri: 'https://picsum.photos/200/300',
-                  }}
-                  mr={3}
-                ></Image>
-              </Column>
-              <Column>
-                <Heading fontSize="sm">{item.productName}</Heading>
-                <Text fontSize="xs">Mã sản phẩm: {item.productSKU}</Text>
-                <Text
-                  color={item.productQuantity < 5 ? 'orange.600' : '#000e21'}
-                  fontSize={item.productQuantity < 5 ? 'lg' : 'xs'}
-                >
-                  Tồn kho: {item.productQuantity - (item.quantityInOrder || 0)}
-                </Text>
-                {useRoleAdmin() && (
-                  <Text fontSize="xs">Giá nhập: {item.productCost}</Text>
-                )}
-                <Text fontSize="sm" color="orange.600">
-                  Giá thành: {item.productPrice}
-                </Text>
-              </Column>
+        <Row alignContent="stretch" width="100%">
+          <Column justifyContent="center" flex={1}>
+            <Icon
+              hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
+              onPress={(event) => {
+                event.preventDefault();
+                addItemToCart(item);
+              }}
+              as={Octicons}
+              color="#E80843"
+              name="plus"
+              size={30}
+              mr={3}
+            />
+          </Column>
+          <Column flex={3}>
+            <Image
+              style={{ width: 100, height: 80, borderRadius: 10 }} // style={{ width: 50, height: 50 }}
+              source={{
+                uri:
+                  item.productImagePath ||
+                  image ||
+                  'https://via.placeholder.com/150',
+              }}
+            ></Image>
+          </Column>
+          <Column flex={6} pl={3}>
+            <Heading fontSize="sm">{item.productName}</Heading>
+            <Text fontSize="xs">Mã sản phẩm: {item.productSKU}</Text>
+
+            <Text
+              color={item.productQuantity < 5 ? 'orange.600' : '#000e21'}
+              fontSize={item.productQuantity < 5 ? 'lg' : 'xs'}
+            >
+              Tồn kho: {item.productQuantity - (item.productQuantitySold || 0)}
+            </Text>
+
+            {useRoleAdmin() && (
+              <Text fontSize="xs">Giá nhập: {item.productCost}</Text>
+            )}
+            <Row alignItems="center" justifyContent="space-between">
+              <Text fontSize="sm" color="orange.600">
+                đ{item.productPrice}
+              </Text>
+              <Text fontSize="10">Đã bán: {item.productQuantitySold || 0}</Text>
             </Row>
           </Column>
         </Row>

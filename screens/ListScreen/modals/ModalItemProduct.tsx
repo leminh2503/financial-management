@@ -18,6 +18,7 @@ import {
   editProduct,
 } from '../../../lib/redux/reducers/productReducer';
 import { useRoleAdmin } from '../../../hooks/useRoleAdmin';
+import { uploadStorage } from '../../../hooks/useFirestorage';
 
 type Props = {
   open: boolean;
@@ -83,8 +84,11 @@ export const ModalItemProduct: React.FC<Props> = ({
     };
     setLoading(true);
     ApiService.postProduct(data)
-      .then((e) => {
-        console.log('Add product: ', e.data.data);
+      .then(async (e) => {
+        const response = await uploadStorage(image, imageApi.imageId);
+
+        console.log('Add product: ', response);
+
         dispatch(
           addToListProduct({
             ...e.data.data,
@@ -97,7 +101,7 @@ export const ModalItemProduct: React.FC<Props> = ({
       .catch((e) => {
         setLoading(false);
         // Alert(JSON.stringify(e));
-        console.log('Error: ---', e.response);
+        console.log('Error: ---', e);
       });
   };
 
