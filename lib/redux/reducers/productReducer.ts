@@ -92,6 +92,8 @@ const productSlice = createSlice({
             ? {
                 ...item,
                 ...action.payload,
+                quantityInOrder:
+                  item.quantityInOrder + action.payload.quantityInOrder,
               }
             : item
         );

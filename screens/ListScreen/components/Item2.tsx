@@ -30,8 +30,6 @@ export const Item2 = ({ item, openItem }: PropsItem) => {
     );
   };
 
-  console.log('item-----', item, image);
-
   return (
     <TouchableRipple
       onPress={() => {
@@ -84,7 +82,7 @@ export const Item2 = ({ item, openItem }: PropsItem) => {
                   color={item.productQuantity < 5 ? 'orange.600' : '#000e21'}
                   fontSize={item.productQuantity < 5 ? 'lg' : 'xs'}
                 >
-                  Tồn kho: {item.productQuantity}
+                  Tồn kho: {item.productQuantity - (item.quantityInOrder || 0)}
                 </Text>
                 {useRoleAdmin() && (
                   <Text fontSize="xs">Giá nhập: {item.productCost}</Text>

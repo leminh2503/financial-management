@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Box, Button, FlatList, Row } from 'native-base';
 
 // navigation
@@ -27,18 +27,6 @@ const _item: ProductModel = {
   productQuantity: 10,
   productSKU: 'MZISKSFJSK',
 };
-export const _ListData: ProductModel[] = [
-  _item,
-  _item,
-  _item,
-  _item,
-  _item,
-  _item,
-  _item,
-  _item,
-  _item,
-  _item,
-];
 
 export const ListScreen: React.FC<Props> = () => {
   const [selectedItem, setSelectedItem] = useState<any>();
@@ -95,9 +83,9 @@ export const ListScreen: React.FC<Props> = () => {
       });
   };
 
-  useEffect(() => {
-    getListProduct();
-  }, []);
+  // useEffect(() => {
+  //   getListProduct();
+  // }, []);
 
   return (
     <Box w="100%">

@@ -24,6 +24,8 @@ export default function InvoiceDetail() {
     return a + i.quantityInOrder * i.productPrice;
   }, 0);
 
+  console.log('invoice----', invoice);
+
   return (
     <Box style={styles.container}>
       <Row justifyContent="space-between">

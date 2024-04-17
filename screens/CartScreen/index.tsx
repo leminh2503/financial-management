@@ -53,26 +53,33 @@ export const CartScreen: React.FC<Props> = () => {
     });
     const dataRes = res.data.data;
     const listProduct = cloneDeep(cart);
+    const listProductMap = listProduct.map((item) => {
+      return {
+        ...item,
+        quantityInOrder: item.count,
+      };
+    });
+    const id = Math.floor(Math.random() * 1000);
     await dispatch(
       addInvoice({
-        id: dataRes.orderId,
+        id: id,
         orderName: dataRes.orderName,
-        products: listProduct,
+        products: listProductMap,
         createdDate: new Date().toISOString(),
       })
     );
-    await listProduct.forEach((item) => {
+    await listProductMap.forEach((item) => {
       dispatch(
         editProduct({
           ...item,
           count: 0,
-          quantityInOrder: item.quantityInOrder + item.count,
+          quantityInOrder: item.quantityInOrder,
         })
       );
     });
     await dispatch(addCartToInvoice());
     navigate.navigate('InvoiceDetail', {
-      id: dataRes.orderId,
+      id: id,
     });
     // console.log('handleCreateInvoice', user);
   };

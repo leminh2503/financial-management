@@ -9,14 +9,18 @@ import {
 import RouteList from './RouteList';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { RootState } from '../lib/redux/store';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { ApiService } from '../lib/axios';
+import { setListInvoice } from '../lib/redux/reducers/invoiceReducer';
 
 const BottomTabContent = React.memo(function BottomTabContent() {
   const navigation = useNavigation();
   const theme = useTheme().colors;
   const route = useRoute();
+  const dispatch = useDispatch();
   const { token } = useSelector((state: RootState) => state.auth);
   const currentRoute = getFocusedRouteNameFromRoute(route) ?? 'Sales';
+
   const getColor = (name: string, index: number): string => {
     if (currentRoute === undefined) {
       return index === 0 ? 'red' : 'black';
@@ -35,6 +39,16 @@ const BottomTabContent = React.memo(function BottomTabContent() {
       navigation.navigate('Signin');
     }
   }, [token]);
+
+  const getInvoice = async () => {
+    ApiService.getOrder().then((res) => {
+      dispatch(setListInvoice(res.data.data));
+    });
+  };
+
+  useEffect(() => {
+    getInvoice();
+  }, []);
 
   return (
     <View style={[styles.main, { backgroundColor: theme.background }]}>
