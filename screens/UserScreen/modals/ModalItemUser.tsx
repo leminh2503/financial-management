@@ -3,7 +3,6 @@ import {
   Box,
   Button,
   FormControl,
-  Image,
   Input,
   KeyboardAvoidingView,
   Modal,
@@ -43,7 +42,6 @@ export const ModalItemUser: React.FC<Props> = ({
       quality: 1,
     });
     if (!result.canceled) {
-      console.log(result);
       setImage(result.assets[0].uri);
     } else {
       alert('You did not select any image.');
@@ -62,6 +60,8 @@ export const ModalItemUser: React.FC<Props> = ({
     ApiService.patchUser({
       userId: selectItem?.userId,
       username: userName,
+      fullName: fullName,
+      phoneNumber: parseInt(phoneNumber),
       roleId: 0,
     })
       .then((e) => {
@@ -78,15 +78,18 @@ export const ModalItemUser: React.FC<Props> = ({
     ApiService.postUser({
       username: userName,
       password: pass,
+      fullName: fullName,
+      phoneNumber: parseInt(phoneNumber),
       roleId: 0,
     })
       .then((e) => {
+        console.log('eerrr---', e.data.data);
         refresh && refresh();
         resetValue();
         closeModal();
       })
       .catch((e) => {
-        console.log(e);
+        console.log('--------', e);
       });
   };
 
@@ -101,8 +104,6 @@ export const ModalItemUser: React.FC<Props> = ({
   useEffect(() => {
     resetValue();
   }, [selectItem]);
-
-  console.log('selectItem----', selectItem);
 
   return (
     <Modal isOpen={open} size={'full'} onClose={closeModal} safeAreaTop={true}>
@@ -125,22 +126,26 @@ export const ModalItemUser: React.FC<Props> = ({
             {selectItem?.username ? selectItem?.username : 'Thêm nhân viên'}
           </Modal.Header>
           <Modal.Body>
+            {/*<FormControl>*/}
+            {/*  {image && (*/}
+            {/*    <Box alignItems="center" justifyContent="center">*/}
+            {/*      <Image*/}
+            {/*        style={{*/}
+            {/*          width: 100,*/}
+            {/*          height: 100,*/}
+            {/*          borderRadius: 50,*/}
+            {/*        }}*/}
+            {/*        source={{ uri: image }}*/}
+            {/*      ></Image>*/}
+            {/*    </Box>*/}
+            {/*  )}*/}
+            {/*  <Button mt={4} onPress={pickImageAsync}>*/}
+            {/*    Chọn ảnh*/}
+            {/*  </Button>*/}
+            {/*</FormControl>*/}
             <FormControl>
-              {image && (
-                <Box alignItems="center" justifyContent="center">
-                  <Image
-                    style={{
-                      width: 100,
-                      height: 100,
-                      borderRadius: 50,
-                    }}
-                    source={{ uri: image }}
-                  ></Image>
-                </Box>
-              )}
-              <Button mt={4} onPress={pickImageAsync}>
-                Chọn ảnh
-              </Button>
+              <FormControl.Label>Tên đăng nhập</FormControl.Label>
+              <Input value={userName} onChangeText={setUserName} />
             </FormControl>
             <FormControl>
               <FormControl.Label>Họ và tên</FormControl.Label>
@@ -148,7 +153,11 @@ export const ModalItemUser: React.FC<Props> = ({
             </FormControl>
             <FormControl>
               <FormControl.Label>Số điện thoại</FormControl.Label>
-              <Input value={userName} onChangeText={setUserName} />
+              <Input
+                keyboardType="numeric"
+                value={phoneNumber}
+                onChangeText={setPhoneNumber}
+              />
             </FormControl>
             {!selectItem && (
               <FormControl mt="3">

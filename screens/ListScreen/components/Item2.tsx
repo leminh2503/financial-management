@@ -1,17 +1,15 @@
 import { PropsItem } from '../../CartScreen/Item1';
-import { Box, Column, Heading, Icon, Image, Row, Text } from 'native-base';
+import { Box, Column, Heading, Icon, Row, Text } from 'native-base';
 import { Octicons } from '@expo/vector-icons';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useDispatch } from 'react-redux';
 import { addToCart } from '../../../lib/redux/reducers/productReducer';
 import { TouchableRipple } from 'react-native-paper';
 import { useRoleAdmin } from '../../../hooks/useRoleAdmin';
-import { ProductModel } from '../../../lib/axios';
-import { getImageStorage } from '../../../hooks/useFirestorage';
+import { Image } from 'expo-image';
 
 export const Item2 = ({ item, openItem }: PropsItem) => {
   const dispatch = useDispatch();
-  const [image, setImage] = React.useState<string>('');
 
   const addItemToCart = (item: any) => {
     dispatch(
@@ -21,15 +19,6 @@ export const Item2 = ({ item, openItem }: PropsItem) => {
       })
     );
   };
-
-  const getURLImage = async (item?: ProductModel) => {
-    const url = await getImageStorage(item?.productImageId);
-    setImage(url);
-  };
-
-  useEffect(() => {
-    getURLImage(item);
-  }, []);
 
   console.log('item', item);
 
@@ -71,10 +60,7 @@ export const Item2 = ({ item, openItem }: PropsItem) => {
             <Image
               style={{ width: 100, height: 80, borderRadius: 10 }} // style={{ width: 50, height: 50 }}
               source={{
-                uri:
-                  item.productImagePath ||
-                  image ||
-                  'https://via.placeholder.com/150',
+                uri: item.productDescription,
               }}
             ></Image>
           </Column>

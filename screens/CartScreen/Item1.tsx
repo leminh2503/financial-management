@@ -44,7 +44,7 @@ export const Item1 = ({ item }: PropsItem) => {
           <Image
             style={{ width: 100, height: 80 }} // style={{ width: 50, height: 50 }}
             source={{
-              uri: item.productImageId,
+              uri: item.productDescription,
             }}
             mr={3}
           ></Image>

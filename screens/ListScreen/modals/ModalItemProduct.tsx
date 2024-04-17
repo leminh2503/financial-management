@@ -3,7 +3,6 @@ import {
   Box,
   Button,
   FormControl,
-  Image,
   Input,
   KeyboardAvoidingView,
   Modal,
@@ -19,6 +18,7 @@ import {
 } from '../../../lib/redux/reducers/productReducer';
 import { useRoleAdmin } from '../../../hooks/useRoleAdmin';
 import { uploadStorage } from '../../../hooks/useFirestorage';
+import { Image } from 'expo-image';
 
 type Props = {
   open: boolean;
@@ -35,7 +35,6 @@ export const ModalItemProduct: React.FC<Props> = ({
 }) => {
   const [name, setName] = React.useState('');
   const [price, setPrice] = React.useState('');
-  const [description, setDescription] = React.useState('');
   const [quantity, setQuantity] = React.useState('');
   const [image, setImage] = React.useState('');
   const [code, setCode] = React.useState('');
@@ -47,7 +46,8 @@ export const ModalItemProduct: React.FC<Props> = ({
   const pickImageAsync = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
-      quality: 1,
+      aspect: [4, 3],
+      quality: 0.05,
     });
     if (!result.canceled) {
       const formData = new FormData();
@@ -58,37 +58,32 @@ export const ModalItemProduct: React.FC<Props> = ({
         name: `image${Math.random() * 99999}`,
       });
       setLoading(true);
-      const reponsrImage = await ApiService.postImage(formData)
-        .then((e) => {
-          setLoading(false);
-          setImage(result.assets[0].uri);
-          setImageApi(e.data.data);
-        })
-        .catch((e) => {
-          console.log('Error: ', e);
-        });
+      const reponsrImage = await ApiService.postImage(formData);
+      const urlImage = await uploadStorage(
+        result.assets[0].uri,
+        reponsrImage.data.data.imageId
+      );
+      setImageApi(reponsrImage.data.data);
+      setImage(urlImage);
+      setLoading(false);
     } else {
       alert('You did not select any image.');
     }
   };
 
-  const addProduct = () => {
-    const data = {
+  const addProduct = async () => {
+    setLoading(true);
+    await ApiService.postProduct({
       productName: name,
       productPrice: parseInt(price),
-      productDescription: description,
+      productDescription: image,
       productQuantity: parseInt(quantity),
       productImageId: imageApi.imageId,
       productSKU: code,
       productCost: parseInt(cost),
-    };
-    setLoading(true);
-    ApiService.postProduct(data)
+    })
       .then(async (e) => {
-        const response = await uploadStorage(image, imageApi.imageId);
-
-        console.log('Add product: ', response);
-
+        console.log('e.data.data--', e.data.data);
         dispatch(
           addToListProduct({
             ...e.data.data,
@@ -110,7 +105,7 @@ export const ModalItemProduct: React.FC<Props> = ({
       productId: selectItem?.productId,
       productName: name,
       productPrice: parseInt(price),
-      productDescription: description,
+      productDescription: image,
       productQuantity: parseInt(quantity),
       productImageId: imageApi.imageId,
       productSKU: code,
@@ -142,11 +137,11 @@ export const ModalItemProduct: React.FC<Props> = ({
   useEffect(() => {
     setName(selectItem?.productName || '');
     setPrice(selectItem?.productPrice.toString() || '');
-    setDescription(selectItem?.productDescription || '');
     setQuantity(selectItem?.productQuantity.toString() || '');
     setImage(selectItem?.productImageId || '');
     setCode(selectItem?.productSKU || '');
     setCost(selectItem?.productCost.toString() || '');
+    setImage(selectItem?.productDescription || '');
   }, [selectItem]);
 
   return (

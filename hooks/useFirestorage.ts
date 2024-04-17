@@ -71,12 +71,13 @@ const uploadStorage = async (uri: string, name: any) => {
         const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref).then(
           (downloadURL) => {
             console.log('File available at', downloadURL);
+            resolve(downloadURL);
           }
         );
-        resolve({
-          downloadUrl: downloadUrl,
-          metadata: uploadTask.snapshot.metadata,
-        });
+        // resolve({
+        //   downloadUrl: downloadUrl,
+        //   metadata: uploadTask.snapshot.metadata,
+        // });
       }
     );
   });

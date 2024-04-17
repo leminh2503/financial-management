@@ -16,7 +16,7 @@ export const ItemInvoice = ({ item }: { item: InvoiceModel }) => {
   }, [item]);
   const handleOnPressInvoice = (item: InvoiceModel) => {
     navigate.navigate('InvoiceDetail', {
-      id: item.id,
+      id: item.orderId,
     });
   };
   return (

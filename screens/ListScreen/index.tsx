@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Button, FlatList, Row } from 'native-base';
 
 // navigation
@@ -83,9 +83,9 @@ export const ListScreen: React.FC<Props> = () => {
       });
   };
 
-  // useEffect(() => {
-  //   getListProduct();
-  // }, []);
+  useEffect(() => {
+    getListProduct();
+  }, []);
 
   return (
     <Box w="100%">

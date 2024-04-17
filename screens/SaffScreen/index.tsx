@@ -49,6 +49,8 @@ export const SaffScreen: React.FC<Props> = () => {
       });
   };
 
+  console.log('infotttt', info);
+
   useEffect(() => {
     GetUser();
   }, []);
