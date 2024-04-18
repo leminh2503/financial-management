@@ -5,7 +5,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 // components & theme
 import { NativeBaseProvider, Spinner } from 'native-base';
 import { theme } from './theme';
-import { useColorScheme } from 'react-native';
+import { LogBox, useColorScheme } from 'react-native';
 
 // redux & persister
 import { Provider as ReduxProvider } from 'react-redux';
@@ -21,6 +21,7 @@ export default function App() {
   // Changing initialColorMode to 'dark' or 'light' or system(mode)
   fbApp;
   theme.config.initialColorMode = mode;
+  LogBox.ignoreAllLogs();
   return (
     <NativeBaseProvider theme={theme}>
       <ReduxProvider store={store}>
