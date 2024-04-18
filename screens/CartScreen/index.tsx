@@ -1,5 +1,14 @@
 import React, { useMemo, useState } from 'react';
-import { Box, Button, Column, FlatList, Icon, Row, Text } from 'native-base';
+import {
+  Box,
+  Button,
+  Column,
+  FlatList,
+  Icon,
+  Row,
+  Text,
+  useToast,
+} from 'native-base';
 import { StyleSheet } from 'react-native';
 
 // navigation
@@ -28,6 +37,7 @@ export const CartScreen: React.FC<Props> = () => {
   const [showModalClient, setShowModalClient] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigation();
+  const toast = useToast();
 
   const cleanCart = () => {
     dispatch(resetCart());
@@ -39,6 +49,22 @@ export const CartScreen: React.FC<Props> = () => {
       0
     );
   }, [cart]);
+
+  const handleOpenModal = () => {
+    const overCount = cart.some(
+      (item) =>
+        item.count > item.productQuantity - (item.productQuantitySold || 0)
+    );
+    if (overCount) {
+      toast.show({
+        title: 'Số lượng hàng không đủ',
+        placement: 'top',
+      });
+      return;
+    } else {
+      setShowModalClient(true);
+    }
+  };
 
   const handleCreateInvoice = async (data: { name: string }) => {
     const listOrderItem = cart.map((item) => {
@@ -62,7 +88,7 @@ export const CartScreen: React.FC<Props> = () => {
 
     await dispatch(
       addInvoice({
-        id: dataRes.orderId,
+        orderId: dataRes.orderId,
         orderName: dataRes.orderName,
         products: listProductMap,
         createdDate: new Date().toISOString(),
@@ -133,7 +159,7 @@ export const CartScreen: React.FC<Props> = () => {
             </Row>
           </Column>
           <Column>
-            <Button onPress={() => setShowModalClient(true)}>In hoá đơn</Button>
+            <Button onPress={handleOpenModal}>In hoá đơn</Button>
           </Column>
         </Row>
       </Box>

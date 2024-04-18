@@ -16,7 +16,7 @@ export default function InvoiceDetail() {
   const { params } = useRoute();
 
   useEffect(() => {
-    const item = listInvoice.find((item) => item.id === params.id);
+    const item = listInvoice.find((item) => item.orderId === params?.id);
     setInvoice(item);
   }, [listInvoice, params]);
 

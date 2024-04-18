@@ -111,10 +111,10 @@ export const SalesScreen: React.FC<Props> = () => {
 
   const data = useMemo(() => {
     return {
-      labels: getLabel1(dataObj),
+      labels: getLabel1(dataObj).slice(0, 5),
       datasets: [
         {
-          data: getQuantity(dataObj),
+          data: getQuantity(dataObj).slice(0, 5),
         },
       ],
     };

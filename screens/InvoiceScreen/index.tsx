@@ -27,8 +27,6 @@ export const ListInvoiceScreen = () => {
     getInvoice();
   }, []);
 
-  console.log('listInvoicepp', listInvoice);
-
   return (
     <Box>
       <FlatList

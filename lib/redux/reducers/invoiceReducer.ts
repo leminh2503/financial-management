@@ -12,6 +12,7 @@ const invoiceSlice = createSlice({
     reset: () => initialState,
     setListInvoice(state, action) {
       state.listInvoice = action.payload;
+      console.log('state.listInvoice-----', state.listInvoice);
     },
     addInvoice(state, action) {
       state.listInvoice = [action.payload, ...state.listInvoice];
