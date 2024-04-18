@@ -52,6 +52,13 @@ export const SigninScreen: React.FC<Props> = (props) => {
 
     ApiService.signin(values)
       .then((res) => {
+        // if (res?.data?.message) {
+        //   toast.show({
+        //     title: res.data.message,
+        //     placement: 'top',
+        //   });
+        //   return;
+        // }
         dispatch(setUser(res.data.data.user));
         dispatch(setToken(res.data.data.token));
         // Set auth token
@@ -73,12 +80,11 @@ export const SigninScreen: React.FC<Props> = (props) => {
         props.navigation.navigate('BottomTab', { screen: 'Sales' });
       })
       .catch((err) => {
-        console.log('err------', String(err.message));
+        console.log('err---', err);
 
         toast.show({
-          title: 'Error',
+          title: 'Sai thông tin tài khoản',
           placement: 'top',
-          description: String(err),
         });
       });
   };

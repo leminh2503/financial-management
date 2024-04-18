@@ -22,11 +22,17 @@ export default function usePusherNotification() {
       });
       apiClient.interceptors.response.use(
         (response) => {
+          if (response?.data?.message) {
+            toast.show({
+              title: response.data.message,
+              placement: 'top',
+            });
+            return;
+          }
           return response;
         },
         (error) => {
           console.log('errortoken-------', token);
-          console.log('error-------', error?.response);
           // If API return 401 not authorized error, then sign-out
           if (error?.response.status == 401) {
             dispatch(resetAuthData());
