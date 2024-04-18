@@ -78,6 +78,9 @@ export const CartScreen: React.FC<Props> = () => {
       products: listOrderItem,
     });
     const dataRes = res.data.data;
+    if (dataRes) {
+      toast.show({ title: 'Tạo hoá đơn thành công', placement: 'top' });
+    }
     const listProduct = cloneDeep(cart);
     const listProductMap = listProduct.map((item) => {
       return {

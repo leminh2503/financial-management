@@ -1,5 +1,5 @@
 import { apiClient } from '../lib/axios';
-import { Alert, useToast } from 'native-base';
+import { useToast } from 'native-base';
 // redux
 import { useDispatch } from 'react-redux';
 import { store } from '../lib/redux/store';
@@ -32,16 +32,18 @@ export default function usePusherNotification() {
           return response;
         },
         (error) => {
-          console.log('errortoken-------', token);
           // If API return 401 not authorized error, then sign-out
           if (error?.response.status == 401) {
             dispatch(resetAuthData());
             toast.show({
-              title: 'Error',
+              title: 'Phiên dăng nhập hết hạn, vui lòng đăng nhập lại',
               placement: 'top',
-              description: String(error),
             });
-            Alert('Token expired, please login again');
+          } else {
+            toast.show({
+              title: 'Dã có lỗi xảy ra, vui lòng thử lại',
+              placement: 'top',
+            });
           }
           return error;
         }

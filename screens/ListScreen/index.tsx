@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Button, FlatList, Row } from 'native-base';
+import { Box, Button, FlatList, Row, useToast } from 'native-base';
 
 // navigation
 import { RootStackParamList } from '../../navigation/types';
@@ -32,6 +32,7 @@ export const ListScreen: React.FC<Props> = () => {
   const [selectedItem, setSelectedItem] = useState<any>();
   const [showAppModal, setShowModal] = useState(false);
   const dispatch = useDispatch();
+  const toast = useToast();
   const { user } = useSelector((state: RootState) => state.auth);
   const { listProduct } = useSelector((state: RootState) => state.product);
   const [loading, setLoading] = useState(false);
@@ -64,6 +65,7 @@ export const ListScreen: React.FC<Props> = () => {
   const handleDeleteItem = (item: ProductModel) => {
     ApiService.deleteProduct(item.productId)
       .then((e) => {
+        toast.show({ title: 'Xoá sản phẩm thành công', placement: 'top' });
         setShowModal(false);
         dispatch(deleteProduct(item.productId));
       })

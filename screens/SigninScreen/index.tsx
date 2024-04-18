@@ -52,13 +52,7 @@ export const SigninScreen: React.FC<Props> = (props) => {
 
     ApiService.signin(values)
       .then((res) => {
-        // if (res?.data?.message) {
-        //   toast.show({
-        //     title: res.data.message,
-        //     placement: 'top',
-        //   });
-        //   return;
-        // }
+        toast.show({ title: 'Đăng nhập thành công', placement: 'top' });
         dispatch(setUser(res.data.data.user));
         dispatch(setToken(res.data.data.token));
         // Set auth token

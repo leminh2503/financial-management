@@ -6,6 +6,7 @@ import {
   Input,
   KeyboardAvoidingView,
   Modal,
+  useToast,
 } from 'native-base';
 import { ApiService, ImageModel, ProductModel } from '../../../lib/axios';
 import { Platform } from 'react-native';
@@ -43,6 +44,7 @@ export const ModalItemProduct: React.FC<Props> = ({
   const [loading, setLoading] = React.useState(false);
   const dispatch = useDispatch();
   const isAdmin = useRoleAdmin();
+  const toast = useToast();
   const pickImageAsync = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
@@ -83,7 +85,7 @@ export const ModalItemProduct: React.FC<Props> = ({
       productCost: parseInt(cost),
     })
       .then(async (e) => {
-        console.log('e.data.data--', e.data.data);
+        toast.show({ title: 'Thêm sản phẩm thành công', placement: 'top' });
         dispatch(
           addToListProduct({
             ...e.data.data,
@@ -114,6 +116,7 @@ export const ModalItemProduct: React.FC<Props> = ({
     setLoading(true);
     ApiService.patchProduct(data)
       .then((e) => {
+        toast.show({ title: 'Sửa sản phẩm thành công', placement: 'top' });
         console.log('Patch product: ', e.data.data);
         dispatch(editProduct(e.data.data));
         setLoading(false);

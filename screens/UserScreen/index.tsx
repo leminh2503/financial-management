@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Button, Column, FlatList, Image, Row, Text } from 'native-base';
+import {
+  Box,
+  Button,
+  Column,
+  FlatList,
+  Image,
+  Row,
+  Text,
+  useToast,
+} from 'native-base';
 
 // navigation
 import { RootStackParamList } from '../../navigation/types';
@@ -14,6 +23,7 @@ export const UserScreen: React.FC<Props> = () => {
   const [selectedItem, setSelectedItem] = useState<any>();
   const [showAppModal, setShowModal] = useState(false);
   const [refresh, setRefresh] = useState(false);
+  const toast = useToast();
   const onPressItem = async (item: UserModel) => {
     setSelectedItem(item);
     handleOpenModal();
@@ -33,11 +43,10 @@ export const UserScreen: React.FC<Props> = () => {
     handleOpenModal();
   };
 
-  console.log('lists: ---', lists);
-
   const handleDeteleItem = (item: UserModel) => {
     ApiService.deleteUser(item?.userId)
       .then((e) => {
+        toast.show({ title: 'Xoá người dùng thành công', placement: 'top' });
         GetUsers();
       })
       .catch((e) => {

@@ -6,6 +6,7 @@ import {
   Input,
   KeyboardAvoidingView,
   Modal,
+  useToast,
 } from 'native-base';
 import { ApiService, UserModel } from '../../../lib/axios';
 import { Platform } from 'react-native';
@@ -36,6 +37,7 @@ export const ModalItemUser: React.FC<Props> = ({
   const [pass, setPass] = React.useState('');
   const [fullName, setFullName] = React.useState('');
   const { user } = useSelector((state: RootState) => state.auth);
+  const toast = useToast();
   const pickImageAsync = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
@@ -65,6 +67,7 @@ export const ModalItemUser: React.FC<Props> = ({
       roleId: 0,
     })
       .then((e) => {
+        toast.show({ title: 'Sửa người dùng thành công', placement: 'top' });
         refresh && refresh();
         closeModal();
         resetValue();
@@ -83,7 +86,7 @@ export const ModalItemUser: React.FC<Props> = ({
       roleId: 0,
     })
       .then((e) => {
-        console.log('eerrr---', e.data.data);
+        toast.show({ title: 'Thêm ngừoi dùng thành công', placement: 'top' });
         refresh && refresh();
         resetValue();
         closeModal();
