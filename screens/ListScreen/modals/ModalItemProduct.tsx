@@ -52,22 +52,31 @@ export const ModalItemProduct: React.FC<Props> = ({
       quality: 0.05,
     });
     if (!result.canceled) {
-      const formData = new FormData();
-      console.log('result:-----', result.assets[0]);
-      formData?.append('imageFile', {
-        uri: result.assets[0].uri,
-        type: 'image/jpeg',
-        name: `image${Math.random() * 99999}`,
-      });
+      // const formData = new FormData();
+      // console.log('result:-----', result.assets[0]);
+      // formData?.append('imageFile', {
+      //   uri: result.assets[0].uri,
+      //   type: 'image/jpeg',
+      //   name: `image${Math.random() * 99999}`,
+      // });
       setLoading(true);
-      const reponsrImage = await ApiService.postImage(formData);
-      const urlImage = await uploadStorage(
+      // const reponsrImage = await ApiService.postImage(formData);
+      await uploadStorage(
         result.assets[0].uri,
-        reponsrImage.data.data.imageId
-      );
-      setImageApi(reponsrImage.data.data);
-      setImage(urlImage);
-      setLoading(false);
+        Math.floor(Math.random() * 99999)
+      )
+        .then((res) => {
+          setImage(res);
+          setLoading(false);
+        })
+        .catch((err) => {
+          setLoading(false);
+          toast.show({
+            title: 'Upload ảnh không thành công',
+            placement: 'top',
+          });
+        });
+      // setImageApi(reponsrImage.data.data);
     } else {
       alert('You did not select any image.');
     }
@@ -79,21 +88,27 @@ export const ModalItemProduct: React.FC<Props> = ({
       productName: name,
       productPrice: parseInt(price),
       productDescription: image,
+      productImageId: 0,
       productQuantity: parseInt(quantity),
-      productImageId: imageApi.imageId,
       productSKU: code,
       productCost: parseInt(cost),
     })
       .then(async (e) => {
         toast.show({ title: 'Thêm sản phẩm thành công', placement: 'top' });
+        closeModal();
         dispatch(
           addToListProduct({
-            ...e.data.data,
+            productName: name,
+            productPrice: parseInt(price),
+            productDescription: image,
+            productImageId: 0,
+            productQuantity: parseInt(quantity),
+            productSKU: code,
+            productCost: parseInt(cost),
             count: 0,
           })
         );
         setLoading(false);
-        closeModal();
       })
       .catch((e) => {
         setLoading(false);
@@ -109,7 +124,7 @@ export const ModalItemProduct: React.FC<Props> = ({
       productPrice: parseInt(price),
       productDescription: image,
       productQuantity: parseInt(quantity),
-      productImageId: imageApi.imageId,
+      productImageId: 0,
       productSKU: code,
       productCost: parseInt(cost),
     };
@@ -117,8 +132,7 @@ export const ModalItemProduct: React.FC<Props> = ({
     ApiService.patchProduct(data)
       .then((e) => {
         toast.show({ title: 'Sửa sản phẩm thành công', placement: 'top' });
-        console.log('Patch product: ', e.data.data);
-        dispatch(editProduct(e.data.data));
+        dispatch(editProduct(data));
         setLoading(false);
         closeModal();
       })

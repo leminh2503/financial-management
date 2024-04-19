@@ -20,8 +20,6 @@ export const Item2 = ({ item, openItem }: PropsItem) => {
     );
   };
 
-  console.log('item', item);
-
   return (
     <TouchableRipple
       onPress={() => {

@@ -37,8 +37,8 @@ export interface ProductModel {
   productName: string;
   productPrice: number;
   productDescription: string;
-  productImageId: string;
-  productImagePath: string;
+  productImageId?: string;
+  productImagePath?: string;
   productQuantity: number;
   quantityInOrder: number;
   productSKU: string;

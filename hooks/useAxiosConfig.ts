@@ -22,7 +22,8 @@ export default function usePusherNotification() {
       });
       apiClient.interceptors.response.use(
         (response) => {
-          if (response?.data?.message) {
+          console.log('response------', response);
+          if (response?.data?.status === 400) {
             toast.show({
               title: response.data.message,
               placement: 'top',

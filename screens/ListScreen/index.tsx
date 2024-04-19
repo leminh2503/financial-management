@@ -89,6 +89,8 @@ export const ListScreen: React.FC<Props> = () => {
     getListProduct();
   }, []);
 
+  console.log('listProduct----', listProduct);
+
   return (
     <Box w="100%">
       {user?.roleId === 1 && (
