@@ -5,6 +5,7 @@ import {
   Input,
   KeyboardAvoidingView,
   Modal,
+  useToast,
 } from 'native-base';
 import { Platform } from 'react-native';
 import { useDispatch } from 'react-redux';
@@ -23,10 +24,22 @@ export const ModalAddClient: React.FC<Props> = ({
   const [name, setName] = React.useState('');
   const [phone, setPhone] = React.useState('');
   const dispatch = useDispatch();
+  const toast = useToast();
   const onPressSave = () => {
+    if (handleValidate()) {
+      return;
+    }
     closeModal();
     // dispatch(setClient({ name, phone }));
     createInvoice({ name });
+  };
+
+  const handleValidate = () => {
+    if (!name) {
+      toast.show({ title: 'Chưa nhập tên khách hàng', placement: 'top' });
+      return true;
+    }
+    return false;
   };
 
   return (

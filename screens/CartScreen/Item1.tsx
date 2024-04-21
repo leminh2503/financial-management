@@ -1,5 +1,5 @@
 import { ProductModel } from '../../lib/axios';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Box, Column, Heading, Image, Row, Text } from 'native-base';
 import NumericInput from 'react-native-numeric-input';
 import { useDispatch } from 'react-redux';
@@ -10,21 +10,17 @@ import {
 
 export interface PropsItem {
   item: ProductModel;
+  count?: number;
   openItem?: (item: ProductModel) => void;
 }
 
-export const Item1 = ({ item }: PropsItem) => {
-  const [count, setCount] = useState(item.count || 0);
+export const Item1 = ({ item, count }: PropsItem) => {
   const dispatch = useDispatch();
   useEffect(() => {
-    setCount(item.count || 0);
-  }, [item]);
-
-  useEffect(() => {
-    if (count === 0) {
+    if (item.count === 0 || count === 0) {
       dispatch(removeProductInCart(item.productId));
     }
-  }, [count]);
+  }, [item]);
 
   return (
     <Box
@@ -65,17 +61,18 @@ export const Item1 = ({ item }: PropsItem) => {
             Giá thành: {item.productPrice} đ
           </Text>
           <NumericInput
-            minValue={0}
+            minValue={1}
             maxValue={item.productQuantity}
             totalWidth={100}
             totalHeight={30}
-            value={count}
+            initValue={count || item.count || 1}
             containerStyle={{
               marginTop: 10,
             }}
+            editable={false}
             textColor="black"
             onChange={(value) => {
-              setCount(value);
+              console.log('value----', value);
               dispatch(
                 changeCountProduct({ productId: item.productId, count: value })
               );

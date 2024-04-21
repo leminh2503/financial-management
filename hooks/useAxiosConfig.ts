@@ -22,17 +22,23 @@ export default function usePusherNotification() {
       });
       apiClient.interceptors.response.use(
         (response) => {
-          console.log('response------', response);
           if (response?.data?.status === 400) {
             toast.show({
-              title: response.data.message,
+              title: response?.data.message,
               placement: 'top',
             });
-            return;
           }
           return response;
         },
         (error) => {
+          const err = JSON.parse(JSON.stringify(error));
+          if (err?.status === 400) {
+            toast.show({
+              title: err?.message,
+              placement: 'top',
+            });
+          }
+
           // If API return 401 not authorized error, then sign-out
           if (error?.response.status == 401) {
             dispatch(resetAuthData());
@@ -40,12 +46,13 @@ export default function usePusherNotification() {
               title: 'Phiên dăng nhập hết hạn, vui lòng đăng nhập lại',
               placement: 'top',
             });
-          } else {
-            toast.show({
-              title: 'Dã có lỗi xảy ra, vui lòng thử lại',
-              placement: 'top',
-            });
           }
+          // else {
+          //   toast.show({
+          //     title: 'Dã có lỗi xảy ra, vui lòng thử lại',
+          //     placement: 'top',
+          //   });
+          // }
           return error;
         }
       );

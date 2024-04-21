@@ -68,12 +68,10 @@ const uploadStorage = async (uri: string, name: any) => {
         reject(error);
       },
       async () => {
-        const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref).then(
-          (downloadURL) => {
-            console.log('File available at', downloadURL);
-            resolve(downloadURL);
-          }
-        );
+        await getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          console.log('File available at', downloadURL);
+          resolve(downloadURL);
+        });
         // resolve({
         //   downloadUrl: downloadUrl,
         //   metadata: uploadTask.snapshot.metadata,

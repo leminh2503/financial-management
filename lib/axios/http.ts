@@ -3,7 +3,8 @@ import { store } from '../redux/store';
 
 const apiClient: AxiosInstance = axios.create({
   baseURL:
-    'https://9b73-123-16-53-214.ngrok-free.app' || 'http://localhost:8000',
+    'https://a3c8-2001-ee0-4a6b-8750-95e-2a4c-cf0-8aec.ngrok-free.app' ||
+    'http://localhost:8000',
   headers: {
     'Content-Type': 'application/json',
     Authorization: 'Bearer ' + store.getState().auth.token || '',

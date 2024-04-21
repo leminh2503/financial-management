@@ -22,7 +22,7 @@ export interface UserModel {
   image?: string;
   password?: string;
   username: string;
-  phoneNumber?: number;
+  phoneNumber?: number | string;
   fullName?: string;
   roleId?: number;
 }

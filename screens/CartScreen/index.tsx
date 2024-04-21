@@ -138,7 +138,7 @@ export const CartScreen: React.FC<Props> = () => {
           // ListFooterComponent={<Box height={200} />}
           data={cart}
           renderItem={({ item }) => {
-            return <Item1 item={item} />;
+            return <Item1 item={item} count={item.count || 0} />;
           }}
           keyExtractor={(item) => String(item.productSKU)}
         />

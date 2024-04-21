@@ -52,13 +52,6 @@ export const ModalItemProduct: React.FC<Props> = ({
       quality: 0.05,
     });
     if (!result.canceled) {
-      // const formData = new FormData();
-      // console.log('result:-----', result.assets[0]);
-      // formData?.append('imageFile', {
-      //   uri: result.assets[0].uri,
-      //   type: 'image/jpeg',
-      //   name: `image${Math.random() * 99999}`,
-      // });
       setLoading(true);
       // const reponsrImage = await ApiService.postImage(formData);
       await uploadStorage(
@@ -82,7 +75,40 @@ export const ModalItemProduct: React.FC<Props> = ({
     }
   };
 
+  const handleValidate = () => {
+    if (!name) {
+      toast.show({ title: 'Chưa nhập tên sản phẩm', placement: 'top' });
+      return true;
+    }
+    if (!price) {
+      toast.show({ title: 'Chưa nhập giá sản phẩm', placement: 'top' });
+      return true;
+    }
+    if (!quantity) {
+      toast.show({
+        title: 'Chưa nhập số lượng sản phẩm',
+        placement: 'top',
+      });
+      return true;
+    }
+    if (!code) {
+      toast.show({ title: 'Chưa nhập mã sản phẩm', placement: 'top' });
+      return true;
+    }
+    if (!cost) {
+      toast.show({
+        title: 'Chưa nhập giá nhập sản phẩm',
+        placement: 'top',
+      });
+      return true;
+    }
+    return false;
+  };
+
   const addProduct = async () => {
+    if (handleValidate()) {
+      return;
+    }
     setLoading(true);
     await ApiService.postProduct({
       productName: name,
@@ -118,6 +144,9 @@ export const ModalItemProduct: React.FC<Props> = ({
   };
 
   const patchProduct = () => {
+    if (handleValidate()) {
+      return;
+    }
     const data = {
       productId: selectItem?.productId,
       productName: name,

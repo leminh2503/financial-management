@@ -9,11 +9,16 @@ import { Dimensions } from 'react-native';
 import { RootState } from '../../lib/redux/store';
 import { useSelector } from 'react-redux';
 import { ProductModel } from '../../lib/axios';
+import moment from 'moment';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'List'>;
 
 export const SalesScreen: React.FC<Props> = () => {
   const { listInvoice } = useSelector((state: RootState) => state.invoice);
+  const today = moment().format('DD/MM/YYYY');
+  const yesterday = moment().subtract(1, 'day').format('DD/MM/YYYY');
+  const twoAgo = moment().subtract(2, 'day').format('DD/MM/YYYY');
+  const threeAgo = moment().subtract(3, 'day').format('DD/MM/YYYY');
 
   const totalItem = (list: ProductModel[]) => {
     return list.reduce((t, i) => {
@@ -42,12 +47,6 @@ export const SalesScreen: React.FC<Props> = () => {
     return arr.filter((item: any, index: any) => {
       return arr.indexOf(item) === index;
     });
-  };
-
-  const getLabel = () => {
-    return listInvoice.flatMap((item) => {
-      return removeDuplicate(item.products.map((i) => i.productSKU));
-    }, 1);
   };
 
   function aggregateQuantities(data: any[]) {
@@ -109,16 +108,62 @@ export const SalesScreen: React.FC<Props> = () => {
     });
   };
 
+  const todayTotal = useMemo(() => {
+    const list = listInvoice.filter((item) => {
+      return moment(item.createdDate).format('DD/MM/YYYY').includes(today);
+    });
+
+    return list.reduce((t, item) => {
+      return t + totalItem(item.products);
+    }, 0);
+  }, [listInvoice, today]);
+
+  const yesterdayTotal = useMemo(() => {
+    const list = listInvoice.filter((item) =>
+      moment(item.createdDate).format('DD/MM/YYYY').includes(yesterday)
+    );
+    return list.reduce((t, item) => {
+      return t + totalItem(item.products);
+    }, 0);
+  }, [listInvoice, yesterday]);
+
+  const twoAgoTotal = useMemo(() => {
+    const list = listInvoice.filter((item) =>
+      moment(item.createdDate).format('DD/MM/YYYY').includes(twoAgo)
+    );
+    return list.reduce((t, item) => {
+      return t + totalItem(item.products);
+    }, 0);
+  }, [listInvoice, twoAgo]);
+
+  const threeAgoTotal = useMemo(() => {
+    const list = listInvoice.filter((item) =>
+      item.createdDate.includes(threeAgo)
+    );
+    return list.reduce((t, item) => {
+      return t + totalItem(item.products);
+    }, 0);
+  }, [listInvoice, threeAgo]);
+
   const data = useMemo(() => {
     return {
-      labels: getLabel1(dataObj).slice(0, 5),
+      labels: [twoAgo, yesterday, today],
       datasets: [
         {
-          data: getQuantity(dataObj).slice(0, 5),
+          data: [twoAgoTotal, yesterdayTotal, todayTotal],
         },
       ],
     };
-  }, [listInvoice]);
+  }, [
+    threeAgo,
+    twoAgo,
+    yesterday,
+    today,
+    todayTotal,
+    twoAgoTotal,
+    yesterdayTotal,
+    threeAgoTotal,
+  ]);
 
   return (
     <Center mt={3} mx={2}>

@@ -38,7 +38,6 @@ export const ListScreen: React.FC<Props> = () => {
   const [loading, setLoading] = useState(false);
 
   const onPressItem = async (item: any) => {
-    console.log('item-----', item);
     setSelectedItem(item);
     setShowModal(true);
   };
@@ -88,8 +87,6 @@ export const ListScreen: React.FC<Props> = () => {
   useEffect(() => {
     getListProduct();
   }, []);
-
-  console.log('listProduct----', listProduct);
 
   return (
     <Box w="100%">

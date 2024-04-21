@@ -11,7 +11,7 @@ import {
 import { ApiService, UserModel } from '../../../lib/axios';
 import { Platform } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../lib/redux/store';
 
 type Props = {
@@ -38,6 +38,7 @@ export const ModalItemUser: React.FC<Props> = ({
   const [fullName, setFullName] = React.useState('');
   const { user } = useSelector((state: RootState) => state.auth);
   const toast = useToast();
+  const dispatch = useDispatch();
   const pickImageAsync = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
@@ -51,6 +52,9 @@ export const ModalItemUser: React.FC<Props> = ({
   };
 
   const handleSave = () => {
+    if (handleValidate()) {
+      return;
+    }
     if (selectItem) {
       patchUser();
     } else {
@@ -58,15 +62,41 @@ export const ModalItemUser: React.FC<Props> = ({
     }
   };
 
+  const handleValidate = () => {
+    if (!userName) {
+      toast.show({ title: 'Chưa nhập tên', placement: 'top' });
+      return true;
+    }
+    if (!fullName) {
+      toast.show({ title: 'Chưa nhập họ tên', placement: 'top' });
+      return true;
+    }
+    if (!phoneNumber) {
+      toast.show({
+        title: 'Chưa nhập số điện thoại',
+        placement: 'top',
+      });
+      return true;
+    }
+    if (!pass) {
+      toast.show({ title: 'Chưa nhập mật khẩu', placement: 'top' });
+      return true;
+    }
+    return false;
+  };
+
   const patchUser = () => {
     ApiService.patchUser({
       userId: selectItem?.userId,
       username: userName,
       fullName: fullName,
-      phoneNumber: parseInt(phoneNumber),
+      phoneNumber: phoneNumber,
       roleId: 0,
     })
       .then((e) => {
+        if (e.data.status === 400) {
+          return toast.show({ title: e.data.message, placement: 'top' });
+        }
         toast.show({ title: 'Sửa người dùng thành công', placement: 'top' });
         refresh && refresh();
         closeModal();
@@ -77,23 +107,34 @@ export const ModalItemUser: React.FC<Props> = ({
       });
   };
 
-  const addUser = () => {
-    ApiService.postUser({
+  const addUser = async () => {
+    const data = await ApiService.postUser({
       username: userName,
       password: pass,
       fullName: fullName,
-      phoneNumber: parseInt(phoneNumber),
+      phoneNumber: phoneNumber,
       roleId: 0,
-    })
-      .then((e) => {
-        toast.show({ title: 'Thêm ngừoi dùng thành công', placement: 'top' });
-        refresh && refresh();
-        resetValue();
-        closeModal();
-      })
-      .catch((e) => {
-        console.log('--------', e);
-      });
+    });
+    if (data.data) {
+      toast.show({ title: 'Thêm người dùng thành công', placement: 'top' });
+      refresh && refresh();
+      resetValue();
+      closeModal();
+    }
+
+    // .then((e) => {
+    //   console.log('add======', e);
+
+    // toast.show({ title: 'Thêm người dùng thành công', placement: 'top' });
+    // refresh && refresh();
+    // resetValue();
+    // closeModal();
+    // })
+    // .catch((e) => {
+    // if (e.data.status === 400) {
+    //   return toast.show({ title: e.data.message, placement: 'top' });
+    // }
+    // });
   };
 
   const resetValue = () => {
