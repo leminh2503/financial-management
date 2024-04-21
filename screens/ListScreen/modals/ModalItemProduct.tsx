@@ -229,9 +229,13 @@ export const ModalItemProduct: React.FC<Props> = ({
                     ></Image>
                   </Box>
                 )}
-                <Button mt={3} onPress={pickImageAsync}>
-                  Chọn ảnh
-                </Button>
+                {selectItem && isAdmin ? (
+                  <Button mt={3} onPress={pickImageAsync}>
+                    Chọn ảnh
+                  </Button>
+                ) : (
+                  <></>
+                )}
               </FormControl>
               <FormControl>
                 <FormControl.Label>Name</FormControl.Label>
@@ -289,7 +293,11 @@ export const ModalItemProduct: React.FC<Props> = ({
                 ) : (
                   <Box></Box>
                 )}
-                <Button onPress={handleSave}>Save</Button>
+                {selectItem && isAdmin ? (
+                  <Button onPress={handleSave}>Save</Button>
+                ) : (
+                  <></>
+                )}
               </Button.Group>
             </Modal.Footer>
           </Modal.Content>
