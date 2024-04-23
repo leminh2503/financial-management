@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Modal, useToast } from 'native-base';
-import { useDispatch } from 'react-redux';
 import { CameraView } from 'expo-camera/next';
 import { Camera } from 'expo-camera';
 
@@ -15,9 +14,7 @@ export const ModalScanner: React.FC<Props> = ({
   closeModal,
   setText,
 }) => {
-  const [name, setName] = React.useState('');
-  const [phone, setPhone] = React.useState('');
-  const dispatch = useDispatch();
+  const [scanned, setScanned] = React.useState(false);
   const toast = useToast();
   const [hasPermission, setHasPermission] = useState<boolean>(false);
 
@@ -30,9 +27,16 @@ export const ModalScanner: React.FC<Props> = ({
     getCameraPermissions();
   }, []);
 
+  useEffect(() => {
+    if (open) {
+      setScanned(false);
+    }
+  }, [open]);
+
   const handleBarCodeScanned = ({ type, data }: any) => {
     setText(data);
     closeModal();
+    setScanned(true);
   };
 
   return (
@@ -56,7 +60,7 @@ export const ModalScanner: React.FC<Props> = ({
                 borderRadius: 10,
                 marginBottom: 10,
               }}
-              onBarcodeScanned={handleBarCodeScanned}
+              onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
               barcodeScannerSettings={{
                 barcodeTypes: [
                   'pdf417',
