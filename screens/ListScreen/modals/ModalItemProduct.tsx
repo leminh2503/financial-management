@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -6,6 +6,7 @@ import {
   Input,
   KeyboardAvoidingView,
   Modal,
+  Text,
   useToast,
 } from 'native-base';
 import { ApiService, ImageModel, ProductModel } from '../../../lib/axios';
@@ -20,6 +21,8 @@ import {
 import { useRoleAdmin } from '../../../hooks/useRoleAdmin';
 import { uploadStorage } from '../../../hooks/useFirestorage';
 import { Image } from 'expo-image';
+import { Camera } from 'expo-camera';
+import { CameraView } from 'expo-camera/next';
 
 type Props = {
   open: boolean;
@@ -42,9 +45,12 @@ export const ModalItemProduct: React.FC<Props> = ({
   const [cost, setCost] = React.useState('');
   const [imageApi, setImageApi] = React.useState<ImageModel>('');
   const [loading, setLoading] = React.useState(false);
+  const [hasPermission, setHasPermission] = useState<boolean>(false);
+  const [scanned, setScanned] = useState(false);
   const dispatch = useDispatch();
   const isAdmin = useRoleAdmin();
   const toast = useToast();
+
   const pickImageAsync = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
@@ -190,6 +196,28 @@ export const ModalItemProduct: React.FC<Props> = ({
     setImage(selectItem?.productDescription || '');
   }, [selectItem]);
 
+  useEffect(() => {
+    const getCameraPermissions = async () => {
+      const { status } = await Camera.requestCameraPermissionsAsync();
+      setHasPermission(status === 'granted');
+    };
+
+    getCameraPermissions();
+  }, []);
+
+  const handleBarCodeScanned = ({ type, data }: any) => {
+    setCode(data);
+    toast.show({ title: 'Quét mã thành công', placement: 'top' });
+    setScanned(false);
+  };
+
+  if (hasPermission === null) {
+    return <Text>Requesting for camera permission</Text>;
+  }
+  if (hasPermission === false) {
+    return <Text>No access to camera</Text>;
+  }
+
   return (
     <Modal isOpen={open} size={'full'} onClose={closeModal} safeAreaTop={true}>
       <KeyboardAvoidingView
@@ -215,7 +243,51 @@ export const ModalItemProduct: React.FC<Props> = ({
                 ? selectItem?.productName
                 : 'Thêm sản phẩm'}
             </Modal.Header>
+
             <Modal.Body>
+              {!selectItem && (
+                <Box
+                  style={{
+                    flex: 1,
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                  }}
+                >
+                  {scanned && (
+                    <CameraView
+                      style={{
+                        width: '100%',
+                        aspectRatio: 1,
+                        overflow: 'hidden',
+                        borderRadius: 10,
+                        marginBottom: 10,
+                      }}
+                      onBarcodeScanned={handleBarCodeScanned}
+                      barcodeScannerSettings={{
+                        barcodeTypes: [
+                          'pdf417',
+                          'codabar',
+                          'datamatrix',
+                          'qr',
+                          'aztec',
+                          'ean13',
+                          'ean8',
+                          'upc_e',
+                          'code39',
+                          'code93',
+                          'itf14',
+                          'code128',
+                          'upc_a',
+                        ],
+                      }}
+                      // style={StyleSheet.absoluteFillObject}
+                    />
+                  )}
+                  {!scanned && (
+                    <Button onPress={() => setScanned(true)}>Quét Mã QR</Button>
+                  )}
+                </Box>
+              )}
               <FormControl>
                 <FormControl.Label>Image</FormControl.Label>
                 {image && (
@@ -229,7 +301,7 @@ export const ModalItemProduct: React.FC<Props> = ({
                     ></Image>
                   </Box>
                 )}
-                {selectItem && isAdmin ? (
+                {isAdmin ? (
                   <Button mt={3} onPress={pickImageAsync}>
                     Chọn ảnh
                   </Button>
@@ -293,11 +365,7 @@ export const ModalItemProduct: React.FC<Props> = ({
                 ) : (
                   <Box></Box>
                 )}
-                {selectItem && isAdmin ? (
-                  <Button onPress={handleSave}>Save</Button>
-                ) : (
-                  <></>
-                )}
+                {isAdmin ? <Button onPress={handleSave}>Save</Button> : <></>}
               </Button.Group>
             </Modal.Footer>
           </Modal.Content>
