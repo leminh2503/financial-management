@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react';
-import { Box, Center, Column, Row, Text } from 'native-base';
+import React, { useMemo, useState } from 'react';
+import { Box, Button, Center, Column, Row, Text } from 'native-base';
 
 // navigation
 import { RootStackParamList } from '../../navigation/types';
@@ -10,10 +10,12 @@ import { RootState } from '../../lib/redux/store';
 import { useSelector } from 'react-redux';
 import { ProductModel } from '../../lib/axios';
 import moment from 'moment';
+import { ModalScannerItem } from './modals/ModalScannerItem';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'List'>;
 
 export const SalesScreen: React.FC<Props> = () => {
+  const [showModalScanner, setModalScanncer] = useState(false);
   const { listInvoice } = useSelector((state: RootState) => state.invoice);
   const today = moment().format('DD/MM/YYYY');
   const yesterday = moment().subtract(1, 'day').format('DD/MM/YYYY');
@@ -42,71 +44,6 @@ export const SalesScreen: React.FC<Props> = () => {
       totals
     );
   }, [listInvoice]);
-
-  const removeDuplicate = (arr: any) => {
-    return arr.filter((item: any, index: any) => {
-      return arr.indexOf(item) === index;
-    });
-  };
-
-  function aggregateQuantities(data: any[]) {
-    const aggregatedData: any = {};
-
-    data.forEach((item) => {
-      const { productSKU, quantityInOrder } = item;
-      if (aggregatedData[productSKU]) {
-        aggregatedData[productSKU] += quantityInOrder;
-      } else {
-        aggregatedData[productSKU] = quantityInOrder;
-      }
-    });
-
-    return Object.keys(aggregatedData).map((productSKU) => ({
-      productSKU,
-      quantityInOrder: aggregatedData[productSKU],
-    }));
-  }
-
-  function aggregateQuantities1(data: any) {
-    const aggregatedData: any = {};
-
-    data.forEach((item) => {
-      const { productSKU, quantityInOrder } = item;
-      if (aggregatedData[productSKU]) {
-        aggregatedData[productSKU] += quantityInOrder;
-      } else {
-        aggregatedData[productSKU] = quantityInOrder;
-      }
-    });
-
-    // Convert aggregated data to array of objects
-    return Object.keys(aggregatedData).map((productSKU) => ({
-      productSKU,
-      quantityInOrder: aggregatedData[productSKU],
-    }));
-  }
-
-  const getData = () => {
-    return listInvoice.flatMap((item) => {
-      return aggregateQuantities(item.products);
-    }, 1);
-  };
-
-  const dataObj = useMemo(() => {
-    return aggregateQuantities1(getData());
-  }, [listInvoice]);
-
-  const getLabel1 = (item: any) => {
-    return item.map((i: any) => {
-      return i.productSKU;
-    });
-  };
-
-  const getQuantity = (item: any) => {
-    return item.map((i: any) => {
-      return i.quantityInOrder;
-    });
-  };
 
   const todayTotal = useMemo(() => {
     const list = listInvoice.filter((item) => {
@@ -223,16 +160,14 @@ export const SalesScreen: React.FC<Props> = () => {
             borderRadius: 16,
           }}
         />
-
-        {/*<Row mt={3} justifyContent="space-between" p={4}>*/}
-        {/*  <Text fontWeight="bold" fontSize={14}>*/}
-        {/*    Tổng doanh số*/}
-        {/*  </Text>*/}
-        {/*  <Text fontWeight="bold" fontSize={20}>*/}
-        {/*    1000 đ*/}
-        {/*  </Text>*/}
-        {/*</Row>*/}
       </Box>
+      <Button mt={2} onPress={() => setModalScanncer(true)}>
+        Quét mã QR
+      </Button>
+      <ModalScannerItem
+        open={showModalScanner}
+        closeModal={() => setModalScanncer(false)}
+      />
     </Center>
   );
 };

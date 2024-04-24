@@ -11,6 +11,7 @@ import { RootState } from '../../lib/redux/store';
 import { useSelector } from 'react-redux';
 import { useDebounce } from '../../hooks/useDebounce';
 import { ModalScanner } from '../CartScreen/modals/ModalScanner';
+import { useRoute } from '@react-navigation/native';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'List'>;
 const _item: ProductModel = {
@@ -30,6 +31,7 @@ export const SearchScreen: React.FC<Props> = () => {
   const [showModalScanner, setModalScanncer] = useState(false);
   const [searchQuery, setSearchQuery] = React.useState('');
   const debouncedValue = useDebounce(searchQuery, 200);
+  const { params } = useRoute();
 
   const search = useCallback(async () => {
     const listResult = listProduct.filter((item) => {
@@ -41,6 +43,12 @@ export const SearchScreen: React.FC<Props> = () => {
   useEffect(() => {
     search();
   }, [debouncedValue, search]);
+
+  useEffect(() => {
+    if (params?.text) {
+      setSearchQuery(params?.text);
+    }
+  }, [params]);
 
   useEffect(() => {
     setList(listProduct);
@@ -61,7 +69,7 @@ export const SearchScreen: React.FC<Props> = () => {
         renderItem={({ item }) => {
           return <Item2 item={item} />;
         }}
-        ListFooterComponent={<Box height={100} />}
+        ListFooterComponent={<Box height={150} />}
         keyExtractor={(item) => String(item.productId)}
       />
 
