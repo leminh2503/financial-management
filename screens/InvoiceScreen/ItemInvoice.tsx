@@ -1,11 +1,17 @@
-import { Box, Row, Text } from 'native-base';
+import { Box, Icon, Row, Text } from 'native-base';
 import { Card, TouchableRipple } from 'react-native-paper';
 import React, { useMemo } from 'react';
 import { InvoiceModel } from '../../lib/axios';
 import { useNavigation } from '@react-navigation/native';
 import moment from 'moment';
+import { FontAwesome } from '@expo/vector-icons';
 
-export const ItemInvoice = ({ item }: { item: InvoiceModel }) => {
+interface Props {
+  item: InvoiceModel;
+  deleteItem: (id: number) => void;
+}
+
+export const ItemInvoice = ({ item, deleteItem }: Props) => {
   const navigate = useNavigation();
 
   const total = useMemo(() => {
@@ -28,7 +34,16 @@ export const ItemInvoice = ({ item }: { item: InvoiceModel }) => {
       <Box p={2}>
         <Card>
           <Box p={2}>
-            <Text fontSize={12}>#{item.orderId}</Text>
+            <Row justifyContent="space-between" alignItems="center">
+              <Text fontSize={12}>#{item.orderId}</Text>
+              <Icon
+                name="trash"
+                color="#Ea372d"
+                as={FontAwesome}
+                size="md"
+                onPress={() => deleteItem(item.orderId)}
+              />
+            </Row>
             <Text fontSize={18} fontWeight="bold">
               {total} đ
             </Text>

@@ -1,4 +1,4 @@
-import { Box, FlatList } from 'native-base';
+import { Box, FlatList, useToast } from 'native-base';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../lib/redux/store';
@@ -9,6 +9,7 @@ import { RefreshControl } from 'react-native';
 
 export const ListInvoiceScreen = () => {
   const dispatch = useDispatch();
+  const toast = useToast();
   const { listInvoice } = useSelector((state: RootState) => state.invoice);
   const [refreshing, setRefreshing] = React.useState(false);
   const getInvoice = async () => {
@@ -23,6 +24,20 @@ export const ListInvoiceScreen = () => {
       });
   };
 
+  const deleteInvoice = async (id: number) => {
+    setRefreshing(true);
+    ApiService.deleteOrder(id)
+      .then((res) => {
+        setRefreshing(false);
+        toast.show({ title: 'Xoá hoá đơn thành công', placement: 'top' });
+        getInvoice();
+      })
+      .catch(() => {
+        setRefreshing(false);
+        toast.show({ title: 'Xoá hoá đơn không thành công', placement: 'top' });
+      });
+  };
+
   useEffect(() => {
     getInvoice();
   }, []);
@@ -30,14 +45,14 @@ export const ListInvoiceScreen = () => {
   return (
     <Box>
       <FlatList
-        ListFooterComponent={<Box p={4} />}
+        ListFooterComponent={<Box p={4} height={100} />}
         data={listInvoice}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={getInvoice} />
         }
         keyExtractor={(item) => item?.orderId?.toString()}
         renderItem={({ item, index }) => {
-          return <ItemInvoice item={item} />;
+          return <ItemInvoice item={item} deleteItem={deleteInvoice} />;
         }}
       />
     </Box>

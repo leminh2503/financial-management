@@ -90,6 +90,10 @@ class ApiService {
   getOrder() {
     return http.get<DataResponse<InvoiceModel[]>>('/api/Order');
   }
+
+  deleteOrder(id: number) {
+    return http.delete<DataResponse<InvoiceModel>>(`/api/Order/${id}`);
+  }
 }
 
 export default new ApiService();
