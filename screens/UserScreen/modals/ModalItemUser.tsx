@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -13,6 +13,9 @@ import { Platform } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../lib/redux/store';
+import { uploadStorage } from '../../../hooks/useFirestorage';
+import { Image } from 'expo-image';
+import { Loading } from '../../../components/Loading';
 
 type Props = {
   open: boolean;
@@ -35,6 +38,7 @@ export const ModalItemUser: React.FC<Props> = ({
   const [phoneNumber, setPhoneNumber] = React.useState('');
   const [image, setImage] = React.useState('');
   const [pass, setPass] = React.useState('');
+  const [loading, setLoading] = useState(false);
   const [fullName, setFullName] = React.useState('');
   const { user } = useSelector((state: RootState) => state.auth);
   const toast = useToast();
@@ -42,10 +46,29 @@ export const ModalItemUser: React.FC<Props> = ({
   const pickImageAsync = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
-      quality: 1,
+      aspect: [4, 3],
+      quality: 0.05,
     });
     if (!result.canceled) {
-      setImage(result.assets[0].uri);
+      setLoading(true);
+      // const reponsrImage = await ApiService.postImage(formData);
+      await uploadStorage(
+        result.assets[0].uri,
+        Math.floor(Math.random() * 99999)
+      )
+        .then((res) => {
+          console.log('-------', res);
+          setImage(res);
+          setLoading(false);
+        })
+        .catch((err) => {
+          setLoading(false);
+          toast.show({
+            title: 'Upload ảnh không thành công',
+            placement: 'top',
+          });
+        });
+      // setImageApi(reponsrImage.data.data);
     } else {
       alert('You did not select any image.');
     }
@@ -78,7 +101,7 @@ export const ModalItemUser: React.FC<Props> = ({
       });
       return true;
     }
-    if (!pass) {
+    if (!pass && !selectItem) {
       toast.show({ title: 'Chưa nhập mật khẩu', placement: 'top' });
       return true;
     }
@@ -86,40 +109,52 @@ export const ModalItemUser: React.FC<Props> = ({
   };
 
   const patchUser = () => {
+    setLoading(true);
     ApiService.patchUser({
       userId: selectItem?.userId,
       username: userName,
+      imageUser: image,
       fullName: fullName,
       phoneNumber: phoneNumber,
       roleId: 0,
     })
       .then((e) => {
-        if (e.data.status === 400) {
-          return toast.show({ title: e.data.message, placement: 'top' });
+        console.log('e?.data----', e);
+
+        if (e?.data?.status === 400) {
+          return toast.show({ title: e?.data?.message, placement: 'top' });
         }
         toast.show({ title: 'Sửa người dùng thành công', placement: 'top' });
         refresh && refresh();
+        setLoading(false);
         closeModal();
         resetValue();
       })
       .catch((e) => {
         console.log(e);
+        setLoading(false);
       });
   };
 
   const addUser = async () => {
+    setLoading(true);
+    console.log('image----', image);
     const data = await ApiService.postUser({
       username: userName,
       password: pass,
       fullName: fullName,
+      imageUser: image,
       phoneNumber: phoneNumber,
       roleId: 0,
     });
     if (data.data) {
+      setLoading(false);
       toast.show({ title: 'Thêm người dùng thành công', placement: 'top' });
       refresh && refresh();
       resetValue();
       closeModal();
+    } else {
+      setLoading(false);
     }
 
     // .then((e) => {
@@ -140,7 +175,7 @@ export const ModalItemUser: React.FC<Props> = ({
   const resetValue = () => {
     setUserName(selectItem?.username || '');
     setPhoneNumber(selectItem?.phoneNumber?.toString() || '');
-    setImage(selectItem?.image || '');
+    setImage(selectItem?.imageUser || '');
     setFullName(selectItem?.fullName || '');
     setPass('');
   };
@@ -148,6 +183,12 @@ export const ModalItemUser: React.FC<Props> = ({
   useEffect(() => {
     resetValue();
   }, [selectItem]);
+
+  // if (loading) {
+  //   return <Loading />;
+  // }
+
+  console.log('image-----', image);
 
   return (
     <Modal isOpen={open} size={'full'} onClose={closeModal} safeAreaTop={true}>
@@ -164,77 +205,85 @@ export const ModalItemUser: React.FC<Props> = ({
         }}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        <Modal.Content>
-          <Modal.CloseButton />
-          <Modal.Header>
-            {selectItem?.username ? selectItem?.username : 'Thêm nhân viên'}
-          </Modal.Header>
-          <Modal.Body>
-            {/*<FormControl>*/}
-            {/*  {image && (*/}
-            {/*    <Box alignItems="center" justifyContent="center">*/}
-            {/*      <Image*/}
-            {/*        style={{*/}
-            {/*          width: 100,*/}
-            {/*          height: 100,*/}
-            {/*          borderRadius: 50,*/}
-            {/*        }}*/}
-            {/*        source={{ uri: image }}*/}
-            {/*      ></Image>*/}
-            {/*    </Box>*/}
-            {/*  )}*/}
-            {/*  <Button mt={4} onPress={pickImageAsync}>*/}
-            {/*    Chọn ảnh*/}
-            {/*  </Button>*/}
-            {/*</FormControl>*/}
-            <FormControl>
-              <FormControl.Label>Tên đăng nhập</FormControl.Label>
-              <Input value={userName} onChangeText={setUserName} />
-            </FormControl>
-            <FormControl>
-              <FormControl.Label>Họ và tên</FormControl.Label>
-              <Input value={fullName} onChangeText={setFullName} />
-            </FormControl>
-            <FormControl>
-              <FormControl.Label>Số điện thoại</FormControl.Label>
-              <Input
-                keyboardType="numeric"
-                value={phoneNumber}
-                onChangeText={setPhoneNumber}
-              />
-            </FormControl>
-            {!selectItem && (
-              <FormControl mt="3">
-                <FormControl.Label>{'Mật khẩu'}</FormControl.Label>
-                <Input type="password" value={pass} onChangeText={setPass} />
+        {loading ? (
+          <Loading />
+        ) : (
+          <Modal.Content>
+            <Modal.CloseButton />
+            <Modal.Header>
+              {selectItem?.username ? selectItem?.username : 'Thêm nhân viên'}
+            </Modal.Header>
+            <Modal.Body>
+              <FormControl>
+                {image && (
+                  <Box alignItems="center" justifyContent="center">
+                    <Image
+                      style={{
+                        width: 100,
+                        height: 100,
+                        borderRadius: 50,
+                      }}
+                      source={{ uri: image }}
+                    ></Image>
+                  </Box>
+                )}
+                {selectItem?.userId === user?.userId || !selectItem ? (
+                  <Button mt={3} onPress={pickImageAsync}>
+                    Chọn ảnh
+                  </Button>
+                ) : (
+                  <></>
+                )}
               </FormControl>
-            )}
-          </Modal.Body>
-          <Modal.Footer>
-            <Button.Group space={2}>
-              <Button
-                variant="ghost"
-                colorScheme="blueGray"
-                onPress={closeModal}
-              >
-                Cancel
-              </Button>
-              {selectItem && user?.roleId === 1 && isShowDelete ? (
-                <Button
-                  onPress={() => {
-                    deleteItem && deleteItem(selectItem);
-                  }}
-                  colorScheme="red"
-                >
-                  Delete
-                </Button>
-              ) : (
-                <Box></Box>
+              <FormControl>
+                <FormControl.Label>Tên đăng nhập</FormControl.Label>
+                <Input value={userName} onChangeText={setUserName} />
+              </FormControl>
+              <FormControl>
+                <FormControl.Label>Họ và tên</FormControl.Label>
+                <Input value={fullName} onChangeText={setFullName} />
+              </FormControl>
+              <FormControl>
+                <FormControl.Label>Số điện thoại</FormControl.Label>
+                <Input
+                  keyboardType="numeric"
+                  value={phoneNumber}
+                  onChangeText={setPhoneNumber}
+                />
+              </FormControl>
+              {!selectItem && (
+                <FormControl mt="3">
+                  <FormControl.Label>{'Mật khẩu'}</FormControl.Label>
+                  <Input type="password" value={pass} onChangeText={setPass} />
+                </FormControl>
               )}
-              <Button onPress={handleSave}>Save</Button>
-            </Button.Group>
-          </Modal.Footer>
-        </Modal.Content>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button.Group space={2}>
+                <Button
+                  variant="ghost"
+                  colorScheme="blueGray"
+                  onPress={closeModal}
+                >
+                  Cancel
+                </Button>
+                {selectItem && user?.roleId === 1 && isShowDelete ? (
+                  <Button
+                    onPress={() => {
+                      deleteItem && deleteItem(selectItem);
+                    }}
+                    colorScheme="red"
+                  >
+                    Delete
+                  </Button>
+                ) : (
+                  <Box></Box>
+                )}
+                <Button onPress={handleSave}>Save</Button>
+              </Button.Group>
+            </Modal.Footer>
+          </Modal.Content>
+        )}
       </KeyboardAvoidingView>
     </Modal>
   );

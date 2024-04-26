@@ -49,8 +49,6 @@ export const SaffScreen: React.FC<Props> = () => {
       });
   };
 
-  console.log('infotttt', info);
-
   useEffect(() => {
     GetUser();
   }, []);
@@ -65,7 +63,7 @@ export const SaffScreen: React.FC<Props> = () => {
             height: 200,
             borderRadius: 100,
           }}
-          source={{ uri: 'https://picsum.photos/200/300' }}
+          source={{ uri: info?.imageUser || 'https://picsum.photos/200/300' }}
         ></Image>
       </Box>
       <Row alignItems="center" mt={3}>

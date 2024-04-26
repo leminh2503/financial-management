@@ -103,7 +103,7 @@ export const UserScreen: React.FC<Props> = () => {
                 <Row alignItems="center">
                   <Image
                     source={{
-                      uri: item.image || 'https://picsum.photos/200/300',
+                      uri: item.imageUser || 'https://picsum.photos/200/300',
                     }}
                     style={{
                       width: 60,
