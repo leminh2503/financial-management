@@ -1,6 +1,5 @@
 import React, { useMemo, useState } from 'react';
 import { Box, Button, Center, Column, Row, Text } from 'native-base';
-
 // navigation
 import { RootStackParamList } from '../../navigation/types';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -11,11 +10,13 @@ import { useSelector } from 'react-redux';
 import { ProductModel } from '../../lib/axios';
 import moment from 'moment';
 import { ModalScannerItem } from './modals/ModalScannerItem';
+import RNDateTimePicker from '@react-native-community/datetimepicker';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'List'>;
 
 export const SalesScreen: React.FC<Props> = () => {
   const [showModalScanner, setModalScanncer] = useState(false);
+  const [date, setDate] = useState(new Date());
   const { listInvoice } = useSelector((state: RootState) => state.invoice);
   const today = moment().format('DD/MM/YYYY');
   const yesterday = moment().subtract(1, 'day').format('DD/MM/YYYY');
@@ -32,6 +33,27 @@ export const SalesScreen: React.FC<Props> = () => {
     return listInvoice?.reduce((t, item) => t + totalItem(item.products), 0);
   }, [listInvoice]);
 
+  const listInvoiceByDate = useMemo(() => {
+    const dateFormat = moment(date).format('DD/MM/YYYY');
+    const list = listInvoice.filter((item) => {
+      return moment(item.createdDate).format('DD/MM/YYYY').includes(dateFormat);
+    });
+    return list;
+  }, [date]);
+
+  const totalItemByDate = (list: ProductModel[]) => {
+    return list.reduce((t, i) => {
+      return t + i.productPrice * i.quantityInOrder;
+    }, 0);
+  };
+
+  const totalsByDate = useMemo(() => {
+    return listInvoiceByDate?.reduce(
+      (t, item) => t + totalItemByDate(item.products),
+      0
+    );
+  }, [listInvoiceByDate]);
+
   const capitalItem = (list: ProductModel[]) => {
     return list.reduce((t, i) => {
       return t + i.productCost * i.quantityInOrder;
@@ -44,6 +66,15 @@ export const SalesScreen: React.FC<Props> = () => {
       totals
     );
   }, [listInvoice]);
+
+  const capitalByDate = useMemo(() => {
+    console.log('listInvoiceByDate---', listInvoiceByDate);
+
+    return listInvoiceByDate?.reduce(
+      (t, item) => t - capitalItem(item.products),
+      totalsByDate
+    );
+  }, [listInvoiceByDate]);
 
   const todayTotal = useMemo(() => {
     const list = listInvoice.filter((item) => {
@@ -111,6 +142,7 @@ export const SalesScreen: React.FC<Props> = () => {
         p={4}
         borderRadius={4}
       >
+        <Text fontWeight="bold">Tổng doanh thu: </Text>
         <Row justifyContent="space-between">
           <Column>
             <Text>{listInvoice.length} hoá đơn</Text>
@@ -126,6 +158,41 @@ export const SalesScreen: React.FC<Props> = () => {
           </Column>
         </Row>
       </Box>
+
+      <Box
+        width="100%"
+        borderWidth={1}
+        backgroundColor="white"
+        p={4}
+        borderRadius={4}
+        mt={3}
+      >
+        <Row justifyContent="space-between" alignItems="center">
+          <Text fontWeight="bold">Doanh thu theo ngày:</Text>
+          <RNDateTimePicker
+            mode="date"
+            value={date}
+            onChange={(_, val) => {
+              setDate(val);
+            }}
+          />
+        </Row>
+        <Row mt={2} justifyContent="space-between">
+          <Column>
+            <Text>{listInvoiceByDate.length} hoá đơn</Text>
+            <Text fontSize={24} color="green.700" fontWeight="700">
+              {totalsByDate} đ
+            </Text>
+          </Column>
+          <Column>
+            <Text>Lợi nhuận</Text>
+            <Text fontSize={24} color="green.700" fontWeight="700">
+              {capitalByDate} đ
+            </Text>
+          </Column>
+        </Row>
+      </Box>
+
       <Box w="100%" mt={3}>
         <Text fontSize={20} fontWeight="800">
           Doanh thu
@@ -135,7 +202,7 @@ export const SalesScreen: React.FC<Props> = () => {
           yAxisLabel=""
           verticalLabelRotation={20}
           width={Dimensions.get('window').width} // from react-native
-          height={300}
+          height={250}
           showValuesOnTopOfBars
           yAxisSuffix=""
           yAxisInterval={1} // optional, defaults to 1
