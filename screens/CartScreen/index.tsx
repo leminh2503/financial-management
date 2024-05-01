@@ -28,6 +28,7 @@ import { ModalAddClient } from './modals/ModalAddClient';
 import { ApiService } from '../../lib/axios';
 import { addInvoice } from '../../lib/redux/reducers/invoiceReducer';
 import { cloneDeep } from 'lodash';
+import { Loading } from '../../components/Loading';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'List'>;
 
@@ -35,6 +36,7 @@ export const CartScreen: React.FC<Props> = () => {
   const { cart } = useSelector((state: RootState) => state.product);
   const { user } = useSelector((state: RootState) => state.auth);
   const [showModalClient, setShowModalClient] = useState(false);
+  const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigation();
   const toast = useToast();
@@ -67,6 +69,7 @@ export const CartScreen: React.FC<Props> = () => {
   };
 
   const handleCreateInvoice = async (data: { name: string }) => {
+    setLoading(true);
     const listOrderItem = cart.map((item) => {
       return {
         productId: item.productId,
@@ -110,69 +113,81 @@ export const CartScreen: React.FC<Props> = () => {
     navigate.navigate('InvoiceDetail', {
       id: dataRes.orderId,
     });
+    setLoading(false);
     // console.log('handleCreateInvoice', user);
   };
 
   return (
-    <Column w="100%" mx={2} style={{ flex: 1 }} justifyContent="space-between">
-      <Row justifyContent="flex-end" my={2} mr={4} space="md">
-        <Icon
-          name="search"
-          // color="#Ea372d"
-          as={FontAwesome}
-          size={30}
-          onPress={() => {
-            navigate.navigate('Search');
-          }}
-        />
-        <Icon
-          name="trash"
-          color="#Ea372d"
-          as={FontAwesome}
-          size={30}
-          onPress={cleanCart}
-        />
-      </Row>
-      <Column style={{ flex: 1 }}>
-        <FlatList
-          // ListFooterComponent={<Box height={200} />}
-          data={cart}
-          renderItem={({ item }) => {
-            return <Item1 item={item} count={item.count || 0} />;
-          }}
-          keyExtractor={(item) => String(item.productSKU)}
-        />
-      </Column>
+    <>
+      {loading ? (
+        <Loading />
+      ) : (
+        <Column
+          w="100%"
+          mx={2}
+          style={{ flex: 1 }}
+          justifyContent="space-between"
+        >
+          <Row justifyContent="flex-end" my={2} mr={4} space="md">
+            <Icon
+              name="search"
+              // color="#Ea372d"
+              as={FontAwesome}
+              size={30}
+              onPress={() => {
+                navigate.navigate('Search');
+              }}
+            />
+            <Icon
+              name="trash"
+              color="#Ea372d"
+              as={FontAwesome}
+              size={30}
+              onPress={cleanCart}
+            />
+          </Row>
+          <Column style={{ flex: 1 }}>
+            <FlatList
+              // ListFooterComponent={<Box height={200} />}
+              data={cart}
+              renderItem={({ item }) => {
+                return <Item1 item={item} count={item.count || 0} />;
+              }}
+              keyExtractor={(item) => String(item.productSKU)}
+            />
+          </Column>
 
-      <Box
-        height={60}
-        width="100%"
-        style={[style.shadow]}
-        alignItems="flex-end"
-        justifyContent="center"
-        px={4}
-      >
-        <Row space="md" alignItems="center">
-          <Column>
-            <Row>
-              <Text>Tổng thanh toán: </Text>
-              <Text ml={1} color="#De7d44">
-                {total} đ
-              </Text>
+          <Box
+            height={60}
+            width="100%"
+            style={[style.shadow]}
+            alignItems="flex-end"
+            justifyContent="center"
+            px={4}
+          >
+            <Row space="md" alignItems="center">
+              <Column>
+                <Row>
+                  <Text>Tổng thanh toán: </Text>
+                  <Text ml={1} color="#De7d44">
+                    {total} đ
+                  </Text>
+                </Row>
+              </Column>
+              <Column>
+                <Button onPress={handleOpenModal}>In hoá đơn</Button>
+              </Column>
             </Row>
-          </Column>
-          <Column>
-            <Button onPress={handleOpenModal}>In hoá đơn</Button>
-          </Column>
-        </Row>
-      </Box>
+          </Box>
 
-      <ModalAddClient
-        open={showModalClient}
-        closeModal={() => setShowModalClient(false)}
-        createInvoice={handleCreateInvoice}
-      />
-    </Column>
+          <ModalAddClient
+            open={showModalClient}
+            closeModal={() => setShowModalClient(false)}
+            createInvoice={handleCreateInvoice}
+          />
+        </Column>
+      )}
+    </>
   );
 };
 
