@@ -4,6 +4,7 @@ import { SignupScreen } from '../screens/SignupScreen';
 import { UserScreen } from '../screens/UserScreen';
 import { HomeScreen } from '../screens/HomeScreen';
 import { ReportScreen } from '../screens/ReportScreen';
+import OtherScreen from '../screens/OtherScreen';
 
 export enum IconBottom {
   HOME = 'Home',
@@ -38,9 +39,9 @@ const routes: any[] = [
     icon: IconBottom.CHART,
   },
   {
-    component: UserScreen,
-    name: 'ListInvoice',
-    title: 'Danh sách hoá đơn',
+    component: OtherScreen,
+    name: 'Other',
+    title: 'Khác',
     isBottom: true,
     icon: IconBottom.THREEDOTS,
   },
