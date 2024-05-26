@@ -10,11 +10,13 @@ import {
   Text,
   VStack,
 } from 'native-base';
-import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons'; // Assuming you're using Expo
+import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native'; // Assuming you're using Expo
 
 const OtherScreen = () => {
+  const navigate = useNavigation();
   return (
-    <ScrollView>
+    <ScrollView bg="white">
       <Box px="4" w="100%" mx="auto" bg="white">
         <Text fontSize="xl" bold textAlign="center">
           Khác
@@ -33,10 +35,10 @@ const OtherScreen = () => {
         >
           <HStack space={3} justifyContent="space-between" alignItems="center">
             <HStack space={3} alignItems="center">
-              <Icon as={MaterialIcons} name="settings" size="sm" />
+              <Icon as={MaterialIcons} name="settings" size="lg" />
               <Text>Cài đặt cơ bản</Text>
             </HStack>
-            <Icon as={MaterialIcons} name="chevron-right" size="sm" />
+            <Icon as={MaterialIcons} name="chevron-right" size="lg" />
           </HStack>
         </Pressable>
 
@@ -50,7 +52,7 @@ const OtherScreen = () => {
         >
           <Pressable
             onPress={() => {
-              /* Handle press */
+              navigate.navigate('ReportYear');
             }}
           >
             <HStack
@@ -59,17 +61,17 @@ const OtherScreen = () => {
               alignItems="center"
             >
               <HStack space={3} alignItems="center">
-                <Icon as={MaterialCommunityIcons} name="chart-line" size="sm" />
+                <Icon as={MaterialCommunityIcons} name="chart-line" size="lg" />
                 <Text>Báo cáo năm</Text>
               </HStack>
-              <Icon as={MaterialIcons} name="chevron-right" size="sm" />
+              <Icon as={MaterialIcons} name="chevron-right" size="lg" />
             </HStack>
           </Pressable>
           <Divider />
 
           <Pressable
             onPress={() => {
-              /* Handle press */
+              navigate.navigate('ReportCategory');
             }}
           >
             <HStack
@@ -78,17 +80,17 @@ const OtherScreen = () => {
               alignItems="center"
             >
               <HStack space={3} alignItems="center">
-                <Icon as={MaterialCommunityIcons} name="chart-pie" size="sm" />
+                <Icon as={MaterialCommunityIcons} name="chart-pie" size="lg" />
                 <Text>Báo cáo danh mục trong năm</Text>
               </HStack>
-              <Icon as={MaterialIcons} name="chevron-right" size="sm" />
+              <Icon as={MaterialIcons} name="chevron-right" size="lg" />
             </HStack>
           </Pressable>
           <Divider />
 
           <Pressable
             onPress={() => {
-              /* Handle press */
+              navigate.navigate('DetailReportCategory');
             }}
           >
             <HStack
@@ -97,17 +99,17 @@ const OtherScreen = () => {
               alignItems="center"
             >
               <HStack space={3} alignItems="center">
-                <Icon as={MaterialCommunityIcons} name="chart-bar" size="sm" />
+                <Icon as={MaterialCommunityIcons} name="chart-bar" size="lg" />
                 <Text>Báo cáo toàn kỳ</Text>
               </HStack>
-              <Icon as={MaterialIcons} name="chevron-right" size="sm" />
+              <Icon as={MaterialIcons} name="chevron-right" size="lg" />
             </HStack>
           </Pressable>
           <Divider />
 
           <Pressable
             onPress={() => {
-              /* Handle press */
+              navigate.navigate('ReportTotalYearTotal');
             }}
           >
             <HStack
@@ -119,18 +121,18 @@ const OtherScreen = () => {
                 <Icon
                   as={MaterialCommunityIcons}
                   name="chart-line-stacked"
-                  size="sm"
+                  size="lg"
                 />
                 <Text>Báo cáo danh mục toàn kỳ</Text>
               </HStack>
-              <Icon as={MaterialIcons} name="chevron-right" size="sm" />
+              <Icon as={MaterialIcons} name="chevron-right" size="lg" />
             </HStack>
           </Pressable>
           <Divider />
 
           <Pressable
             onPress={() => {
-              /* Handle press */
+              navigate.navigate('ReportYear');
             }}
           >
             <HStack
@@ -142,12 +144,12 @@ const OtherScreen = () => {
                 <Icon
                   as={MaterialCommunityIcons}
                   name="swap-vertical"
-                  size="sm"
+                  size="lg"
                 />
                 <Text>Báo cáo thay đổi số dư</Text>
               </HStack>
 
-              <Icon as={MaterialIcons} name="chevron-right" size="sm" />
+              <Icon as={MaterialIcons} name="chevron-right" size="lg" />
             </HStack>
           </Pressable>
           <Divider />
@@ -163,10 +165,10 @@ const OtherScreen = () => {
               alignItems="center"
             >
               <HStack space={3} alignItems="center">
-                <Icon as={MaterialIcons} name="search" size="sm" />
+                <Icon as={MaterialIcons} name="search" size="lg" />
                 <Text>Tìm kiếm giao dịch</Text>
               </HStack>
-              <Icon as={MaterialIcons} name="chevron-right" size="sm" />
+              <Icon as={MaterialIcons} name="chevron-right" size="lg" />
             </HStack>
           </Pressable>
         </VStack>
@@ -183,10 +185,10 @@ const OtherScreen = () => {
         >
           <HStack space={3} justifyContent="space-between" alignItems="center">
             <HStack space={3} alignItems="center">
-              <Icon as={MaterialIcons} name="help-outline" size="sm" />
+              <Icon as={MaterialIcons} name="help-outline" size="lg" />
               <Text>Trợ giúp</Text>
             </HStack>
-            <Icon as={MaterialIcons} name="chevron-right" size="sm" />
+            <Icon as={MaterialIcons} name="chevron-right" size="lg" />
           </HStack>
         </Pressable>
       </Box>

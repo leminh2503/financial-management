@@ -33,6 +33,7 @@ import RouteList from './RouteList';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import BottomTabContent from './BottomTabContent';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { BackButton } from '../components/BackButton';
 
 const BottomTab = createBottomTabNavigator();
 
@@ -64,7 +65,6 @@ function BottomTabScreen(): ReactElement {
 const Stack = createNativeStackNavigator<RootStackParamList>();
 export default function Navigator({ theme }: { theme: ITheme }) {
   const { user, token } = useSelector((state: RootState) => state.auth);
-
   return (
     <NavigationContainer
       linking={linking}
@@ -80,11 +80,15 @@ export default function Navigator({ theme }: { theme: ITheme }) {
             headerShown: false,
           }}
         />
-        {RouteList.map(({ name, component, isBottom }) => {
+        {RouteList.map(({ title, name, component, isBottom }) => {
           if (!isBottom) {
             return (
               <Stack.Screen
-                options={{ headerShown: true, title: name }}
+                options={{
+                  headerShown: true,
+                  title: title,
+                  headerLeft: () => <BackButton />,
+                }}
                 name={name}
                 component={component}
                 key={name}

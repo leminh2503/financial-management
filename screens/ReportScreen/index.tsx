@@ -20,6 +20,11 @@ import { IncomeRoute } from './Income';
 
 const { width } = Dimensions.get('window');
 
+enum ReportScreenRoute {
+  MONTH = 'Tháng',
+  YEAR = 'Năm',
+}
+
 const renderScene = SceneMap({
   expenses: ExpensesRoute,
   income: IncomeRoute,
@@ -51,6 +56,14 @@ export const ReportScreen = () => {
     setCurrentDate(currentDate.clone().subtract(1, 'month'));
   };
 
+  const [screen, setScreen] = useState<ReportScreenRoute>(
+    ReportScreenRoute.MONTH
+  );
+
+  const handleSetScreen = (value: ReportScreenRoute) => {
+    setScreen(value);
+  };
+
   const handleNextMonth = () => {
     setCurrentDate(currentDate.clone().add(1, 'month'));
   };
@@ -59,15 +72,41 @@ export const ReportScreen = () => {
     <NativeBaseProvider>
       <ScrollView contentContainerStyle={{ padding: 16, flexGrow: 1 }}>
         <Box backgroundColor="#F6F9FF">
+          <Center mb={4}>
+            <HStack alignItems="center">
+              <Pressable
+                borderRadius={screen === ReportScreenRoute.MONTH ? 8 : 0}
+                bgColor={
+                  screen === ReportScreenRoute.MONTH ? '#C0D3FC' : '#F6F9FF'
+                }
+                p={2}
+                px={4}
+                onPress={() => handleSetScreen(ReportScreenRoute.MONTH)}
+              >
+                <Text>Hàng tháng</Text>
+              </Pressable>
+              <Pressable
+                borderRadius={screen === ReportScreenRoute.YEAR ? 8 : 0}
+                bgColor={
+                  screen === ReportScreenRoute.YEAR ? '#C0D3FC' : '#F6F9FF'
+                }
+                p={2}
+                px={4}
+                onPress={() => handleSetScreen(ReportScreenRoute.YEAR)}
+              >
+                <Text>Hàng năm</Text>
+              </Pressable>
+            </HStack>
+          </Center>
           <HStack justifyContent="space-between" alignItems="center" mb={4}>
             <Pressable onPress={handlePrevMonth}>
-              <Icon as={MaterialIcons} name="arrow-back" size="lg" />
+              <Icon as={MaterialIcons} name="chevron-left" size="lg" />
             </Pressable>
             <Text fontSize="2xl" bold>
               {currentDate.format('MM/YYYY')}
             </Text>
             <Pressable onPress={handleNextMonth}>
-              <Icon as={MaterialIcons} name="arrow-forward" size="lg" />
+              <Icon as={MaterialIcons} name="chevron-right" size="lg" />
             </Pressable>
           </HStack>
           <Divider my={4} />
@@ -104,24 +143,6 @@ export const ReportScreen = () => {
           initialLayout={{ width }}
         />
       </ScrollView>
-      <Box style={styles.tabBar}>
-        <Center flex={1}>
-          <Icon as={MaterialIcons} name="edit" size="lg" />
-          <Text>Nhập vào</Text>
-        </Center>
-        <Center flex={1}>
-          <Icon as={MaterialIcons} name="calendar-today" size="lg" />
-          <Text>Lịch</Text>
-        </Center>
-        <Center flex={1}>
-          <Icon as={MaterialIcons} name="pie-chart" size="lg" />
-          <Text>Báo cáo</Text>
-        </Center>
-        <Center flex={1}>
-          <Icon as={MaterialIcons} name="more-horiz" size="lg" />
-          <Text>Khác</Text>
-        </Center>
-      </Box>
     </NativeBaseProvider>
   );
 };
