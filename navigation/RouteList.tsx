@@ -1,13 +1,9 @@
 import { CalendarScreen } from '../screens/CalendarScreen';
 import { SettingsScreen } from '../screens/SettingsScreen';
 import { SignupScreen } from '../screens/SignupScreen';
-import { CartScreen } from '../screens/CartScreen';
 import { UserScreen } from '../screens/UserScreen';
-import { SearchScreen } from '../screens/SearchScreen';
-import InvoiceDetail from '../screens/InvoiceScreen/InvoiceDetail';
-import { ListInvoiceScreen } from '../screens/InvoiceScreen';
-import { SaffScreen } from '../screens/SaffScreen';
 import { HomeScreen } from '../screens/HomeScreen';
+import { ReportScreen } from '../screens/ReportScreen';
 
 export enum IconBottom {
   HOME = 'Home',
@@ -34,42 +30,25 @@ const routes: any[] = [
     icon: IconBottom.CALENDAR,
   },
   {
-    component: CartScreen,
-    name: 'Cart',
-    title: 'Cart',
+    component: ReportScreen,
+    name: 'Report',
+    title: 'Report',
     isAuth: false,
     isBottom: true,
     icon: IconBottom.CHART,
   },
   {
-    component: ListInvoiceScreen,
+    component: UserScreen,
     name: 'ListInvoice',
     title: 'Danh sách hoá đơn',
     isBottom: true,
     icon: IconBottom.THREEDOTS,
   },
   {
-    component: InvoiceDetail,
-    name: 'InvoiceDetail',
-    title: 'InvoiceDetail',
-  },
-  {
-    component: SaffScreen,
-    name: 'Saff',
-    title: 'Saff Info',
-    isBottom: false,
-    icon: 'account',
-  },
-  {
     component: UserScreen,
     name: 'User',
     title: 'User',
     isAuth: false,
-  },
-  {
-    component: SearchScreen,
-    name: 'Search',
-    title: 'Search',
   },
   {
     component: SettingsScreen,

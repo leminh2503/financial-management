@@ -90,9 +90,11 @@ export const CalendarScreen = () => {
 
   return (
     <NativeBaseProvider>
-      <ScrollView contentContainerStyle={{ padding: 16 }}>
+      <ScrollView
+        contentContainerStyle={{ padding: 16, backgroundColor: '#F6F9FF' }}
+      >
         <HStack justifyContent="space-between" alignItems="center" mb={4}>
-          <Text fontSize="2xl" bold>
+          <Text flex={1} fontSize="2xl" bold>
             Lịch
           </Text>
           <IconButton
@@ -111,33 +113,41 @@ export const CalendarScreen = () => {
             selectedDayTextColor: '#ffffff',
             todayTextColor: '#00adf5',
             arrowColor: 'orange',
+            calendarBackground: '#F6F9FF',
           }}
         />
         <Divider my={4} />
-        <HStack justifyContent="space-between" mb={4}>
+        <HStack justifyContent="space-between">
           <VStack alignItems="center">
-            <Text color="blue.500" fontSize="lg" bold>
+            <Text>Thu nhập</Text>
+            <Text color="blue.500" fontSize="md" bold>
               10,000,000đ
             </Text>
-            <Text>Thu nhập</Text>
           </VStack>
           <VStack alignItems="center">
-            <Text color="red.500" fontSize="lg" bold>
+            <Text>Chi tiêu</Text>
+            <Text color="red.500" fontSize="md" bold>
               1,200,000đ
             </Text>
-            <Text>Chi tiêu</Text>
           </VStack>
           <VStack alignItems="center">
-            <Text color="blue.500" fontSize="lg" bold>
+            <Text>Tổng</Text>
+            <Text color="blue.500" fontSize="md" bold>
               +8,800,000đ
             </Text>
-            <Text>Tổng</Text>
           </VStack>
         </HStack>
         <Divider my={4} />
         {transactions.map((transaction, index) => (
           <Box key={index} mb={4}>
-            <Text mb={2}>{transaction.date}</Text>
+            <HStack
+              mb={2}
+              backgroundColor="#DBE6FD"
+              justifyContent="space-between"
+            >
+              <Text fontWeight="bold">{transaction.date}</Text>
+              <Text fontWeight="bold">8,800,000đ</Text>
+            </HStack>
             <HStack justifyContent="space-between" alignItems="center">
               <HStack alignItems="center">
                 <Icon
@@ -153,9 +163,10 @@ export const CalendarScreen = () => {
                   }
                   mr={2}
                 />
-                <Text>{transaction.category}</Text>
+                <Text fontWeight="bold">{transaction.category}</Text>
               </HStack>
               <Text
+                fontWeight="bold"
                 color={transaction.type === 'expense' ? 'red.500' : 'blue.500'}
               >
                 {transaction.amount}
