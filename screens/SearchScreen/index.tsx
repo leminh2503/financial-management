@@ -5,13 +5,13 @@ import { RootStackParamList } from '../../navigation/types';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Searchbar } from 'react-native-paper';
 import { Box, Button, FlatList } from 'native-base';
-import { Item2 } from '../ListScreen/components/Item2';
 import { ProductModel } from '../../lib/axios';
 import { RootState } from '../../lib/redux/store';
 import { useSelector } from 'react-redux';
 import { useDebounce } from '../../hooks/useDebounce';
 import { ModalScanner } from '../CartScreen/modals/ModalScanner';
 import { useRoute } from '@react-navigation/native';
+import { View } from 'react-native';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'List'>;
 const _item: ProductModel = {
@@ -67,7 +67,7 @@ export const SearchScreen: React.FC<Props> = () => {
       <FlatList
         data={list}
         renderItem={({ item }) => {
-          return <Item2 item={item} />;
+          return <View />;
         }}
         ListFooterComponent={<Box height={150} />}
         keyExtractor={(item) => String(item.productId)}

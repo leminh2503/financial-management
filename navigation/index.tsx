@@ -33,7 +33,6 @@ import RouteList from './RouteList';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import BottomTabContent from './BottomTabContent';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { NavMenu } from './NavigationMenu';
 
 const BottomTab = createBottomTabNavigator();
 
@@ -51,12 +50,9 @@ function BottomTabScreen(): ReactElement {
               key={name}
               options={{
                 headerTitleStyle: {
-                  fontWeight: 'bold',
+                  display: 'none',
                 },
-                title: title,
-                headerRight: () => <NavMenu />,
-                headerShown: true,
-                headerLeft: () => null,
+                headerShown: false,
               }}
             />
           )

@@ -4,7 +4,6 @@ import { useToast } from 'native-base';
 import { useDispatch } from 'react-redux';
 import { store } from '../lib/redux/store';
 import { useEffect, useState } from 'react';
-import { resetAuthData } from '../lib/redux/reducers/authReducer';
 
 export default function usePusherNotification() {
   const [isLoadingComplete, setLoadingComplete] = useState(false);
@@ -40,13 +39,13 @@ export default function usePusherNotification() {
           }
 
           // If API return 401 not authorized error, then sign-out
-          if (error?.response.status == 401) {
-            dispatch(resetAuthData());
-            toast.show({
-              title: 'Phiên dăng nhập hết hạn, vui lòng đăng nhập lại',
-              placement: 'top',
-            });
-          }
+          // if (error?.response.status == 401) {
+          //   dispatch(resetAuthData());
+          //   toast.show({
+          //     title: 'Phiên dăng nhập hết hạn, vui lòng đăng nhập lại',
+          //     placement: 'top',
+          //   });
+          // }
           // else {
           //   toast.show({
           //     title: 'Dã có lỗi xảy ra, vui lòng thử lại',

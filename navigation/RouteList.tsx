@@ -1,46 +1,52 @@
-import { ListScreen } from '../screens/ListScreen';
+import { CalendarScreen } from '../screens/CalendarScreen';
 import { SettingsScreen } from '../screens/SettingsScreen';
-import { SigninScreen } from '../screens/SigninScreen';
 import { SignupScreen } from '../screens/SignupScreen';
 import { CartScreen } from '../screens/CartScreen';
 import { UserScreen } from '../screens/UserScreen';
-import { SalesScreen } from '../screens/SalesScreen';
 import { SearchScreen } from '../screens/SearchScreen';
 import InvoiceDetail from '../screens/InvoiceScreen/InvoiceDetail';
 import { ListInvoiceScreen } from '../screens/InvoiceScreen';
 import { SaffScreen } from '../screens/SaffScreen';
+import { HomeScreen } from '../screens/HomeScreen';
+
+export enum IconBottom {
+  HOME = 'Home',
+  CALENDAR = 'Calendar',
+  CHART = 'Chart',
+  THREEDOTS = 'Threedots',
+}
 
 const routes: any[] = [
   {
-    component: SalesScreen,
-    name: 'Sales',
-    title: 'TotalSales',
-    isAuth: true,
+    component: HomeScreen,
+    name: 'Home',
+    title: 'Home',
+    isAuth: false,
     isBottom: true,
-    icon: 'tire',
+    icon: IconBottom.HOME,
   },
   {
-    component: ListScreen,
-    name: 'List',
-    title: 'List',
-    isAuth: true,
+    component: CalendarScreen,
+    name: 'Calendar',
+    title: 'Calendar',
+    isAuth: false,
     isBottom: true,
-    icon: 'store-outline',
+    icon: IconBottom.CALENDAR,
   },
   {
     component: CartScreen,
     name: 'Cart',
     title: 'Cart',
-    isAuth: true,
+    isAuth: false,
     isBottom: true,
-    icon: 'cart',
+    icon: IconBottom.CHART,
   },
   {
     component: ListInvoiceScreen,
     name: 'ListInvoice',
     title: 'Danh sách hoá đơn',
-    icon: 'format-list-bulleted',
     isBottom: true,
+    icon: IconBottom.THREEDOTS,
   },
   {
     component: InvoiceDetail,
@@ -51,14 +57,14 @@ const routes: any[] = [
     component: SaffScreen,
     name: 'Saff',
     title: 'Saff Info',
-    isBottom: true,
+    isBottom: false,
     icon: 'account',
   },
   {
     component: UserScreen,
     name: 'User',
     title: 'User',
-    isAuth: true,
+    isAuth: false,
   },
   {
     component: SearchScreen,
@@ -69,19 +75,13 @@ const routes: any[] = [
     component: SettingsScreen,
     name: 'Settings',
     title: 'Settings',
-    isAuth: true,
-  },
-  {
-    component: SigninScreen,
-    name: 'Signin',
-    title: 'Signin',
-    isAuth: true,
+    isAuth: false,
   },
   {
     component: SignupScreen,
     name: 'Signup',
     title: 'Signup',
-    isAuth: true,
+    isAuth: false,
   },
 ];
 

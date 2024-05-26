@@ -6,12 +6,15 @@ import {
   useRoute,
   useTheme,
 } from '@react-navigation/native';
-import RouteList from './RouteList';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import RouteList, { IconBottom } from './RouteList';
 import { RootState } from '../lib/redux/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { ApiService } from '../lib/axios';
 import { setListInvoice } from '../lib/redux/reducers/invoiceReducer';
+import { IconHome } from '../assets/icon/IconHome';
+import { IconCalendar } from '../assets/icon/IconCalendar';
+import { IconThreeDots } from '../assets/icon/IconThreeDots';
+import { IconChart } from '../assets/icon/IconChart';
 
 const BottomTabContent = React.memo(function BottomTabContent() {
   const navigation = useNavigation();
@@ -23,22 +26,15 @@ const BottomTabContent = React.memo(function BottomTabContent() {
 
   const getColor = (name: string, index: number): string => {
     if (currentRoute === undefined) {
-      return index === 0 ? 'red' : 'black';
+      return index === 0 ? 'red' : '';
     }
 
     if (name === currentRoute) {
-      return 'red';
+      return '#5386F7';
     }
 
-    return 'black';
+    return '';
   };
-
-  useEffect(() => {
-    console.log('token------', token);
-    if (!token) {
-      navigation.navigate('Signin');
-    }
-  }, [token]);
 
   const getInvoice = async () => {
     ApiService.getOrder().then((res) => {
@@ -65,13 +61,18 @@ const BottomTabContent = React.memo(function BottomTabContent() {
               // style={styles.itemContainer}
             >
               <View style={styles.itemContainer}>
-                <MaterialCommunityIcons
-                  style={{
-                    color: getColor(name, index),
-                    fontSize: 28,
-                  }}
-                  name={icon}
-                ></MaterialCommunityIcons>
+                {icon === IconBottom.HOME && (
+                  <IconHome color={getColor(name, index)} />
+                )}
+                {icon === IconBottom.THREEDOTS && (
+                  <IconThreeDots color={getColor(name, index)} />
+                )}
+                {icon === IconBottom.CHART && (
+                  <IconChart color={getColor(name, index)} />
+                )}
+                {icon === IconBottom.CALENDAR && (
+                  <IconCalendar color={getColor(name, index)} />
+                )}
               </View>
             </TouchableOpacity>
           )
