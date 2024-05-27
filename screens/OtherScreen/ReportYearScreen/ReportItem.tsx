@@ -1,60 +1,33 @@
 import React from 'react';
 import { Box, Divider, HStack, Text, VStack } from 'native-base';
-import { BarChart } from 'react-native-chart-kit';
-import { Dimensions } from 'react-native';
+import { BarChart } from 'react-native-gifted-charts';
 
 export const ReportItem = ({ data }: any) => {
-  const dataBar = {
-    labels: [
-      'T1',
-      'T2',
-      'T3',
-      'T4',
-      'T5',
-      'T6',
-      'T7',
-      'T8',
-      'T9',
-      'T10',
-      'T11',
-      'T12',
-    ],
-    datasets: [
-      {
-        data: [20, 45, 28, 80, 99, 43, 20, 45, 28, 80, 99, 43],
-      },
-    ],
-  };
+  const barData = [
+    { value: 250, label: 'M' },
+    { value: 500, label: 'T', frontColor: '#177AD5' },
+    { value: 745, label: 'W', frontColor: '#177AD5' },
+    { value: 320, label: 'T' },
+    { value: 600, label: 'F', frontColor: '#177AD5' },
+    { value: 256, label: 'S' },
+    { value: 300, label: 'S' },
+    { value: 300, label: 'S' },
+    { value: 300, label: 'S' },
+    { value: 300, label: 'S' },
+    { value: 300, label: 'S' },
+    { value: 300, label: 'S' },
+  ];
 
   return (
     <Box>
       <BarChart
-        data={dataBar}
-        yAxisLabel=""
-        width={Dimensions.get('window').width - 32} // from react-native
-        height={200}
-        showValuesOnTopOfBars
-        yAxisSuffix=""
-        yAxisInterval={1} // optional, defaults to 1
-        chartConfig={{
-          backgroundColor: 'transparent',
-          backgroundGradientFrom: '#eeeeee',
-          backgroundGradientTo: '#f1f1f1',
-          decimalPlaces: 2, // optional, defaults to 2dp
-          color: (opacity = 1) => `#000000`,
-          labelColor: (opacity = 1) => `#000000`,
-          style: {
-            borderRadius: 16,
-          },
-          propsForDots: {
-            // r: '6',
-            strokeWidth: '2',
-            stroke: '#ff9700',
-          },
-        }}
-        style={{
-          borderRadius: 16,
-        }}
+        barWidth={22}
+        noOfSections={3}
+        barBorderRadius={4}
+        frontColor="lightgray"
+        data={barData}
+        yAxisThickness={0}
+        xAxisThickness={0}
       />
       <VStack space={2} mb={4} mt={4} bgColor="#F6F9FF">
         <HStack justifyContent="space-between">

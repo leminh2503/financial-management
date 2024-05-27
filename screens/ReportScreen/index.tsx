@@ -6,6 +6,7 @@ import {
   Divider,
   HStack,
   Icon,
+  IconButton,
   NativeBaseProvider,
   Pressable,
   ScrollView,
@@ -17,6 +18,7 @@ import { SceneMap, TabBar, TabView } from 'react-native-tab-view';
 import moment from 'moment';
 import { ExpensesRoute } from './Expense';
 import { IncomeRoute } from './Income';
+import { useNavigation } from '@react-navigation/native';
 
 const { width } = Dimensions.get('window');
 
@@ -52,6 +54,7 @@ export const ReportScreen = () => {
 
   const [currentDate, setCurrentDate] = useState(moment());
 
+  const navigation = useNavigation();
   const handlePrevMonth = () => {
     setCurrentDate(currentDate.clone().subtract(1, 'month'));
   };
@@ -72,32 +75,44 @@ export const ReportScreen = () => {
     <NativeBaseProvider>
       <ScrollView contentContainerStyle={{ padding: 16, flexGrow: 1 }}>
         <Box backgroundColor="#F6F9FF">
-          <Center mb={4}>
-            <HStack alignItems="center">
-              <Pressable
-                borderRadius={screen === ReportScreenRoute.MONTH ? 8 : 0}
-                bgColor={
-                  screen === ReportScreenRoute.MONTH ? '#C0D3FC' : '#F6F9FF'
-                }
-                p={2}
-                px={4}
-                onPress={() => handleSetScreen(ReportScreenRoute.MONTH)}
-              >
-                <Text>Hàng tháng</Text>
-              </Pressable>
-              <Pressable
-                borderRadius={screen === ReportScreenRoute.YEAR ? 8 : 0}
-                bgColor={
-                  screen === ReportScreenRoute.YEAR ? '#C0D3FC' : '#F6F9FF'
-                }
-                p={2}
-                px={4}
-                onPress={() => handleSetScreen(ReportScreenRoute.YEAR)}
-              >
-                <Text>Hàng năm</Text>
-              </Pressable>
-            </HStack>
-          </Center>
+          <HStack justifyContent="space-between">
+            <Center mb={4} flex={1}>
+              <HStack alignItems="center">
+                <Pressable
+                  borderRadius={screen === ReportScreenRoute.MONTH ? 8 : 0}
+                  bgColor={
+                    screen === ReportScreenRoute.MONTH ? '#C0D3FC' : '#F6F9FF'
+                  }
+                  p={2}
+                  px={4}
+                  onPress={() => handleSetScreen(ReportScreenRoute.MONTH)}
+                >
+                  <Text>Hàng tháng</Text>
+                </Pressable>
+                <Pressable
+                  borderRadius={screen === ReportScreenRoute.YEAR ? 8 : 0}
+                  bgColor={
+                    screen === ReportScreenRoute.YEAR ? '#C0D3FC' : '#F6F9FF'
+                  }
+                  p={2}
+                  px={4}
+                  onPress={() => handleSetScreen(ReportScreenRoute.YEAR)}
+                >
+                  <Text>Hàng năm</Text>
+                </Pressable>
+              </HStack>
+            </Center>
+            <Pressable
+              onPress={() => {
+                navigation.navigate('Search');
+              }}
+            >
+              <IconButton
+                icon={<Icon as={MaterialIcons} name="search" />}
+                borderRadius="full"
+              />
+            </Pressable>
+          </HStack>
           <HStack justifyContent="space-between" alignItems="center" mb={4}>
             <Pressable onPress={handlePrevMonth}>
               <Icon as={MaterialIcons} name="chevron-left" size="lg" />

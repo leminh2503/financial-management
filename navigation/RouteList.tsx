@@ -7,6 +7,7 @@ import ReportYearScreen from '../screens/OtherScreen/ReportYearScreen';
 import ReportCategoryScreen from '../screens/OtherScreen/ReportCategoryScreen';
 import DetailReportCategoryScreen from '../screens/OtherScreen/DetailReportCategoryScreen';
 import ReportTotalScreen from '../screens/OtherScreen/ReportTotalScreen';
+import { SearchScreen } from '../screens/SearchScreen';
 
 export enum IconBottom {
   HOME = 'Home',
@@ -72,6 +73,13 @@ const routes: any[] = [
     component: ReportTotalScreen,
     name: 'ReportTotalYearTotal',
     title: 'Báo cáo danh mục toàn kì',
+    isAuth: false,
+    isBottom: false,
+  },
+  {
+    component: SearchScreen,
+    name: 'SearchRoute',
+    title: 'Tìm kiếm',
     isAuth: false,
     isBottom: false,
   },

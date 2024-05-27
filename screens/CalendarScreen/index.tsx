@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ScrollView } from 'react-native';
+import { ScrollView, TouchableOpacity } from 'react-native';
 import {
   Box,
   Divider,
@@ -13,6 +13,7 @@ import {
 import { FontAwesome5, MaterialIcons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
+import { useNavigation } from '@react-navigation/native';
 
 LocaleConfig.locales['vi'] = {
   monthNames: [
@@ -82,6 +83,7 @@ export const CalendarScreen = () => {
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
 
+  const navigation = useNavigation();
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
     setShowDatePicker(false);
@@ -97,10 +99,17 @@ export const CalendarScreen = () => {
           <Text flex={1} fontSize="2xl" bold>
             Lịch
           </Text>
-          <IconButton
-            icon={<Icon as={MaterialIcons} name="search" />}
-            borderRadius="full"
-          />
+          <TouchableOpacity
+            onPress={() => {
+              console.log('Search');
+              navigation.navigate('Search');
+            }}
+          >
+            <IconButton
+              icon={<Icon as={MaterialIcons} name="search" />}
+              borderRadius="full"
+            />
+          </TouchableOpacity>
         </HStack>
         <Calendar
           current={date.toISOString().split('T')[0]}
@@ -148,7 +157,11 @@ export const CalendarScreen = () => {
               <Text fontWeight="bold">{transaction.date}</Text>
               <Text fontWeight="bold">8,800,000đ</Text>
             </HStack>
-            <HStack justifyContent="space-between" alignItems="center">
+            <HStack
+              justifyContent="space-between"
+              alignItems="center"
+              bg="#F6F9FF"
+            >
               <HStack alignItems="center">
                 <Icon
                   as={FontAwesome5}
@@ -165,12 +178,7 @@ export const CalendarScreen = () => {
                 />
                 <Text fontWeight="bold">{transaction.category}</Text>
               </HStack>
-              <Text
-                fontWeight="bold"
-                color={transaction.type === 'expense' ? 'red.500' : 'blue.500'}
-              >
-                {transaction.amount}
-              </Text>
+              <Text fontWeight="bold">{transaction.amount}</Text>
             </HStack>
           </Box>
         ))}
