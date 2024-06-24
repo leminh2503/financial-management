@@ -47,7 +47,6 @@ export const Revenue = () => {
             <Input
               borderWidth={0}
               size="2xl"
-              value="0 đ"
               variant="unstyled"
               borderColor={'transparent'}
               flex={1}
