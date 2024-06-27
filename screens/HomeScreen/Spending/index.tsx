@@ -14,13 +14,12 @@ import {
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { db } from '../../../hooks/useFirestorage';
+import { ICategory } from '../../../types';
 
 export const Spending = () => {
   const [date, setDate] = React.useState(new Date());
   const [showDatePicker, setShowDatePicker] = React.useState(false);
-  const [category, setCategory] = useState<
-    { title: string; image: string; id: string }[]
-  >([]);
+  const [category, setCategory] = useState<ICategory[]>([]);
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
     setShowDatePicker(false);
@@ -28,20 +27,17 @@ export const Spending = () => {
   };
 
   useEffect(() => {
-    db.collection('categorySpending')
-      .get()
-      .then((results) => results.docs)
-      .then((docs) =>
-        docs.map((doc) => ({
+    db.collection('categorySpending').onSnapshot({
+      next: (snapshot) => {
+        const data = snapshot.docs.map((doc) => ({
           id: doc.id,
           title: doc.data().title,
           image: doc.data().image,
-        }))
-      )
-      .then((res) => {
-        setCategory(res);
-      });
-  }, []);
+        }));
+        setCategory(data);
+      },
+    });
+  }, [setCategory]);
 
   return (
     <ScrollView>
