@@ -1,8 +1,6 @@
 import * as React from 'react';
 
 // api
-import { apiClient, ApiService } from '../../lib/axios';
-
 //components
 import {
   Box,
@@ -23,11 +21,6 @@ import {
 
 //redux
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  setLoginEmail,
-  setToken,
-  setUser,
-} from '../../lib/redux/reducers/authReducer';
 import { RootState } from '../../lib/redux/store';
 
 // navigation
@@ -49,38 +42,6 @@ export const SigninScreen: React.FC<Props> = (props) => {
       username,
       password,
     };
-
-    ApiService.signin(values)
-      .then((res) => {
-        toast.show({ title: 'Đăng nhập thành công', placement: 'top' });
-        dispatch(setUser(res.data.data.user));
-        dispatch(setToken(res.data.data.token));
-        // Set auth token
-        apiClient.interceptors.request.use((config) => {
-          if (config.headers) {
-            config.headers.Authorization = `Bearer ${res.data.data.token}`;
-          }
-          return config;
-        });
-        // If remember me checked, then save user data to storage
-        if (rememberMe) {
-          dispatch(
-            setLoginEmail({
-              username: username,
-              password: password,
-            })
-          );
-        }
-        props.navigation.navigate('BottomTab', { screen: 'Sales' });
-      })
-      .catch((err) => {
-        console.log('err---', err);
-
-        toast.show({
-          title: 'Sai thông tin tài khoản',
-          placement: 'top',
-        });
-      });
   };
   const onPressSignupLink = () => {
     props.navigation.navigate('Signup');

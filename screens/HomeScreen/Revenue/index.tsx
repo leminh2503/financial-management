@@ -1,5 +1,5 @@
-import React from 'react';
-import { ScrollView, Text } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Image, ScrollView, Text } from 'react-native';
 import {
   Box,
   Button,
@@ -13,30 +13,35 @@ import {
 } from 'native-base';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
-
-const categories = [
-  { icon: 'restaurant', label: 'Ăn uống', color: 'orange.500' },
-  { icon: 'hand-wash', label: 'Hàng ngày', color: 'green.500' },
-  { icon: 'tshirt-crew', label: 'Quần áo', color: 'blue.500' },
-  { icon: 'lipstick', label: 'Mỹ phẩm', color: 'pink.500' },
-  { icon: 'account-group', label: 'Giao lưu', color: 'yellow.500' },
-  { icon: 'medical-bag', label: 'Y tế', color: 'teal.500' },
-  { icon: 'book-open', label: 'Giáo dục', color: 'red.500' },
-  { icon: 'water', label: 'Tiền điện nước', color: 'blue.500' },
-  { icon: 'car', label: 'Đi lại', color: 'brown.500' },
-  { icon: 'phone', label: 'Liên lạc', color: 'orange.500' },
-  { icon: 'home', label: 'Tiền nhà', color: 'yellow.500' },
-];
+import { db } from '../../../hooks/useFirestorage';
 
 export const Revenue = () => {
   const [date, setDate] = React.useState(new Date());
   const [showDatePicker, setShowDatePicker] = React.useState(false);
-
+  const [category, setCategory] = useState<
+    { title: string; image: string; id: string }[]
+  >([]);
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
     setShowDatePicker(false);
     setDate(currentDate);
   };
+
+  useEffect(() => {
+    db.collection('category')
+      .get()
+      .then((results) => results.docs)
+      .then((docs) =>
+        docs.map((doc) => ({
+          id: doc.id,
+          title: doc.data().title,
+          image: doc.data().image,
+        }))
+      )
+      .then((res) => {
+        setCategory(res);
+      });
+  }, []);
 
   return (
     <ScrollView>
@@ -85,7 +90,7 @@ export const Revenue = () => {
             Danh mục
           </Text>
           <HStack justifyContent="flex-start" flexWrap="wrap">
-            {categories.map((category, index) => (
+            {category.map((cate, index) => (
               <Button
                 width="30%"
                 key={index}
@@ -97,13 +102,11 @@ export const Revenue = () => {
                 mx="1"
               >
                 <VStack alignItems="center">
-                  <Icon
-                    as={MaterialCommunityIcons}
-                    name={category.icon}
-                    size="lg"
-                    color={category.color}
+                  <Image
+                    source={{ uri: cate?.image }}
+                    style={{ width: 24, height: 24, paddingBottom: 8 }}
                   />
-                  <Text>{category.label}</Text>
+                  <Text>{cate?.title}</Text>
                 </VStack>
               </Button>
             ))}

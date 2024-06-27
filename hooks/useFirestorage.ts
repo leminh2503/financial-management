@@ -1,34 +1,34 @@
 // Import the functions you need from the SDKs you need
-import { getApp, getApps, initializeApp } from 'firebase/app';
+import { getApp } from 'firebase/app';
 import {
   getDownloadURL,
   getStorage,
   ref,
   uploadBytesResumable,
 } from 'firebase/storage';
+import firebase from 'firebase/compat';
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: 'AIzaSyDcikbPQaFJObyloeo7ZzBwFL_AJS1wzBE',
-  authDomain: 'firestore-cc482.firebaseapp.com',
-  projectId: 'firestore-cc482',
-  storageBucket: 'firestore-cc482.appspot.com',
-  messagingSenderId: '442296153857',
-  appId: '1:442296153857:web:87167a9e9a77b7c4514d00',
-  measurementId: 'G-XTMY8CSZQR',
+  apiKey: 'AIzaSyB8aslrQkwxU-DjJut3C7rZEfhOimJh9dA',
+  authDomain: 'my-clip-45ba5.firebaseapp.com',
+  databaseURL:
+    'https://my-clip-45ba5-default-rtdb.asia-southeast1.firebasedatabase.app',
+  projectId: 'my-clip-45ba5',
+  storageBucket: 'my-clip-45ba5.appspot.com',
+  messagingSenderId: '7086495905',
+  appId: '1:7086495905:web:631f85579a098073cab8e0',
+  measurementId: 'G-9E1HYKR82L',
 };
-
-console.log(firebaseConfig.apiKey);
-
-if (getApps().length === 0) {
-  // Initialize Firebase
-  initializeApp(firebaseConfig);
-}
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
 // Initialize Firebase
 const fbApp = getApp();
+
+const db = firebase.firestore();
 const fbStorage = getStorage();
 
 const getImageStorage = async (name: any) => {
@@ -81,4 +81,4 @@ const uploadStorage = async (uri: string, name: any) => {
   });
 };
 
-export { fbApp, fbStorage, uploadStorage, getImageStorage };
+export { fbApp, fbStorage, uploadStorage, getImageStorage, db };

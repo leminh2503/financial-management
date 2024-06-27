@@ -8,6 +8,7 @@ import ReportCategoryScreen from '../screens/OtherScreen/ReportCategoryScreen';
 import DetailReportCategoryScreen from '../screens/OtherScreen/DetailReportCategoryScreen';
 import ReportTotalScreen from '../screens/OtherScreen/ReportTotalScreen';
 import { SearchScreen } from '../screens/SearchScreen';
+import { SigninScreen } from '../screens/SigninScreen';
 
 export enum IconBottom {
   HOME = 'Home',
@@ -87,6 +88,12 @@ const routes: any[] = [
     component: SignupScreen,
     name: 'Signup',
     title: 'Signup',
+    isAuth: false,
+  },
+  {
+    component: SigninScreen,
+    name: 'SignIn',
+    title: 'SignIn',
     isAuth: false,
   },
 ];

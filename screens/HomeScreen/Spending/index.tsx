@@ -1,5 +1,5 @@
-import React from 'react';
-import { ScrollView, Text } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Image, ScrollView, Text } from 'react-native';
 import {
   Box,
   Button,
@@ -13,25 +13,35 @@ import {
 } from 'native-base';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
-
-const categories = [
-  { icon: 'wallet', label: 'Tiền lương', color: 'green.500' },
-  { icon: 'piggy-bank', label: 'Tiền phụ cấp', color: 'orange.500' },
-  { icon: 'gift', label: 'Tiền thưởng', color: 'red.500' },
-  { icon: 'cash-plus', label: 'Thu nhập phụ', color: 'cyan.500' },
-  { icon: 'chart-line', label: 'Đầu tư', color: 'blue.500' },
-  { icon: 'hand-holding-usd', label: 'Tạm thời', color: 'pink.500' },
-];
+import { db } from '../../../hooks/useFirestorage';
 
 export const Spending = () => {
   const [date, setDate] = React.useState(new Date());
   const [showDatePicker, setShowDatePicker] = React.useState(false);
-
+  const [category, setCategory] = useState<
+    { title: string; image: string; id: string }[]
+  >([]);
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
     setShowDatePicker(false);
     setDate(currentDate);
   };
+
+  useEffect(() => {
+    db.collection('categorySpending')
+      .get()
+      .then((results) => results.docs)
+      .then((docs) =>
+        docs.map((doc) => ({
+          id: doc.id,
+          title: doc.data().title,
+          image: doc.data().image,
+        }))
+      )
+      .then((res) => {
+        setCategory(res);
+      });
+  }, []);
 
   return (
     <ScrollView>
@@ -80,7 +90,7 @@ export const Spending = () => {
             Danh mục
           </Text>
           <HStack justifyContent="flex-start" flexWrap="wrap">
-            {categories.map((category, index) => (
+            {category.map((cate, index) => (
               <Button
                 width="30%"
                 key={index}
@@ -92,13 +102,11 @@ export const Spending = () => {
                 mx="1"
               >
                 <VStack alignItems="center">
-                  <Icon
-                    as={MaterialCommunityIcons}
-                    name={category.icon}
-                    size="lg"
-                    color={category.color}
+                  <Image
+                    source={{ uri: cate?.image }}
+                    style={{ width: 24, height: 24, paddingBottom: 8 }}
                   />
-                  <Text>{category.label}</Text>
+                  <Text>{cate?.title}</Text>
                 </VStack>
               </Button>
             ))}

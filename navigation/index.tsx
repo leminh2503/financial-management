@@ -65,6 +65,9 @@ function BottomTabScreen(): ReactElement {
 const Stack = createNativeStackNavigator<RootStackParamList>();
 export default function Navigator({ theme }: { theme: ITheme }) {
   const { user, token } = useSelector((state: RootState) => state.auth);
+
+  console.log('token----', token);
+
   return (
     <NavigationContainer
       linking={linking}
@@ -72,7 +75,7 @@ export default function Navigator({ theme }: { theme: ITheme }) {
         theme.config?.initialColorMode === 'dark' ? navDarkTheme : navLightTheme
       }
     >
-      <Stack.Navigator initialRouteName={token ? 'BottomTab' : 'Signin'}>
+      <Stack.Navigator initialRouteName={!token ? 'BottomTab' : 'SignIn'}>
         <Stack.Screen
           name="BottomTab"
           component={BottomTabScreen}

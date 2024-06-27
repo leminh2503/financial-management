@@ -4,7 +4,7 @@
   },
   "expo": {
     "name": "rn-base-app",
-    "slug": "rn-base-app",
+    "slug": "finacial-app",
     "version": "2.0.0",
     "orientation": "default",
     "icon": "./assets/images/icon.png",
@@ -16,12 +16,7 @@
       "backgroundColor": "#ffffff"
     },
     "plugins": [
-      [
-        "expo-barcode-scanner",
-        {
-          "cameraPermission": "Allow LanAnhMart to access camera."
-        }
-      ]
+      "expo-font"
     ],
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -45,8 +40,11 @@
     "web": {
       "favicon": "./assets/images/favicon.png"
     },
-    "plugins": [
-      "expo-font"
-    ]
+    "extra": {
+      "eas": {
+        "projectId": "6cb636ae-6943-4779-bca9-c68d1bf60fd9"
+      }
+    },
+    "owner": "minhpm"
   }
 }

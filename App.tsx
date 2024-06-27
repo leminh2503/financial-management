@@ -13,13 +13,11 @@ import { persistor, store } from './lib/redux/store';
 import { PersistGate } from 'redux-persist/es/integration/react';
 
 import { Root } from './Root';
-import { fbApp } from './hooks/useFirestorage';
 import StatusBar from './components/StatusBar';
 
 export default function App() {
   const mode = useColorScheme();
   // Changing initialColorMode to 'dark' or 'light' or system(mode)
-  fbApp;
   theme.config.initialColorMode = mode;
   LogBox.ignoreAllLogs();
   return (
