@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { ScrollView, TouchableOpacity } from 'react-native';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Image, ScrollView, TouchableOpacity } from 'react-native';
 import {
   Box,
   Divider,
@@ -10,10 +10,20 @@ import {
   Text,
   VStack,
 } from 'native-base';
-import { FontAwesome5, MaterialIcons } from '@expo/vector-icons';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import { MaterialIcons } from '@expo/vector-icons';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
 import { useNavigation } from '@react-navigation/native';
+import { db } from '../../hooks/useFirestorage';
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  where,
+} from 'firebase/firestore';
+import { ITransaction } from '../../types';
+import convertTime from '../../ultils/convertTime';
 
 LocaleConfig.locales['vi'] = {
   monthNames: [
@@ -58,37 +68,77 @@ LocaleConfig.locales['vi'] = {
 };
 LocaleConfig.defaultLocale = 'vi';
 
-const transactions = [
-  {
-    date: '21/12/2023',
-    category: 'Ăn uống',
-    amount: '1,000,000đ',
-    type: 'expense',
-  },
-  {
-    date: '21/12/2023',
-    category: 'Tiền lương',
-    amount: '10,000,000đ',
-    type: 'income',
-  },
-  {
-    date: '21/12/2023',
-    category: 'Ăn uống',
-    amount: '500,000đ',
-    type: 'expense',
-  },
-];
-
 export const CalendarScreen = () => {
   const [date, setDate] = useState(new Date());
-  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [transaction, setTransaction] = useState<ITransaction[]>([]);
 
   const navigation = useNavigation();
-  const onChange = (event, selectedDate) => {
-    const currentDate = selectedDate || date;
-    setShowDatePicker(false);
-    setDate(currentDate);
-  };
+
+  async function getRevenueWithCategory(dateTime) {
+    const current = new Date(dateTime);
+    current.setUTCHours(0, 0, 0, 0); // Đặt giờ, phút, giây và milliseconds về 0
+    // const current = new Date(moment(dateTime).toISOString()).setHours(
+    //   0,
+    //   0,
+    //   0,
+    //   0
+    // );
+    const endOfToday = new Date(dateTime);
+    endOfToday.setUTCHours(23, 59, 59, 999); // Đặt giờ, phút, giây và milliseconds về cuối ngày
+
+    // Tạo query để lấy tài liệu từ collection "revenue" với ngày hiện tại
+    const revenueQuery = query(
+      collection(db, 'transaction'),
+      where('date', '>=', current),
+      where('date', '<=', endOfToday)
+    );
+
+    const revenueCollection = revenueQuery;
+    const revenueSnapshot = await getDocs(revenueCollection);
+
+    const revenueList = await Promise.all(
+      revenueSnapshot.docs.map(async (revenueDoc) => {
+        const revenueData = revenueDoc.data();
+        const categoryRef = revenueData.category;
+
+        // Lấy thông tin của category
+        let categoryData = {};
+        if (categoryRef) {
+          const categoryDoc = await getDoc(doc(db, categoryRef.path));
+          categoryData = categoryDoc.data();
+        }
+
+        return { ...revenueData, category: categoryData };
+      })
+    );
+    setTransaction(revenueList);
+  }
+
+  console.log('rtr--', transaction);
+
+  useEffect(() => {
+    getRevenueWithCategory(date);
+  }, []);
+
+  const totalsRevenue = useMemo(() => {
+    return transaction
+      .filter((item) => item?.isRevenue)
+      .reduce((acc, cur) => {
+        return acc + cur?.amount;
+      }, 0);
+  }, [transaction]);
+
+  const totalsSpending = useMemo(() => {
+    return transaction
+      .filter((item) => !item?.isRevenue)
+      .reduce((acc, cur) => {
+        return acc + cur?.amount;
+      }, 0);
+  }, [transaction]);
+
+  const totals = useMemo(() => {
+    return (totalsSpending || 0) - (totalsRevenue || 0);
+  }, [totalsSpending, totalsRevenue]);
 
   return (
     <NativeBaseProvider>
@@ -101,7 +151,6 @@ export const CalendarScreen = () => {
           </Text>
           <TouchableOpacity
             onPress={() => {
-              console.log('Search');
               navigation.navigate('Search');
             }}
           >
@@ -113,7 +162,12 @@ export const CalendarScreen = () => {
         </HStack>
         <Calendar
           current={date.toISOString().split('T')[0]}
-          onDayPress={(day) => setDate(new Date(day.dateString))}
+          onDayPress={(day) => {
+            console.log('day---', day);
+
+            setDate(new Date(day.dateString));
+            getRevenueWithCategory(new Date(day.dateString));
+          }}
           markedDates={{
             [date.toISOString().split('T')[0]]: { selected: true },
           }}
@@ -130,32 +184,36 @@ export const CalendarScreen = () => {
           <VStack alignItems="center">
             <Text>Thu nhập</Text>
             <Text color="blue.500" fontSize="md" bold>
-              10,000,000đ
+              {totalsSpending}đ
             </Text>
           </VStack>
           <VStack alignItems="center">
             <Text>Chi tiêu</Text>
             <Text color="red.500" fontSize="md" bold>
-              1,200,000đ
+              {totalsRevenue}đ
             </Text>
           </VStack>
           <VStack alignItems="center">
             <Text>Tổng</Text>
-            <Text color="blue.500" fontSize="md" bold>
-              +8,800,000đ
+            <Text
+              color={totals > 0 ? 'blue.500' : 'red.500'}
+              fontSize="md"
+              bold
+            >
+              {totals}đ
             </Text>
           </VStack>
         </HStack>
         <Divider my={4} />
-        {transactions.map((transaction, index) => (
+        {transaction.map((item, index) => (
           <Box key={index} mb={4}>
             <HStack
               mb={2}
               backgroundColor="#DBE6FD"
               justifyContent="space-between"
             >
-              <Text fontWeight="bold">{transaction.date}</Text>
-              <Text fontWeight="bold">8,800,000đ</Text>
+              <Text fontWeight="bold">{convertTime(item?.date)}</Text>
+              {/*<Text fontWeight="bold">{item.amount}đ</Text>*/}
             </HStack>
             <HStack
               justifyContent="space-between"
@@ -163,36 +221,34 @@ export const CalendarScreen = () => {
               bg="#F6F9FF"
             >
               <HStack alignItems="center">
-                <Icon
-                  as={FontAwesome5}
-                  name={
-                    transaction.category === 'Ăn uống' ? 'utensils' : 'wallet'
-                  }
-                  size="sm"
-                  color={
-                    transaction.category === 'Ăn uống'
-                      ? 'orange.500'
-                      : 'green.500'
-                  }
-                  mr={2}
+                <Image
+                  source={{ uri: item?.category?.image }}
+                  style={{ width: 24, height: 24, paddingBottom: 8 }}
                 />
-                <Text fontWeight="bold">{transaction.category}</Text>
+                <Text mx={2} fontWeight="bold">
+                  {item.category.title}
+                </Text>
               </HStack>
-              <Text fontWeight="bold">{transaction.amount}</Text>
+              <Text
+                fontWeight="bold"
+                color={item?.isRevenue ? 'red.500' : 'blue.500'}
+              >
+                {item?.amount}
+              </Text>
             </HStack>
           </Box>
         ))}
       </ScrollView>
-      {showDatePicker && (
-        <DateTimePicker
-          testID="dateTimePicker"
-          value={date}
-          mode="date"
-          is24Hour={true}
-          display="default"
-          onChange={onChange}
-        />
-      )}
+      {/*{showDatePicker && (*/}
+      {/*  <DateTimePicker*/}
+      {/*    testID="dateTimePicker"*/}
+      {/*    value={date}*/}
+      {/*    mode="date"*/}
+      {/*    is24Hour={true}*/}
+      {/*    display="default"*/}
+      {/*    onChange={onChange}*/}
+      {/*  />*/}
+      {/*)}*/}
     </NativeBaseProvider>
   );
 };
