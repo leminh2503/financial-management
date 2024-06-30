@@ -163,8 +163,6 @@ export const CalendarScreen = () => {
         <Calendar
           current={date.toISOString().split('T')[0]}
           onDayPress={(day) => {
-            console.log('day---', day);
-
             setDate(new Date(day.dateString));
             getRevenueWithCategory(new Date(day.dateString));
           }}
@@ -209,11 +207,13 @@ export const CalendarScreen = () => {
           <Box key={index} mb={4}>
             <HStack
               mb={2}
+              p={2}
               backgroundColor="#DBE6FD"
               justifyContent="space-between"
             >
+              <Text fontWeight="bold">{item.title}</Text>
+
               <Text fontWeight="bold">{convertTime(item?.date)}</Text>
-              {/*<Text fontWeight="bold">{item.amount}đ</Text>*/}
             </HStack>
             <HStack
               justifyContent="space-between"
@@ -226,7 +226,7 @@ export const CalendarScreen = () => {
                   style={{ width: 24, height: 24, paddingBottom: 8 }}
                 />
                 <Text mx={2} fontWeight="bold">
-                  {item.category.title}
+                  {item?.category?.title}
                 </Text>
               </HStack>
               <Text

@@ -73,6 +73,7 @@
     "react-native-counter-input": "^2.0.2",
     "react-native-fast-image": "^8.6.3",
     "react-native-gifted-charts": "^1.4.10",
+    "react-native-modal-datetime-picker": "^17.1.0",
     "react-native-numeric-input": "https://github.com/didac-wh/react-native-numeric-input.git",
     "react-native-pager-view": "^6.2.3",
     "react-native-paper": "^5.12.3",

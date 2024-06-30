@@ -12,18 +12,57 @@ import {
   VStack,
 } from 'native-base';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import { db } from '../../../hooks/useFirestorage';
 import { ICategory } from '../../../types';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import { addDoc, collection } from 'firebase/firestore';
+import firebase from 'firebase/compat';
+import Timestamp = firebase.firestore.Timestamp;
 
 export const Spending = () => {
   const [date, setDate] = React.useState(new Date());
   const [showDatePicker, setShowDatePicker] = React.useState(false);
   const [category, setCategory] = useState<ICategory[]>([]);
+  const [title, setTitle] = useState('');
+  const [amount, setAmount] = useState('');
+  const [categorySelected, setCategorySelected] = useState('');
+
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
     setShowDatePicker(false);
     setDate(currentDate);
+  };
+
+  const handleConfirm = (date) => {
+    setDate(date);
+    hideDatePicker();
+  };
+
+  const hideDatePicker = () => {
+    setShowDatePicker(false);
+  };
+
+  const onPressSpending = async () => {
+    try {
+      const transactionRecord = {
+        category: `/categorySpending/${categorySelected}`, // Thay thế bằng đường dẫn tham chiếu thực tế của bạn
+        date: Timestamp.fromDate(date), // Sử dụng thời gian hiện tại
+        amount: Number(amount),
+        title: title,
+        isRevenue: false,
+      };
+      // Thêm bản ghi vào collection "revenue"
+      const docRef = await addDoc(
+        collection(db, 'transaction'),
+        transactionRecord
+      );
+
+      setAmount('');
+      setCategorySelected('');
+      setTitle('');
+    } catch (e) {
+      console.error('Error adding document: ', e);
+    }
   };
 
   useEffect(() => {
@@ -46,6 +85,8 @@ export const Spending = () => {
           <VStack justifyContent="space-between" alignItems="flex-end">
             <Text>Số tiền</Text>
             <Input
+              value={amount}
+              onChangeText={setAmount}
               borderWidth={0}
               size="2xl"
               variant="unstyled"
@@ -67,6 +108,8 @@ export const Spending = () => {
           </HStack>
           <Divider my="2" />
           <Input
+            value={title}
+            onChangeText={setTitle}
             placeholder="Ghi chú"
             variant="underlined"
             placeholderTextColor="gray.400"
@@ -76,7 +119,7 @@ export const Spending = () => {
               <Icon
                 as={MaterialCommunityIcons}
                 name="note-outline"
-                size="sm"
+                size={19}
                 ml={2}
               />
             }
@@ -96,6 +139,8 @@ export const Spending = () => {
                 px="4"
                 my="1"
                 mx="1"
+                bgColor={categorySelected === cate.id ? 'blue.400' : 'white'}
+                onPress={() => setCategorySelected(cate.id)}
               >
                 <VStack alignItems="center">
                   <Image
@@ -113,21 +158,19 @@ export const Spending = () => {
             bg="blue.400"
             py="3"
             _text={{ color: 'white' }}
+            onPress={onPressSpending}
           >
             Nhập khoản thu
           </Button>
         </Box>
       </Center>
-      {showDatePicker && (
-        <DateTimePicker
-          testID="dateTimePicker"
-          value={date}
-          mode="date"
-          is24Hour={true}
-          display="default"
-          onChange={onChange}
-        />
-      )}
+      <DateTimePickerModal
+        date={date}
+        isVisible={showDatePicker}
+        mode="date"
+        onConfirm={handleConfirm}
+        onCancel={hideDatePicker}
+      />
     </ScrollView>
   );
 };

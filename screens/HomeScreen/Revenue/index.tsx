@@ -12,18 +12,53 @@ import {
   VStack,
 } from 'native-base';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import { db } from '../../../hooks/useFirestorage';
 import { ICategory } from '../../../types';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import { addDoc, collection, doc } from 'firebase/firestore';
+import firebase from 'firebase/compat';
+import Timestamp = firebase.firestore.Timestamp;
 
 export const Revenue = () => {
   const [date, setDate] = React.useState(new Date());
   const [showDatePicker, setShowDatePicker] = React.useState(false);
   const [category, setCategory] = useState<ICategory[]>([]);
-  const onChange = (event, selectedDate) => {
-    const currentDate = selectedDate || date;
+  const [title, setTitle] = useState('');
+  const [amount, setAmount] = useState('');
+  const [categorySelected, setCategorySelected] = useState('');
+
+  const handleConfirm = (date) => {
+    setDate(date);
+    hideDatePicker();
+  };
+
+  const hideDatePicker = () => {
     setShowDatePicker(false);
-    setDate(currentDate);
+  };
+
+  const onPressRevenue = async () => {
+    try {
+      const categoryRef = await doc(db, 'category', categorySelected); // Thay thế bằng ID thực tế của tài liệu category
+
+      const transactionRecord = {
+        category: categoryRef, // Thay thế bằng đường dẫn tham chiếu thực tế của bạn
+        date: Timestamp.fromDate(date), // Sử dụng thời gian hiện tại
+        amount: Number(amount),
+        title: title,
+        isRevenue: true,
+      };
+      // Thêm bản ghi vào collection "revenue"
+      const docRef = await addDoc(
+        collection(db, 'transaction'),
+        transactionRecord
+      );
+
+      setAmount('');
+      setCategorySelected('');
+      setTitle('');
+    } catch (e) {
+      console.error('Error adding document: ', e);
+    }
   };
 
   useEffect(() => {
@@ -46,6 +81,8 @@ export const Revenue = () => {
           <VStack justifyContent="space-between" alignItems="flex-end">
             <Text>Số tiền</Text>
             <Input
+              value={amount}
+              onChangeText={setAmount}
               borderWidth={0}
               size="2xl"
               variant="unstyled"
@@ -67,6 +104,8 @@ export const Revenue = () => {
           </HStack>
           <Divider my="2" />
           <Input
+            value={title}
+            onChangeText={setTitle}
             placeholder="Ghi chú"
             variant="underlined"
             placeholderTextColor="gray.400"
@@ -76,7 +115,7 @@ export const Revenue = () => {
               <Icon
                 as={MaterialCommunityIcons}
                 name="note-outline"
-                size="sm"
+                size={19}
                 ml={2}
               />
             }
@@ -90,12 +129,14 @@ export const Revenue = () => {
               <Button
                 width="30%"
                 key={index}
+                bgColor={categorySelected === cate.id ? 'blue.400' : 'white'}
                 variant="outline"
                 borderRadius="10"
                 py="4"
                 px="4"
                 my="1"
                 mx="1"
+                onPress={() => setCategorySelected(cate.id)}
               >
                 <VStack alignItems="center">
                   <Image
@@ -113,21 +154,19 @@ export const Revenue = () => {
             bg="blue.400"
             py="3"
             _text={{ color: 'white' }}
+            onPress={onPressRevenue}
           >
             Nhập khoản chi
           </Button>
         </Box>
       </Center>
-      {showDatePicker && (
-        <DateTimePicker
-          testID="dateTimePicker"
-          value={date}
-          mode="date"
-          is24Hour={true}
-          display="default"
-          onChange={onChange}
-        />
-      )}
+      <DateTimePickerModal
+        date={date}
+        isVisible={showDatePicker}
+        mode="date"
+        onConfirm={handleConfirm}
+        onCancel={hideDatePicker}
+      />
     </ScrollView>
   );
 };
