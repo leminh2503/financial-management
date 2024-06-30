@@ -15,7 +15,7 @@ import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { db } from '../../../hooks/useFirestorage';
 import { ICategory } from '../../../types';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import { addDoc, collection } from 'firebase/firestore';
+import { addDoc, collection, doc } from 'firebase/firestore';
 import firebase from 'firebase/compat';
 import Timestamp = firebase.firestore.Timestamp;
 
@@ -44,8 +44,10 @@ export const Spending = () => {
 
   const onPressSpending = async () => {
     try {
+      const categoryRef = await doc(db, 'categorySpending', categorySelected); // Thay thế bằng ID thực tế của tài liệu category
+
       const transactionRecord = {
-        category: `/categorySpending/${categorySelected}`, // Thay thế bằng đường dẫn tham chiếu thực tế của bạn
+        category: categoryRef, // Thay thế bằng đường dẫn tham chiếu thực tế của bạn
         date: Timestamp.fromDate(date), // Sử dụng thời gian hiện tại
         amount: Number(amount),
         title: title,

@@ -143,7 +143,13 @@ export const CalendarScreen = () => {
   return (
     <NativeBaseProvider>
       <ScrollView
-        contentContainerStyle={{ padding: 16, backgroundColor: '#F6F9FF' }}
+        contentContainerStyle={{
+          padding: 16,
+          backgroundColor: '#F6F9FF',
+        }}
+        style={{
+          marginBottom: 50,
+        }}
       >
         <HStack justifyContent="space-between" alignItems="center" mb={4}>
           <Text flex={1} fontSize="2xl" bold>
@@ -233,22 +239,12 @@ export const CalendarScreen = () => {
                 fontWeight="bold"
                 color={item?.isRevenue ? 'red.500' : 'blue.500'}
               >
-                {item?.amount}
+                {item?.amount}đ
               </Text>
             </HStack>
           </Box>
         ))}
       </ScrollView>
-      {/*{showDatePicker && (*/}
-      {/*  <DateTimePicker*/}
-      {/*    testID="dateTimePicker"*/}
-      {/*    value={date}*/}
-      {/*    mode="date"*/}
-      {/*    is24Hour={true}*/}
-      {/*    display="default"*/}
-      {/*    onChange={onChange}*/}
-      {/*  />*/}
-      {/*)}*/}
     </NativeBaseProvider>
   );
 };
