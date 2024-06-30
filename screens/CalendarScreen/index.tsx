@@ -102,9 +102,10 @@ export const CalendarScreen = () => {
         const categoryRef = revenueData.category;
 
         // Lấy thông tin của category
-        const categoryData = {};
+        let categoryData: any = {};
         if (categoryRef) {
           const categoryDoc = await getDoc(doc(db, categoryRef.path));
+          categoryData = categoryDoc?.data();
         }
 
         return { ...revenueData, category: categoryData };

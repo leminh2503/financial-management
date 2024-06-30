@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Center,
@@ -11,6 +11,8 @@ import {
 import moment from 'moment/moment';
 import { MaterialIcons } from '@expo/vector-icons';
 import { ReportItem } from './ReportItem';
+import { collection, getDocs, query, where } from 'firebase/firestore';
+import { db } from '../../../hooks/useFirestorage';
 
 enum ReportScreen {
   INCOME = 'Thu nhập',
@@ -19,24 +21,10 @@ enum ReportScreen {
 }
 
 const ReportYearScreen = () => {
-  const data = [
-    { month: 'T1', income: 0 },
-    { month: 'T2', income: 0 },
-    { month: 'T3', income: 0 },
-    { month: 'T4', income: 0 },
-    { month: 'T5', income: 0 },
-    { month: 'T6', income: 0 },
-    { month: 'T7', income: 0 },
-    { month: 'T8', income: 0 },
-    { month: 'T9', income: 0 },
-    { month: 'T10', income: 0 },
-    { month: 'T11', income: 0 },
-    { month: 'T12', income: 1500000 },
-  ];
-
   const [currentDate, setCurrentDate] = useState(moment());
   const [screen, setScreen] = useState<ReportScreen>(ReportScreen.EXPENSES);
-
+  const [dataList, setDataList] = useState([]);
+  const [loading, setLoading] = useState(false);
   const handleSetScreen = (value: ReportScreen) => {
     setScreen(value);
   };
@@ -47,6 +35,73 @@ const ReportYearScreen = () => {
   const handleNextMonth = () => {
     setCurrentDate(currentDate.clone().add(1, 'year'));
   };
+
+  async function getMonthlyTransactionForYear(year) {
+    try {
+      setLoading(true);
+      const monthlyRevenue = Array(12).fill(0); // Mảng để lưu tổng số tiền cho 12 tháng
+
+      for (let month = 0; month < 12; month++) {
+        // Tạo thời gian đầu tháng và cuối tháng
+        const startOfMonth = new Date(year, month, 1); // Tháng trong JavaScript bắt đầu từ 0
+        const endOfMonth = new Date(year, month + 1, 0, 23, 59, 59, 999); // Ngày 0 của tháng tiếp theo là ngày cuối cùng của tháng hiện tại
+        // Tạo query để lấy tài liệu từ collection "revenue" trong khoảng thời gian từ đầu tháng đến cuối tháng
+        const revenueQueryScreenIncome = query(
+          collection(db, 'transaction'),
+          where('isRevenue', '==', true),
+          where('date', '>=', startOfMonth),
+          where('date', '<=', endOfMonth)
+        );
+        const revenueQueryScreenExpense = query(
+          collection(db, 'transaction'),
+          where('isRevenue', '==', false),
+          where('date', '>=', startOfMonth),
+          where('date', '<=', endOfMonth)
+        );
+
+        const revenueQueryScreenTotal = query(
+          collection(db, 'transaction'),
+          where('date', '>=', startOfMonth),
+          where('date', '<=', endOfMonth)
+        );
+
+        const returnQuery = () => {
+          switch (screen) {
+            case ReportScreen.INCOME:
+              return revenueQueryScreenIncome;
+            case ReportScreen.EXPENSES:
+              return revenueQueryScreenExpense;
+            case ReportScreen.TOTAL:
+              return revenueQueryScreenTotal;
+          }
+        };
+
+        const revenueSnapshot = await getDocs(returnQuery());
+
+        // Tính tổng số tiền cho tháng hiện tại
+        let totalAmountForMonth = 0;
+        revenueSnapshot.docs.forEach((doc) => {
+          totalAmountForMonth += doc.data().amount;
+        });
+
+        // Lưu tổng số tiền vào mảng
+        monthlyRevenue[month] = {
+          id: `T${month + 1}`,
+          amount: totalAmountForMonth,
+        };
+      }
+
+      setDataList(monthlyRevenue);
+      setLoading(false);
+    } catch (e) {
+      console.error('Error getting documents: ', e);
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    getMonthlyTransactionForYear(currentDate.get('year'));
+  }, [screen]);
 
   return (
     <ScrollView bg="white">
@@ -95,7 +150,13 @@ const ReportYearScreen = () => {
           </HStack>
         </Center>
 
-        <ReportItem data={data} />
+        {loading ? (
+          <Center>
+            <Text>Loading...</Text>
+          </Center>
+        ) : (
+          <ReportItem data={dataList} />
+        )}
       </Box>
     </ScrollView>
   );
