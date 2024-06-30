@@ -3,7 +3,6 @@ import { Dimensions, StyleSheet } from 'react-native';
 import {
   Box,
   Center,
-  Divider,
   HStack,
   Icon,
   IconButton,
@@ -11,28 +10,21 @@ import {
   Pressable,
   ScrollView,
   Text,
-  VStack,
 } from 'native-base';
 import { MaterialIcons } from '@expo/vector-icons';
-import { SceneMap, TabBar, TabView } from 'react-native-tab-view';
-import moment from 'moment';
-import { ExpensesRoute } from './Expense';
-import { IncomeRoute } from './Income';
+import { TabBar } from 'react-native-tab-view';
 import { useNavigation } from '@react-navigation/native';
+import { Monthly } from './Monthly';
+import { Yearly } from './Yearly';
 
-const { width } = Dimensions.get('window');
+export const { width } = Dimensions.get('window');
 
 enum ReportScreenRoute {
   MONTH = 'Tháng',
   YEAR = 'Năm',
 }
 
-const renderScene = SceneMap({
-  expenses: ExpensesRoute,
-  income: IncomeRoute,
-});
-
-const renderTabBar = (props) => (
+export const renderTabBar = (props) => (
   <TabBar
     {...props}
     indicatorStyle={{ backgroundColor: '#007bff' }}
@@ -46,18 +38,7 @@ const renderTabBar = (props) => (
 );
 
 export const ReportScreen = () => {
-  const [index, setIndex] = React.useState(0);
-  const [routes] = React.useState([
-    { key: 'expenses', title: 'Chi tiêu' },
-    { key: 'income', title: 'Thu nhập' },
-  ]);
-
-  const [currentDate, setCurrentDate] = useState(moment());
-
   const navigation = useNavigation();
-  const handlePrevMonth = () => {
-    setCurrentDate(currentDate.clone().subtract(1, 'month'));
-  };
 
   const [screen, setScreen] = useState<ReportScreenRoute>(
     ReportScreenRoute.MONTH
@@ -65,10 +46,6 @@ export const ReportScreen = () => {
 
   const handleSetScreen = (value: ReportScreenRoute) => {
     setScreen(value);
-  };
-
-  const handleNextMonth = () => {
-    setCurrentDate(currentDate.clone().add(1, 'month'));
   };
 
   return (
@@ -113,50 +90,10 @@ export const ReportScreen = () => {
               />
             </Pressable>
           </HStack>
-          <HStack justifyContent="space-between" alignItems="center" mb={4}>
-            <Pressable onPress={handlePrevMonth}>
-              <Icon as={MaterialIcons} name="chevron-left" size="lg" />
-            </Pressable>
-            <Text fontSize="2xl" bold>
-              {currentDate.format('MM/YYYY')}
-            </Text>
-            <Pressable onPress={handleNextMonth}>
-              <Icon as={MaterialIcons} name="chevron-right" size="lg" />
-            </Pressable>
-          </HStack>
-          <Divider my={4} />
-          <VStack space={2}>
-            <HStack justifyContent="space-between">
-              <Text>Chi:</Text>
-              <Text fontSize="xl" color="red.500" bold>
-                1,500,000đ
-              </Text>
-            </HStack>
-            <Divider my={4} />
-            <HStack justifyContent="space-between">
-              <Text>Thu:</Text>
-              <Text fontSize="xl" color="blue.500" bold>
-                10,000,000đ
-              </Text>
-            </HStack>
-
-            <Divider my={4} />
-            <HStack justifyContent="space-between">
-              <Text>Thu chi:</Text>
-              <Text fontSize="xl" color="blue.500" bold>
-                +8,500,000đ
-              </Text>
-            </HStack>
-          </VStack>
+          <Box flex={1}>
+            {screen === ReportScreenRoute.MONTH ? <Monthly /> : <Yearly />}
+          </Box>
         </Box>
-        <Divider my={4} />
-        <TabView
-          navigationState={{ index, routes }}
-          renderScene={renderScene}
-          renderTabBar={renderTabBar}
-          onIndexChange={setIndex}
-          initialLayout={{ width }}
-        />
       </ScrollView>
     </NativeBaseProvider>
   );
