@@ -157,6 +157,7 @@ const OtherScreen = () => {
           <Pressable
             onPress={() => {
               /* Handle press */
+              navigate.navigate('SearchRoute');
             }}
           >
             <HStack

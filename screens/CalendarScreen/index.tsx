@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Image, ScrollView, TouchableOpacity } from 'react-native';
+import { Image, ScrollView } from 'react-native';
 import {
   Box,
   Divider,
@@ -155,16 +155,14 @@ export const CalendarScreen = () => {
           <Text flex={1} fontSize="2xl" bold>
             Lịch
           </Text>
-          <TouchableOpacity
+          <IconButton
             onPress={() => {
-              navigation.navigate('Search');
+              console.log(123123123123);
+              navigation.navigate('SearchRoute');
             }}
-          >
-            <IconButton
-              icon={<Icon as={MaterialIcons} name="search" />}
-              borderRadius="full"
-            />
-          </TouchableOpacity>
+            icon={<Icon as={MaterialIcons} name="search" />}
+            borderRadius="full"
+          />
         </HStack>
         <Calendar
           current={date.toISOString().split('T')[0]}

@@ -9,6 +9,7 @@ import {
   Icon,
   IconButton,
   Input,
+  useToast,
   VStack,
 } from 'native-base';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
@@ -26,7 +27,7 @@ export const Revenue = () => {
   const [title, setTitle] = useState('');
   const [amount, setAmount] = useState('');
   const [categorySelected, setCategorySelected] = useState('');
-
+  const toast = useToast();
   const handleConfirm = (date) => {
     setDate(date);
     hideDatePicker();
@@ -43,19 +44,22 @@ export const Revenue = () => {
       const transactionRecord = {
         category: categoryRef, // Thay thế bằng đường dẫn tham chiếu thực tế của bạn
         date: Timestamp.fromDate(date), // Sử dụng thời gian hiện tại
-        amount: Number(amount),
+        amount: Number(amount ?? 0),
         title: title,
         isRevenue: true,
+        title_lowercase: title.toLowerCase(),
       };
       // Thêm bản ghi vào collection "revenue"
       const docRef = await addDoc(
         collection(db, 'transaction'),
         transactionRecord
       );
-
       setAmount('');
       setCategorySelected('');
       setTitle('');
+      toast.show({
+        title: 'Thêm khoản chi thành công',
+      });
     } catch (e) {
       console.error('Error adding document: ', e);
     }

@@ -79,16 +79,13 @@ export const ReportScreen = () => {
                 </Pressable>
               </HStack>
             </Center>
-            <Pressable
+            <IconButton
               onPress={() => {
-                navigation.navigate('Search');
+                navigation.navigate('SearchRoute');
               }}
-            >
-              <IconButton
-                icon={<Icon as={MaterialIcons} name="search" />}
-                borderRadius="full"
-              />
-            </Pressable>
+              icon={<Icon as={MaterialIcons} name="search" />}
+              borderRadius="full"
+            />
           </HStack>
           <Box flex={1}>
             {screen === ReportScreenRoute.MONTH ? <Monthly /> : <Yearly />}
