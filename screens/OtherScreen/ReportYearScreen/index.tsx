@@ -29,11 +29,15 @@ const ReportYearScreen = () => {
     setScreen(value);
   };
   const handlePrevMonth = () => {
-    setCurrentDate(currentDate.clone().subtract(1, 'year'));
+    const yearPrev = currentDate.clone().subtract(1, 'year');
+    setCurrentDate(yearPrev);
+    getMonthlyTransactionForYear(yearPrev.get('year'));
   };
 
   const handleNextMonth = () => {
-    setCurrentDate(currentDate.clone().add(1, 'year'));
+    const yearNext = currentDate.clone().add(1, 'year');
+    setCurrentDate(yearNext);
+    getMonthlyTransactionForYear(yearNext.get('year'));
   };
 
   async function getMonthlyTransactionForYear(year) {

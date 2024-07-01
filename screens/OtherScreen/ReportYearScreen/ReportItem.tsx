@@ -7,20 +7,7 @@ export const ReportItem = ({
 }: {
   data: { id: string; amount: number }[];
 }) => {
-  const [barData, setBarData] = useState([
-    { value: 250, label: 'M' },
-    { value: 500, label: 'T' },
-    { value: 745, label: 'W' },
-    { value: 320, label: 'T' },
-    { value: 600, label: 'F' },
-    { value: 256, label: 'S' },
-    { value: 300, label: 'S' },
-    { value: 300, label: 'S' },
-    { value: 300, label: 'S' },
-    { value: 300, label: 'S' },
-    { value: 300, label: 'S' },
-    { value: 300, label: 'S' },
-  ]);
+  const [barData, setBarData] = useState([]);
 
   const totals = useMemo(() => {
     return data.reduce((acc, cur) => {
@@ -30,12 +17,19 @@ export const ReportItem = ({
 
   useEffect(() => {
     const newBarData = data.map((item) => {
+      if (item.amount > 0) {
+        return {
+          value: item.amount ?? 1,
+          label: item.id,
+          frontColor: '#5386F7',
+        };
+      }
       return {
-        value: item.amount,
+        value: item.amount ?? 1,
         label: item.id,
-        frontColor: item.amount > 0 ? '#5386F7' : null,
       };
     });
+    console.log('newBarData---', newBarData);
     setBarData(newBarData);
   }, [data]);
 

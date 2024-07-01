@@ -20,6 +20,25 @@ export const ExpensesRoute = ({
     }, 0);
   }, [data]);
 
+  const totalsCategoryAmount = useMemo(() => {
+    return data.reduce((acc, item) => {
+      const existingItem = acc.find((i) => i.title === item.category.title);
+      if (existingItem) {
+        existingItem.amount += item.amount;
+      } else {
+        acc.push({
+          title: item.category.title,
+          amount: item.amount,
+          image: item.category.image,
+          isRevenue: item.isRevenue ?? false,
+        });
+      }
+      return acc;
+    }, [] as { title: string; amount: number; image: string; isRevenue: boolean }[]);
+  }, [data]);
+
+  console.log('totalsCategoryAmount--', totalsCategoryAmount);
+
   return (
     <View style={{ flex: 1, padding: 16 }}>
       {showTotal && (
@@ -32,16 +51,16 @@ export const ExpensesRoute = ({
           </HStack>
         </Box>
       )}
-      {data.map((item, index) => (
+      {totalsCategoryAmount.map((item, index) => (
         <Box key={index}>
           <HStack justifyContent="space-between" alignItems="center">
             <HStack alignItems="center">
               <Image
-                source={{ uri: item?.category?.image }}
+                source={{ uri: item?.image }}
                 style={{ width: 24, height: 24, paddingBottom: 8 }}
               />
               <Text mx={2} fontWeight="bold">
-                {item?.category?.title}
+                {item?.title}
               </Text>
             </HStack>
             <Text
