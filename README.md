@@ -24,7 +24,7 @@ npm run web
 
 # Video Demo Application
 
-[demo.mp4](assets%2Fdemo%2Fdemo.mp4)
+[![Watch the video](https://raw.githubusercontent.com/leminh2503/financial-management/main/assets/images/favicon.png)](https://raw.githubusercontent.com/leminh2503/financial-management/main/assets/demo/demo.mp4)
 
 ## Main libraries
 
