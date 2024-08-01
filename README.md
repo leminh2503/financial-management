@@ -1,5 +1,31 @@
 # React Native Base App
 
+# Guide Run App
+
+- Step 1: install node_modules
+
+```bash
+npm i
+```
+
+- Step 2: start app
+
+```bash
+npm run start
+```
+
+- Step 3: open application ios/android/web
+
+```bash
+npm run ios
+npm run android
+npm run web
+```
+
+# Video Demo Application
+
+[demo.mp4](assets%2Fdemo%2Fdemo.mp4)
+
 ## Main libraries
 
 - [React Native](https://reactnative.dev/)
@@ -28,7 +54,8 @@ npm i
 npm run start
 ```
 
-Now you are ready to develop your app, and you can check your app in a web browser or in the simulator of iOS/Android OS.
+Now you are ready to develop your app, and you can check your app in a web browser or in the simulator of iOS/Android
+OS.
 
 Please check here for deatils:
 
@@ -95,7 +122,8 @@ https://docs.expo.dev/versions/latest/config/app/
 
 ### State/Storage
 
-This app are using [Redux(toolkit)](https://redux-toolkit.js.org/) for state management, and [Redux Persist](https://github.com/rt2zz/redux-persist) for persisting store's state when app reload.  
+This app are using [Redux(toolkit)](https://redux-toolkit.js.org/) for state management,
+and [Redux Persist](https://github.com/rt2zz/redux-persist) for persisting store's state when app reload.  
 And also using [Async Storage](https://react-native-async-storage.github.io/async-storage/) for data storage.
 
 Here is an example case of getting stored data:
@@ -127,6 +155,7 @@ However, it is also possible to set them manually:
 
 ```ts
 import { theme } from './theme';
+
 const mode = useColorScheme();
 // you can set `dark` or `light` instead of system mode
 theme.config.initialColorMode = mode;
@@ -167,7 +196,10 @@ You can explore the built-in icon families and icons on the web at following:
 ```ts
 import { Icon } from 'native-base';
 import { Feather } from '@expo/vector-icons';
+
 export default function Example() {
-  return <Icon as={Feather} name="message-square" size="sm" />;
+  return <Icon as = { Feather }
+  name = "message-square"
+  size = "sm" / >;
 }
 ```
