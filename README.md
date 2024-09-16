@@ -11,20 +11,20 @@ npm i
 - Step 2: start app
 
 ```bash
-npm run start
+expo start
 ```
 
 - Step 3: open application ios/android/web
 
 ```bash
-npm run ios
-npm run android
-npm run web
+expo start --ios
+expo start --android
+expo start --web
 ```
 
 # Video Demo Application
 
-[demo.mp4](assets%2Fdemo%2Fdemo.mp4)
+[demo.mp4](https://drive.google.com/file/d/1GayzkhuQh-Fku0I8uY7RG28ddp04yBBE/view?usp=sharing)
 
 ## Main libraries
 
@@ -51,7 +51,7 @@ Minimum setup for development is just following commands:
 
 ```bash
 npm i
-npm run start
+expo start 
 ```
 
 Now you are ready to develop your app, and you can check your app in a web browser or in the simulator of iOS/Android
@@ -71,8 +71,8 @@ EAS Build is a hosted service for building app binaries for your Expo and React 
 Also, this app includes the EAS CLI as a dependency, so you can build it by just entering commands.
 
 ```bash
-npm run build:android
-npm run build:ios
+expo build:android
+expo build:ios
 ```
 
 Please check following for more details:
@@ -82,23 +82,23 @@ Please check following for more details:
 ### Android
 
 ```bash
-npm run login
-npm run build:android
-npm run submit:android
+expo login
+expo build:android
+expo submit:android
 ```
 
 ### iOS
 
 ```bash
-npm run login
-npm run build:ios
-npm run submit:ios
+expo login
+expo build:ios
+expo submit:ios
 ```
 
 ## Building Web App
 
 ```bash
-npm run build:web
+expo build:web
 ```
 
 Please check following for more details:
@@ -196,10 +196,26 @@ You can explore the built-in icon families and icons on the web at following:
 ```ts
 import { Icon } from 'native-base';
 import { Feather } from '@expo/vector-icons';
-
-export default function Example() {
-  return <Icon as = { Feather }
-  name = "message-square"
-  size = "sm" / >;
-}
 ```
+
+## Giới thiệu về ứng dụng
+
+### Mục đích sử dụng
+
+- Ứng dụng được sử dụng với mục đích quản lý tài chính. Quản lý chi tiêu hàng ngày. Thống kê tài chính cá nhân.
+
+### Các chức năng chính
+
+- Nhập thông tin chi tiêu
+- Nhập thông tin thu nhập
+- Quản lý giao dịch thu chi
+- Thống kê tài chính theo ngày, tháng, năm
+
+### Công nghệ sử dụng
+
+- React Native
+- Expo
+- Redux(toolkit)
+- Axios
+- Async Storage
+
