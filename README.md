@@ -24,7 +24,7 @@ expo start --web
 
 # Video Demo Application
 
-[demo.mp4](https://drive.google.com/file/d/1GayzkhuQh-Fku0I8uY7RG28ddp04yBBE/view?usp=sharing)
+[demo.mp4](assets%2Fdemo%2Fdemo.mp4)
 
 ## Main libraries
 
